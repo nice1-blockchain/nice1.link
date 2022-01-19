@@ -1,4 +1,5 @@
 import { ColorModeScript } from "@chakra-ui/react"
+import { AnchorProvider } from '@nice1/l1nk'
 import * as React from "react"
 import ReactDOM from "react-dom"
 import { App } from "./App"
@@ -8,7 +9,9 @@ import * as serviceWorker from "./serviceWorker"
 ReactDOM.render(
   <React.StrictMode>
     <ColorModeScript />
-    <App />
+    <AnchorProvider sessionKey='nice1-l1nk-showcase'>
+      <App />
+    </AnchorProvider>
   </React.StrictMode>,
   document.getElementById("root"),
 )
