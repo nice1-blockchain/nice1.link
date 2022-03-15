@@ -1,19 +1,24 @@
-import { ColorModeScript } from "@chakra-ui/react"
-import { AnchorProvider } from '@nice1/l1nk'
-import * as React from "react"
-import ReactDOM from "react-dom"
-import { App } from "./App"
-import reportWebVitals from "./reportWebVitals"
-import * as serviceWorker from "./serviceWorker"
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
+import { AnchorProvider, Nice1Provider } from '@nice1/react-tools'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { App } from './App'
+import reportWebVitals from './reportWebVitals'
+import * as serviceWorker from './serviceWorker'
+import theme from './theme'
 
 ReactDOM.render(
   <React.StrictMode>
     <ColorModeScript />
-    <AnchorProvider sessionKey='nice1-l1nk-showcase'>
-      <App />
-    </AnchorProvider>
+    <ChakraProvider theme={theme}>
+      <AnchorProvider sessionKey='nice1-l1nk'>
+        <Nice1Provider>
+          <App />
+        </Nice1Provider>
+      </AnchorProvider>
+    </ChakraProvider>
   </React.StrictMode>,
-  document.getElementById("root"),
+  document.getElementById('root'),
 )
 
 // If you want your app to work offline and load faster, you can change
