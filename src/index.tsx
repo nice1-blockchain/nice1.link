@@ -2,6 +2,8 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { AnchorProvider, Nice1Provider } from '@nice1/react-tools'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter } from 'react-router-dom'
+
 import { App } from './App'
 import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
@@ -13,7 +15,9 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
-          <App />
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
         </Nice1Provider>
       </AnchorProvider>
     </ChakraProvider>

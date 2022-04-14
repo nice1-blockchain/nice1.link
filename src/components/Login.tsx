@@ -35,7 +35,7 @@ const Login = () => {
           display={{base: 'none', md: 'flex'}}
           bg={{base: 'none', md: `center center no-repeat url(${process.env.PUBLIC_URL}/bg_army.png)`}}
           bgSize='cover'
-          minH={{base: 'auto', lg: 500}}
+          minH={{base: '100vh', lg: 500}}
           width={470}
           alignItems='center'
           justifyContent='center'
