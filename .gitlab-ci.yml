@@ -1,0 +1,22 @@
+stages:
+- pages
+
+pages:
+  stage: pages
+  image: node:16
+  only:
+  - main
+  variables:
+    PUBLIC_URL: /nice1-link/
+    NODE_ENV: development
+  before_script:
+  - yarn
+  script:
+  - yarn build
+  after_script:
+  - rm -fr public
+  - mv -f build public
+  - cp public/index.html public/404.html
+  artifacts:
+    paths:
+    - public
