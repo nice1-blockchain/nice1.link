@@ -15,7 +15,7 @@ ReactDOM.render(
     <ChakraProvider theme={theme}>
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
-          <BrowserRouter>
+          <BrowserRouter basename={process.env.PUBLIC_URL}>
             <App />
           </BrowserRouter>
         </Nice1Provider>
