@@ -1,17 +1,13 @@
 import { useAnchor } from '@nice1/react-tools'
+import ProfileCard from './ProfileCard'
 
 export default function Dashboard() {
-  const { login, logout, session } = useAnchor()
+  const { session } = useAnchor()
 
   return (
     <>
-      {
-        session === null ?
-          <button onClick={login}>Login</button> :
-          <>
-            <button onClick={logout}>logout</button>
-          </>
-      }
+      <ProfileCard />
+      <p>Hello { session?.auth.actor.toString() } :)</p>
     </>
   )
 }
