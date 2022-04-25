@@ -1,13 +1,16 @@
-import { useAnchor } from '@nice1/react-tools'
+import { Grid, GridItem } from '@chakra-ui/react'
 import ProfileCard from './ProfileCard'
+import ResourcesCard from './ResourcesCard'
 
 export default function Dashboard() {
-  const { session } = useAnchor()
-
   return (
-    <>
-      <ProfileCard />
-      <p>Hello { session?.auth.actor.toString() } :)</p>
-    </>
+    <Grid gap={2}>
+      <GridItem>
+        <ProfileCard />
+      </GridItem>
+      <GridItem>
+        <ResourcesCard />
+      </GridItem>
+    </Grid>
   )
 }

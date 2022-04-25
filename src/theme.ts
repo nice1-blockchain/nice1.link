@@ -8,7 +8,7 @@ const theme = extendTheme({
   colors: {
     bgs: {
       body: '#1A1E23',
-      widgets: '#21252A',
+      widgets: '#202938',
       gradientStart: '#260F09',
       gradientEnd: '#000',
       buttons: '#A61410',
@@ -30,8 +30,8 @@ const theme = extendTheme({
           _hover: {
             bg: 'red.900',
           },
-        },
-      }
+        }
+      },
     },
   },
   styles: {

@@ -1,4 +1,4 @@
-import { Box, Grid, IconButton, VStack } from '@chakra-ui/react'
+import { Box, IconButton, VStack } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
 import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
@@ -28,14 +28,12 @@ const DashboardLayout = ({children} : {children: ReactNode}) => {
   const { logout } = useAnchor()
 
   return (
-    <>
+    <Box display='flex' flexDirection='row' alignItems='stretch' minH='100vh'>
       <Box
-        position='fixed'
         left={0}
         p={5}
         w={75}
         top={0}
-        h='100%'
         bg='bgs.widgets'
         borderTopLeftRadius={20}
       >
@@ -69,12 +67,10 @@ const DashboardLayout = ({children} : {children: ReactNode}) => {
           />
         </VStack>
       </Box>
-      <Box textAlign='center' fontSize='xl'>
-        <Grid minH='100vh' p={3}>
-          {children}
-        </Grid>
+      <Box textAlign='center' fontSize='xl' p={5}>
+        {children}
       </Box>
-    </>
+    </Box>
   )
 }
 
