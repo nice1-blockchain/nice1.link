@@ -1,7 +1,7 @@
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { AnchorProvider, Nice1Provider } from '@nice1/react-tools'
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 
 import { App } from './App'
@@ -9,7 +9,15 @@ import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
 import theme from './theme'
 
-ReactDOM.render(
+const rootElement = document.getElementById('root')
+
+if (!rootElement) {
+  throw new Error('failed to find root element')
+}
+
+const root = createRoot(rootElement)
+
+root.render(
   <React.StrictMode>
     <ColorModeScript />
     <ChakraProvider theme={theme}>
@@ -21,8 +29,7 @@ ReactDOM.render(
         </Nice1Provider>
       </AnchorProvider>
     </ChakraProvider>
-  </React.StrictMode>,
-  document.getElementById('root'),
+  </React.StrictMode>
 )
 
 // If you want your app to work offline and load faster, you can change
