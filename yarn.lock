@@ -2418,10 +2418,10 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.3.tgz#0300943770e04231041a51bd39f0439b5c7ab4f0"
   integrity sha512-nkalE/f1RvRGChwBnEIoBfSEYOXnCRdleKuv6+lePbMDrMZXeDQnqak5XDOeBgrPPyPfAdcCu/B5z+v3VhplGg==
 
-"@nice1/react-tools@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@nice1/react-tools/-/react-tools-0.0.2.tgz#d66fcdc34a3f798ec4c2bfade691ea4a3f1bd6b3"
-  integrity sha512-jjdwwPVDjN03aZjcvHaXaQW8Qdsq3pdD0H7fDuHZXSgFHVU5D6rUcMkzg34vrHPDwaEivkOyTASc1CAWWa6OUQ==
+"@nice1/react-tools@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@nice1/react-tools/-/react-tools-0.1.0.tgz#3da3595a390697dd2915cd5d633239d8e4f9ca46"
+  integrity sha512-mHdKcHYE8C1cikhdZ2tVeL2saKr3SUz5CHc3ymuxW1U1w+0iEyimTxlyaXqw4uIksENy2o0W2SDKVjC0Q+vPgg==
   dependencies:
     "@greymass/eosio" "^0.5.3"
     anchor-link "^3.3.5"
