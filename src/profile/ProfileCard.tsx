@@ -1,10 +1,11 @@
-import { Box, IconButton, Text } from '@chakra-ui/react'
+import { Box, IconButton, Text, useDisclosure } from '@chakra-ui/react'
 import { useAnchor, useNice1 } from '@nice1/react-tools'
 import styled from 'styled-components'
 
 import { ReactComponent as EditIcon } from '../icons/edit.svg'
-import { Image } from '../ipfs'
-import DashboardBox from './DashboardBox'
+import Avatar from '../components/Avatar'
+import DashboardBox from '../components/DashboardBox'
+import ProfileModal from './ProfileModal'
 
 
 const SVGIconButton : typeof IconButton = styled(IconButton)`
@@ -18,16 +19,12 @@ const SVGIconButton : typeof IconButton = styled(IconButton)`
 const ProfileCard = () => {
   const { session } = useAnchor()
   const { profile } = useNice1()
+  const { isOpen, onClose, onOpen } = useDisclosure()
 
   return (
     <DashboardBox>
       <Box display='flex' w='80px' h='80px' justifyContent='center' alignItems='center' mr={4}>
-        <Image
-          src={profile.avatar as string}
-          alt={`${profile.alias} avatar`}
-          maxH='100%'
-          rounded='xl'
-        />
+        <Avatar avatar={profile.avatar} />
       </Box>
       <Box display='flex' alignItems='start' flexDir='column'>
         <Text fontSize='xs'>
@@ -50,7 +47,9 @@ const ProfileCard = () => {
         ml={4}
         size='xs'
         height='15px'
+        onClick={onOpen}
       />
+      <ProfileModal isOpen={isOpen} onClose={onClose} />
     </DashboardBox>
   )
 }

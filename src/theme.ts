@@ -33,6 +33,14 @@ const theme = extendTheme({
         }
       },
     },
+    Modal: {
+      parts: ['dialog'],
+      baseStyle: {
+        dialog: {
+          borderTop: '8px solid #C86266'
+        },
+      },
+    },
   },
   styles: {
     global: {

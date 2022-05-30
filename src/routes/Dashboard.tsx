@@ -1,6 +1,6 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import ProfileCard from './ProfileCard'
-import ResourcesCard from './ResourcesCard'
+import ProfileCard from '../profile/ProfileCard'
+import ResourcesCard from '../dashboard/ResourcesCard'
 
 export default function Dashboard() {
   return (

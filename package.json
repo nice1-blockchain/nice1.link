@@ -35,6 +35,7 @@
     "fs-extra": "^10.1.0",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
+    "ipfs-http-client": "^56.0.3",
     "jest": "^28.0.0",
     "jest-resolve": "^28.0.0",
     "jest-watch-typeahead": "^1.0.0",

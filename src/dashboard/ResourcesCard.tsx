@@ -1,7 +1,7 @@
 import { Progress } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
 import Decimal from 'decimal.js'
-import DashboardBox from './DashboardBox'
+import DashboardBox from '../components/DashboardBox'
 
 const ResourcesCard = () => {
   const { account } = useAnchor()
