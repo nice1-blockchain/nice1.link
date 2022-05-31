@@ -1,7 +1,7 @@
 import { Box, ImageProps } from "@chakra-ui/react"
 
 import { ReactComponent as AvatarIcon } from '../icons/avatar.svg'
-import { Image } from '../ipfs'
+import { Image } from './ipfs'
 
 const Avatar = ({avatar, ...atrs}: {avatar: string | null} & ImageProps) => {
   let image = <AvatarIcon width='100%' height='100%' />
