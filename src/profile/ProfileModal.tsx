@@ -87,6 +87,8 @@ const ProfileModal = ({isOpen, onClose} : {isOpen: boolean, onClose: () => void}
       if (alias !== profile.alias && avatar === profile.avatar) {
         await setAlias(alias)
       }
+
+      onClose()
     } catch (e) {
       console.error(e)
     }
