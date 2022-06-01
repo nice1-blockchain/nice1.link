@@ -10,12 +10,23 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const ModalURL = ({isOpen, onClose, setAvatar} : any) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<null|string>(null)
-  const isInvalid = error !== null
+  const [invalid, setInvalid] = useState<boolean>(true)
+
+  useEffect(() => {
+    if (!inputRef.current?.value.length) {
+      return
+    }
+
+    setInvalid(false)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    inputRef.current
+  ])
 
   const setAvatarState = () => {
     if (!inputRef.current) {
@@ -32,7 +43,7 @@ const ModalURL = ({isOpen, onClose, setAvatar} : any) => {
       <ModalContent>
         <ModalHeader fontSize='md' textAlign='center'>Set custom avatar URL</ModalHeader>
         <ModalBody>
-          <FormControl isInvalid={isInvalid}>
+          <FormControl isInvalid={error !== null}>
             <Input
               type='text'
               ref={inputRef}
@@ -41,6 +52,7 @@ const ModalURL = ({isOpen, onClose, setAvatar} : any) => {
                   setError('Has to be either an http or ipfs link')
                 } else {
                   setError(null)
+                  setInvalid(false)
                 }
               }}
             />
@@ -49,7 +61,7 @@ const ModalURL = ({isOpen, onClose, setAvatar} : any) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button mr={3} disabled={isInvalid || !inputRef.current?.value.length} onClick={setAvatarState}>Set</Button>
+          <Button mr={3} disabled={invalid || error !== null} onClick={setAvatarState}>Set</Button>
           <Button onClick={onClose} variant='outline'>
             Cancel
           </Button>
