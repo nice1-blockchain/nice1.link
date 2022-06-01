@@ -73,7 +73,7 @@ const ProfileModal = ({isOpen, onClose} : {isOpen: boolean, onClose: () => void}
       return
     }
 
-    const avatar = avatarUrl ? avatarUrl : ''
+    const avatar = avatarUrl ? avatarUrl : profile.avatar as string
     const alias = aliasRef.current?.value
 
     try {
