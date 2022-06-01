@@ -1,7 +1,7 @@
 import { Image as ChakraImage, ImageProps } from "@chakra-ui/react"
 
 
-const gateway = 'https://ipfs.io/ipfs/'
+const gateway = 'https://infura-ipfs.io/ipfs/'
 
 export const linkify = (link: string | undefined) => {
   if (typeof link === 'undefined') {
