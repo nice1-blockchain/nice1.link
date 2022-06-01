@@ -3,7 +3,7 @@ import { useAnchor } from '@nice1/react-tools'
 import styled from 'styled-components'
 
 import { ReactComponent as Anchor } from '../icons/anchor.svg'
-import { ReactComponent as Git } from '../icons/git.svg'
+import { ReactComponent as Discord } from '../icons/discord.svg'
 import { ReactComponent as Mail } from '../icons/mail.svg'
 import { ReactComponent as Telegram } from '../icons/telegram.svg'
 import { ReactComponent as Twitter } from '../icons/twitter.svg'
@@ -11,6 +11,10 @@ import { ReactComponent as Twitter } from '../icons/twitter.svg'
 const SVGIconButton : typeof IconButton = styled(IconButton)`
   svg {
     max-height: 130%;
+
+    & * {
+      fill: white;
+    }
   }
 `
 
@@ -79,11 +83,11 @@ const Login = () => {
                   onClick={() => {window.open('https://twitter.com/nice1blockchain', '_blank')}}
                 />
                 <SVGIconButton
-                  aria-label='git'
-                  title='help us contributing'
+                  aria-label='Discord'
+                  title='connect with us'
                   variant='link'
-                  icon={<Git />}
-                  onClick={() => {window.open('https://github.com/nice1-blockchain', '_blank')}}
+                  icon={<Discord />}
+                  onClick={() => {window.open('https://t.co/ngDHr5wyjU', '_blank')}}
                 />
                 <SVGIconButton
                   aria-label='telegram'
