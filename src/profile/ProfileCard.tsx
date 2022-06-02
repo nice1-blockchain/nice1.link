@@ -23,8 +23,8 @@ const ProfileCard = () => {
 
   return (
     <DashboardBox>
-      <Box display='flex' w='80px' h='80px' justifyContent='center' alignItems='center' mr={4}>
-        <Avatar avatar={profile.avatar} />
+      <Box mr={4} flexBasis='min-content'>
+        <Avatar avatar={profile.avatar} h='80px' width='80px' />
       </Box>
       <Box display='flex' alignItems='start' flexDir='column'>
         <Text fontSize='xs'>

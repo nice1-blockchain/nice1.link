@@ -1,8 +1,14 @@
 import { Box, BoxProps } from '@chakra-ui/react'
+import { ReactNode } from 'react'
 
-const DashboardBox = ({children, ...props} : BoxProps) => (
-  <Box display='flex' bg='bgs.widgets' p={4} borderRightRadius='xl' borderBottomLeftRadius='xl' {...props}>
-    {children}
+const DashboardBox = ({children, ...props} : BoxProps & {image?: ReactNode}) => (
+  <Box display='flex' flexDir='column' bg='bgs.widgets' borderRightRadius='xl' borderBottomLeftRadius='xl'>
+    {
+      props.image ? props.image : null
+    }
+    <Box p={4} display='flex' {...props}>
+      {children}
+    </Box>
   </Box>
 )
 
