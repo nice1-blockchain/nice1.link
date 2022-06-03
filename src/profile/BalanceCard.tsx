@@ -22,7 +22,7 @@ const BalanceCard = () => {
   const { balance } = useNice1()
 
   return (
-    <DashboardBox justifyContent='center'>
+    <DashboardBox childProps={{justifyContent: 'center'}}>
       <HStack divider={<StackDivider />} align='stretch'>
         <Box flexDir='row' display='flex'>
           <SVGIcon>

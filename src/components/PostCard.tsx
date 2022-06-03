@@ -38,7 +38,7 @@ const PostCard = ({post}: {post: Post}) => {
   const image = <Image src={`${NEWS_BASE_URL}/images/${post.image}`} alt={`${post.slug} heading image`}/>
 
   return (
-    <DashboardBox image={image}>
+    <DashboardBox image={image} childProps={{h: '100%'}}>
       <StyledMarkdown>
         <ReactMarkdown
           children={wordsOverflow(markdown, 25)}
@@ -59,8 +59,8 @@ const PostCard = ({post}: {post: Post}) => {
             }
           }}
         />
-        <Link to={`/blog/${post.slug}`} style={{alignSelf: 'end'}}>
-          <Button variant='outline' size='xs' alignSelf='flex-end'>
+        <Link to={`/blog/${post.slug}`} style={{alignSelf: 'end', marginTop: 'auto'}}>
+          <Button variant='outline' size='xs' alignSelf='flex-end' mt='auto'>
             Read more
           </Button>
         </Link>
