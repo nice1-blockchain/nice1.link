@@ -33,10 +33,10 @@ export default function Dashboard() {
       <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)'>
         <GridItem colSpan={{xs: 4, lg: 1}} rowSpan={1}>
           <Grid gap={2} templateColumns='repeat(2, 1fr)'>
-            <GridItem colSpan={{xs: 2, md: 1, lg: 2}}>
+            <GridItem colSpan={{xs: 2, md: 1, lg: 2}} maxW='100%'>
               <ProfileCard />
             </GridItem>
-            <GridItem colSpan={{xs: 2, md: 1, lg: 2}}>
+            <GridItem colSpan={{xs: 2, md: 1, lg: 2}} display='flex' maxW='100%'>
               <BalanceCard />
             </GridItem>
           </Grid>

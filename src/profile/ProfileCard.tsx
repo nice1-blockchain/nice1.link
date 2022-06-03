@@ -24,9 +24,9 @@ const ProfileCard = () => {
   return (
     <DashboardBox>
       <Box mr={4} flexBasis='min-content'>
-        <Avatar avatar={profile.avatar} h='80px' width='80px' />
+        <Avatar avatar={profile.avatar} w='80px' />
       </Box>
-      <Box display='flex' alignItems='start' flexDir='column'>
+      <Box display='flex' alignItems='start' flexDir='column' flex='2 auto'>
         <Text fontSize='xs'>
           Account:
         </Text>

@@ -9,6 +9,8 @@ import { ReactComponent as EOS } from '../icons/eos.svg'
 
 
 const SVGIcon : typeof Box  = styled(Box)`
+  margin-right: var(--chakra-space-2);
+  min-width: 25px;
   > svg {
     height: 100%;
     width: 100%;
@@ -20,7 +22,7 @@ const BalanceCard = () => {
   const { balance } = useNice1()
 
   return (
-    <DashboardBox>
+    <DashboardBox justifyContent='center'>
       <HStack divider={<StackDivider />} align='stretch'>
         <Box flexDir='row' display='flex'>
           <SVGIcon>

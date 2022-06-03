@@ -23,7 +23,6 @@ import { useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import styled from 'styled-components'
 
-import { ReactComponent as Discord } from '../icons/discord.svg'
 import { ReactComponent as Telegram } from '../icons/telegram.svg'
 import { ReactComponent as Twitter } from '../icons/twitter.svg'
 import { NEWS_BASE_URL, NEWS_INDEX_URL, Post, StoredPost } from '../constants'
