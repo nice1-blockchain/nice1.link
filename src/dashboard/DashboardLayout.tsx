@@ -67,7 +67,7 @@ const DashboardLayout = ({children} : {children: ReactNode}) => {
           />
         </VStack>
       </Box>
-      <Box textAlign='center' fontSize='xl' p={5}>
+      <Box p={5} w='calc(100% - 75px)'>
         {children}
       </Box>
     </Box>

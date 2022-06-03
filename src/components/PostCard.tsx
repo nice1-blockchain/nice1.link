@@ -17,10 +17,8 @@ const wordsOverflow = (text: string, words: number) => {
 
 export const StyledMarkdown = styled.div`
   text-align: left;
-  pre, .table {
-    max-width: 200px;
-    overflow-x: scroll;
-  }
+  display: flex;
+  flex-direction: column;
 `
 const PostCard = ({post}: {post: Post}) => {
   const [loaded, setLoaded] = useState<boolean>(false)
@@ -61,7 +59,7 @@ const PostCard = ({post}: {post: Post}) => {
             }
           }}
         />
-        <Link to={`/blog/${post.slug}`}>
+        <Link to={`/blog/${post.slug}`} style={{alignSelf: 'end'}}>
           <Button variant='outline' size='xs' alignSelf='flex-end'>
             Read more
           </Button>

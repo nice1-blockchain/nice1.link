@@ -1,6 +1,16 @@
 import { extendTheme } from '@chakra-ui/react'
 
 const theme = extendTheme({
+  breakpoints: {
+    // for unknown reasons, chakra does not include the xs breakpoint using object notation (but it does using array...)
+    // adding it here fixes the issue tho
+    xs: '0em',
+    sm: '30em',
+    md: '48em',
+    lg: '62em',
+    xl: '80em',
+    '2xl': '96em',
+  },
   config: {
     initialColorMode: 'dark',
     useSystemColorMode: false,
@@ -30,7 +40,11 @@ const theme = extendTheme({
           _hover: {
             bg: 'red.900',
           },
-        }
+        },
+        outline: {
+          borderColor: '#E01F1F',
+          fontWeight: 'bold',
+        },
       },
     },
     Modal: {
@@ -39,6 +53,11 @@ const theme = extendTheme({
         dialog: {
           borderTop: '8px solid #C86266'
         },
+      },
+    },
+    Link: {
+      baseStyle: {
+        color: '#C86266',
       },
     },
   },

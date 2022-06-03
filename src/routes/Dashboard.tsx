@@ -31,13 +31,17 @@ export default function Dashboard() {
   return (
     <>
       <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)'>
-        <GridItem colSpan={1} rowSpan={1}>
-          <Grid gap={2}>
-            <ProfileCard />
-            <BalanceCard />
+        <GridItem colSpan={{xs: 4, lg: 1}} rowSpan={1}>
+          <Grid gap={2} templateColumns='repeat(2, 1fr)'>
+            <GridItem colSpan={{xs: 2, md: 1, lg: 2}}>
+              <ProfileCard />
+            </GridItem>
+            <GridItem colSpan={{xs: 2, md: 1, lg: 2}}>
+              <BalanceCard />
+            </GridItem>
           </Grid>
         </GridItem>
-        <GridItem colSpan={3} rowSpan={1}>
+        <GridItem colSpan={{xs: 4, lg: 3}} rowSpan={1}>
           <a href={featured.link}>
             <img src={`${NEWS_BASE_URL}/images/${featured.image}`} alt='' />
           </a>
@@ -46,7 +50,7 @@ export default function Dashboard() {
       <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)' mt={2}>
         {
           posts.map((post, k) => (
-            <GridItem colSpan={1} rowSpan={1} key={k}>
+            <GridItem colSpan={{xs: 4, md: 2, lg: 1}} rowSpan={1} key={k}>
               <PostCard post={post} />
             </GridItem>
           ))
