@@ -4,7 +4,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 
-import { App } from './App'
+import Routes from './routes'
 import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
 import theme from './theme'
@@ -24,7 +24,7 @@ root.render(
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
           <BrowserRouter basename={process.env.PUBLIC_URL}>
-            <App />
+            <Routes />
           </BrowserRouter>
         </Nice1Provider>
       </AnchorProvider>

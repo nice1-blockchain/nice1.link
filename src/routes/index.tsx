@@ -1,13 +1,13 @@
 import { useAnchor } from '@nice1/react-tools'
 import { Route, Routes } from 'react-router-dom'
 
-import DashboardLayout from './dashboard/DashboardLayout'
-import Login from './routes/Login'
-import Dashboard from './routes/Dashboard'
-import Nfts from './routes/NFTS'
-import Post from './routes/Post'
+import DashboardLayout from '../dashboard/DashboardLayout'
+import Login from './Login'
+import Dashboard from './Dashboard'
+import Nfts from './NFTS'
+import Post from './Post'
 
-export const App = () => {
+const AppRoutes = () => {
   const { session } = useAnchor()
 
   if (session === null) {
@@ -24,3 +24,5 @@ export const App = () => {
     </DashboardLayout>
   )
 }
+
+export default AppRoutes
