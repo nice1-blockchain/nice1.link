@@ -10,7 +10,7 @@ const DashboardLayout = ({children} : {children: ReactNode}) => (
       "sidebar content"
       "sidebar footer"
     `}
-    height='100vh'
+    minH='100vh'
   >
     <GridItem
       bg='bgs.widgets'
@@ -18,10 +18,12 @@ const DashboardLayout = ({children} : {children: ReactNode}) => (
       w='4.4em'
       p={5}
       area='sidebar'
+      minH='100vh'
+      h='100%'
     >
       <Menu />
     </GridItem>
-    <GridItem area='content' p={5} minH='calc(100vh - 6em)' w='calc(100vw - 4.4em)'>
+    <GridItem area='content' p={5} minH='calc(100vh - 6em)' w='calc(100vw - 4.4em - var(--chakra-space-5))'>
       {children}
     </GridItem>
     <GridItem area='footer' p={5} justifySelf='center' maxH='6em'>
