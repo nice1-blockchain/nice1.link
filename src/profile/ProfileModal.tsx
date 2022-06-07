@@ -57,6 +57,7 @@ const ProfileModal = ({isOpen, onClose} : {isOpen: boolean, onClose: () => void}
   const { profile, updateProfile, setAvatar, setAlias } = useNice1()
   const aliasRef = useRef<HTMLInputElement>(null)
   const [ avatarUrl, setAvatarUrl ] = useState<string|null>(null)
+  const [ loading, setLoading ] = useState<boolean>(false)
   const {
     isOpen: isFileModalOpen,
     onOpen: onFileModalOpen,
@@ -75,6 +76,7 @@ const ProfileModal = ({isOpen, onClose} : {isOpen: boolean, onClose: () => void}
 
     const avatar = avatarUrl ? avatarUrl : profile.avatar as string
     const alias = aliasRef.current?.value
+    setLoading(true)
 
     try {
       if (avatar !== profile.avatar && alias !== profile.alias) {
@@ -92,6 +94,8 @@ const ProfileModal = ({isOpen, onClose} : {isOpen: boolean, onClose: () => void}
     } catch (e) {
       console.error(e)
     }
+
+    setLoading(false)
   }
 
   return (
@@ -129,7 +133,7 @@ const ProfileModal = ({isOpen, onClose} : {isOpen: boolean, onClose: () => void}
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={save} mr={3}>Save</Button>
+            <Button onClick={save} mr={3} isLoading={loading}>Save</Button>
             <Button onClick={onClose} variant='outline'>
               Cancel
             </Button>
