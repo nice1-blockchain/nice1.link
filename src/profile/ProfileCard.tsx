@@ -2,11 +2,10 @@ import { Box, IconButton, Text, useDisclosure } from '@chakra-ui/react'
 import { useAnchor, useNice1 } from '@nice1/react-tools'
 import styled from 'styled-components'
 
-import { ReactComponent as EditIcon } from '../icons/edit.svg'
 import Avatar from '../components/Avatar'
 import DashboardBox from '../components/DashboardBox'
+import { Edit } from '../icons'
 import ProfileModal from './ProfileModal'
-
 
 const SVGIconButton : typeof IconButton = styled(IconButton)`
   svg {
@@ -14,7 +13,6 @@ const SVGIconButton : typeof IconButton = styled(IconButton)`
     height: 100%;
   }
 `
-
 
 const ProfileCard = () => {
   const { session } = useAnchor()
@@ -43,7 +41,7 @@ const ProfileCard = () => {
       <SVGIconButton
         variant='link'
         aria-label='edit profile'
-        icon={<EditIcon />}
+        icon={<Edit />}
         ml={4}
         size='xs'
         height='15px'

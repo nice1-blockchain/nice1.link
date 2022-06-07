@@ -2,11 +2,7 @@ import { Box, Button, Flex, Heading, IconButton, Image, Stack, Text } from '@cha
 import { useAnchor } from '@nice1/react-tools'
 import styled from 'styled-components'
 
-import { ReactComponent as Anchor } from '../icons/anchor.svg'
-import { ReactComponent as Discord } from '../icons/discord.svg'
-import { ReactComponent as Mail } from '../icons/mail.svg'
-import { ReactComponent as Telegram } from '../icons/telegram.svg'
-import { ReactComponent as Twitter } from '../icons/twitter.svg'
+import { Anchor, Discord, Mail, Telegram, Twitter } from '../icons'
 
 const SVGIconButton : typeof IconButton = styled(IconButton)`
   svg {

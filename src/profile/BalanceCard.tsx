@@ -4,9 +4,7 @@ import NumberFormat from 'react-number-format'
 import styled from 'styled-components'
 
 import DashboardBox from '../components/DashboardBox'
-import { ReactComponent as Nice1 } from '../icons/niceonetoken.svg'
-import { ReactComponent as EOS } from '../icons/eos.svg'
-
+import { EOS, N1Token } from '../icons'
 
 const SVGIcon : typeof Box  = styled(Box)`
   margin-right: var(--chakra-space-2);
@@ -26,7 +24,7 @@ const BalanceCard = () => {
       <HStack divider={<StackDivider />} align='stretch'>
         <Box flexDir='row' display='flex'>
           <SVGIcon>
-            <Nice1 />
+            <N1Token />
           </SVGIcon>
           <Box>
             <Text fontSize='sm' color='gray.400'>

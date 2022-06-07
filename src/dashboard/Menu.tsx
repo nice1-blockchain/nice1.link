@@ -3,10 +3,12 @@ import { useAnchor } from '@nice1/react-tools'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { ReactComponent as N1link } from '../icons/n1link.svg'
-import { ReactComponent as Nft } from '../icons/nft.svg'
-import { ReactComponent as Shutdown } from '../icons/shutdown.svg'
-import { ReactComponent as User } from '../icons/user.svg'
+import {
+  N1Link,
+  NFT,
+  Shutdown,
+  User,
+} from '../icons'
 
 const SVGIconButton : typeof IconButton = styled(IconButton)`
   svg {
@@ -31,7 +33,7 @@ const Menu = () => {
         <SVGLogoButton
           variant='link'
           aria-label='Nice1 Link'
-          icon={<N1link />}
+          icon={<N1Link />}
         />
       </Link>
       <Link to='/'>
@@ -45,7 +47,7 @@ const Menu = () => {
         <SVGIconButton
           variant='link'
           aria-label='Nft collection'
-          icon={<Nft />}
+          icon={<NFT />}
         />
       </Link>
       <SVGIconButton
