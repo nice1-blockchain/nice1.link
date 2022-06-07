@@ -4,6 +4,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 
+import { BlogProvider } from './hooks/blog'
 import Routes from './routes'
 import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
@@ -23,9 +24,11 @@ root.render(
     <ChakraProvider theme={theme}>
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
-          <BrowserRouter basename={process.env.PUBLIC_URL}>
-            <Routes />
-          </BrowserRouter>
+          <BlogProvider>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
+              <Routes />
+            </BrowserRouter>
+          </BlogProvider>
         </Nice1Provider>
       </AnchorProvider>
     </ChakraProvider>

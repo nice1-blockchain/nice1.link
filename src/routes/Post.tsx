@@ -14,8 +14,7 @@ import {
   Tr,
   UnorderedList,
 } from '@chakra-ui/react'
-import axios from 'axios'
-import { format, parse } from 'date-fns'
+import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useNavigate } from 'react-router-dom'
@@ -23,7 +22,8 @@ import { useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import styled from 'styled-components'
 
-import { NEWS_BASE_URL, NEWS_INDEX_URL, Post, StoredPost } from '../constants'
+import { NEWS_BASE_URL } from '../constants'
+import { IndexedPost, useBlog } from '../hooks/blog'
 import { ArrowBack, Telegram, Twitter } from '../icons'
 
 const StyledMarkdown = styled.div`
@@ -52,40 +52,24 @@ const SVGIconButton : typeof IconButton = styled(IconButton)`
 
 const PostPage = () => {
   const { slug } = useParams()
-  const [ loaded, setLoaded ] = useState<boolean>(false)
-  const [ loading, setLoading ] = useState<boolean>(false)
-  const [ markdown, setMarkdown ] = useState<string>('')
-  const [ post, setPost ] = useState<Post>()
+  const { indexed, load, loaded, posts } = useBlog()
+  const [ post, setPost ] = useState<IndexedPost|null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
-    (async () => {
-      if (loaded || loading) return
-      setLoading(true)
+    load()
+  }, [load])
 
-      try {
-        const posts = await axios.get(NEWS_INDEX_URL + '?' + (Math.random() * 1000))
-        const found : StoredPost = posts.data.posts.find((post: StoredPost) => post.slug === slug)
-        const response = await axios.get(`${NEWS_BASE_URL}/posts/${found.file}`)
+  useEffect(() => {
+    console.log('indexed:', indexed)
+    console.log('posts:', posts)
 
-        const post : Post = {
-          ...found,
-          date: parse(found.date as string, 'yyyy-MM-dd', new Date()),
-        }
+    if (!slug || !loaded || !indexed[slug]?.contents) return
 
-        setMarkdown(response.data)
-        setPost(post)
-      } catch (e) {
-        console.error(e)
-      }
-      setLoaded(true)
-      setLoading(false)
-    })()
-  }, [loaded, markdown, slug, loading])
+    setPost(indexed[slug])
+  }, [indexed, load, loaded, posts, slug])
 
-  if (!post || loading || !loaded) {
-    return null
-  }
+  if (!post) return null // should show some kind of loading or similar.. waiting for design
 
   return (
     <Box>
@@ -127,7 +111,7 @@ const PostPage = () => {
       <Image src={`${NEWS_BASE_URL}/images/${post?.image}`} alt={`${post?.slug} heading image`}/>
       <StyledMarkdown>
         <ReactMarkdown
-          children={markdown}
+          children={post?.contents}
           remarkPlugins={[remarkGfm]}
           components={{
             a({node, children, ...props}) {

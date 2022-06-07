@@ -6,6 +6,7 @@ import Footer from './Footer'
 import Menu from './Menu'
 
 import 'simplebar/dist/simplebar.min.css'
+import BlogSidebar from './BlogSidebar'
 
 const BlogLayout = ({children} : {children: ReactNode}) => (
   <Grid
@@ -29,6 +30,7 @@ const BlogLayout = ({children} : {children: ReactNode}) => (
         bgColor='bgs.widgets'
         borderRightRadius='xl'
         borderBottomLeftRadius='xl'
+        pr={2}
         h='100%'
       >
         <Scrollbar style={{maxHeight: '100%', padding: 'var(--chakra-space-4)'}}>
@@ -37,7 +39,7 @@ const BlogLayout = ({children} : {children: ReactNode}) => (
       </Box>
     </GridItem>
     <GridItem area='history' p={5} w='20em'>
-      Posts
+      <BlogSidebar />
     </GridItem>
     <GridItem area='footer' p={5} justifySelf='center' maxH='6em'>
       <Footer />

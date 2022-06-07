@@ -1,32 +1,17 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { useEffect } from 'react'
 
 import BalanceCard from '../profile/BalanceCard'
 import ProfileCard from '../profile/ProfileCard'
 import PostCard from '../components/PostCard'
-import { NEWS_BASE_URL, NEWS_INDEX_URL, Post } from '../constants'
+import { NEWS_BASE_URL } from '../constants'
+import { useBlog } from '../hooks/blog'
 
 export default function Dashboard() {
-  const [loaded, setLoaded] = useState<boolean>(false)
-  const [posts, setPosts] = useState<Post[]>([])
-  const [featured, setFeatured] = useState<{image: string, link: string}>({
-    image: '',
-    link: '',
-  })
-
+  const { load, indexed, featured } = useBlog()
   useEffect(() => {
-    if (loaded) return
-
-    (async () => {
-      const result = await axios.get(NEWS_INDEX_URL)
-
-      setLoaded(true)
-      setPosts(result.data.posts)
-      setFeatured(result.data.featured)
-    })()
-
-  }, [loaded])
+    load()
+  }, [load])
 
   return (
     <>
@@ -42,14 +27,14 @@ export default function Dashboard() {
           </Grid>
         </GridItem>
         <GridItem colSpan={{xs: 4, lg: 3}} rowSpan={1}>
-          <a href={featured.link}>
-            <img src={`${NEWS_BASE_URL}/images/${featured.image}`} alt='' />
+          <a href={featured?.link}>
+            <img src={`${NEWS_BASE_URL}/images/${featured?.image}`} alt='' />
           </a>
         </GridItem>
       </Grid>
       <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)' mt={2}>
         {
-          posts.map((post, k) => (
+          Object.values(indexed).map((post, k) => (
             <GridItem colSpan={{xs: 4, md: 2, lg: 1}} rowSpan={1} key={k} display='flex'>
               <PostCard post={post} />
             </GridItem>

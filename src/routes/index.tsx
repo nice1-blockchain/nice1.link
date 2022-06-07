@@ -17,11 +17,11 @@ const AppRoutes = () => {
 
   return (
     <>
-        <Routes>
-          <Route path='/' element={<DashboardLayout><Dashboard /></DashboardLayout>} />
-          <Route path='/nfts' element={<DashboardLayout><Nfts /></DashboardLayout>} />
-          <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
-        </Routes>
+      <Routes>
+        <Route path='/' element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+        <Route path='/nfts' element={<DashboardLayout><Nfts /></DashboardLayout>} />
+        <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
+      </Routes>
     </>
 
   )
