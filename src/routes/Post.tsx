@@ -88,7 +88,7 @@ const PostPage = () => {
   }
 
   return (
-    <Box bgColor='bgs.widgets' py={2} px={4} borderRightRadius='xl' borderBottomLeftRadius='xl'>
+    <Box>
       <Box mb={4}>
         <Box mb={4}>
           <Button variant='link' onClick={() => (window.history.state && window.history.state.idx && navigate(-1)) || navigate('/')} fontWeight='medium'>

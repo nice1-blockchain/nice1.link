@@ -6,6 +6,7 @@ import Login from './Login'
 import Dashboard from './Dashboard'
 import Nfts from './NFTS'
 import Post from './Post'
+import BlogLayout from '../dashboard/BlogLayout'
 
 const AppRoutes = () => {
   const { session } = useAnchor()
@@ -15,13 +16,14 @@ const AppRoutes = () => {
   }
 
   return (
-    <DashboardLayout>
-      <Routes>
-        <Route path='/' element={<Dashboard />} />
-        <Route path='/nfts' element={<Nfts />} />
-        <Route path='/blog/:slug' element={<Post />} />
-      </Routes>
-    </DashboardLayout>
+    <>
+        <Routes>
+          <Route path='/' element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+          <Route path='/nfts' element={<DashboardLayout><Nfts /></DashboardLayout>} />
+          <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
+        </Routes>
+    </>
+
   )
 }
 

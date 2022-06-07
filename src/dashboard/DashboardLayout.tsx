@@ -1,24 +1,33 @@
-import { Box } from '@chakra-ui/react'
+import { Grid, GridItem } from '@chakra-ui/react'
 import { ReactNode } from 'react'
+import Footer from './Footer'
 
 import Menu from './Menu'
 
 const DashboardLayout = ({children} : {children: ReactNode}) => (
-  <Box display='flex' flexDirection='row' alignItems='stretch' minH='100vh'>
-    <Box
-      left={0}
-      p={5}
-      w={75}
-      top={0}
+  <Grid
+    templateAreas={`
+      "sidebar content"
+      "sidebar footer"
+    `}
+    height='100vh'
+  >
+    <GridItem
       bg='bgs.widgets'
       borderTopLeftRadius={20}
+      w='4.4em'
+      p={5}
+      area='sidebar'
     >
       <Menu />
-    </Box>
-    <Box p={5} w='calc(100% - 75px)'>
+    </GridItem>
+    <GridItem area='content' p={5} minH='calc(100vh - 6em)' w='calc(100vw - 4.4em)'>
       {children}
-    </Box>
-  </Box>
+    </GridItem>
+    <GridItem area='footer' p={5} justifySelf='center' maxH='6em'>
+      <Footer />
+    </GridItem>
+  </Grid>
 )
 
 export default DashboardLayout
