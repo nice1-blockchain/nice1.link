@@ -1,4 +1,5 @@
-import { extendTheme } from '@chakra-ui/react'
+import { extendTheme, theme as oTheme } from '@chakra-ui/react'
+import { StyleFunctionProps } from '@chakra-ui/theme-tools'
 
 const theme = extendTheme({
   breakpoints: {
@@ -41,10 +42,11 @@ const theme = extendTheme({
             bg: 'red.900',
           },
         },
-        outline: {
+        readmore: (props: StyleFunctionProps) => ({
+          ...oTheme.components.Button.variants.outline(props),
           borderColor: '#E01F1F',
           fontWeight: 'bold',
-        },
+        }),
       },
     },
     Modal: {

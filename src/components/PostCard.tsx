@@ -60,7 +60,7 @@ const PostCard = ({post}: {post: Post}) => {
           }}
         />
         <Link to={`/blog/${post.slug}`} style={{alignSelf: 'end', marginTop: 'auto'}}>
-          <Button variant='outline' size='xs' alignSelf='flex-end' mt='auto'>
+          <Button variant='readmore' size='xs' alignSelf='flex-end' mt='auto'>
             Read more
           </Button>
         </Link>
