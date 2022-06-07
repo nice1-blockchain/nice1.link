@@ -23,6 +23,7 @@ import { useParams } from 'react-router-dom'
 import remarkGfm from 'remark-gfm'
 import styled from 'styled-components'
 
+import { ReactComponent as ArrowBack } from '../icons/arrow_back.svg'
 import { ReactComponent as Telegram } from '../icons/telegram.svg'
 import { ReactComponent as Twitter } from '../icons/twitter.svg'
 import { NEWS_BASE_URL, NEWS_INDEX_URL, Post, StoredPost } from '../constants'
@@ -92,8 +93,8 @@ const PostPage = () => {
     <Box bgColor='bgs.widgets' py={2} px={4} borderRightRadius='xl' borderBottomLeftRadius='xl'>
       <Box mb={4}>
         <Box mb={4}>
-          <Button variant='link' onClick={() => (window.history.state && window.history.state.idx && navigate(-1)) || navigate('/')}>
-            &lt; Back
+          <Button variant='link' onClick={() => (window.history.state && window.history.state.idx && navigate(-1)) || navigate('/')} fontWeight='medium'>
+            <ArrowBack style={{marginRight: 'var(--chakra-space-2)'}} /> Back
           </Button>
         </Box>
         <Box>
