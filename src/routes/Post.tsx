@@ -61,9 +61,6 @@ const PostPage = () => {
   }, [load])
 
   useEffect(() => {
-    console.log('indexed:', indexed)
-    console.log('posts:', posts)
-
     if (!slug || !loaded || !indexed[slug]?.contents) return
 
     setPost(indexed[slug])

@@ -10,10 +10,16 @@ import BlogSidebar from './BlogSidebar'
 
 const BlogLayout = ({children} : {children: ReactNode}) => (
   <Grid
-    templateAreas={`
+    templateAreas={{xs: `
+      "sidebar content"
+      "sidebar history"
+      "sidebar footer"
+    `,
+    lg: `
       "sidebar content history"
       "sidebar footer footer"
-    `}
+    `,
+  }}
     height='100vh'
   >
     <GridItem
@@ -25,7 +31,18 @@ const BlogLayout = ({children} : {children: ReactNode}) => (
     >
       <Menu />
     </GridItem>
-    <GridItem area='content' p={5} minH='calc(100vh - 6em)' w='calc(100vw - 20em - 6em - var(--chakra-space-5))' overflow='hidden'>
+    <GridItem
+      area='content'
+      p={5}
+      pr={0}
+      minH='calc(100vh - 6em)'
+      w={{
+        xs: 'calc(100vw - 6em)',
+        lg: 'calc(100vw - 25em - 6em - var(--chakra-space-5))',
+        xl: 'calc(100vw - 35em - 6em - var(--chakra-space-5))',
+      }}
+      overflow='hidden'
+    >
       <Box
         bgColor='bgs.widgets'
         borderRightRadius='xl'
@@ -38,7 +55,7 @@ const BlogLayout = ({children} : {children: ReactNode}) => (
         </Scrollbar>
       </Box>
     </GridItem>
-    <GridItem area='history' p={5} w='20em'>
+    <GridItem area='history' p={5} w={{xs: '100%', lg: '25em', xl: '35em'}}>
       <BlogSidebar />
     </GridItem>
     <GridItem area='footer' p={5} justifySelf='center' maxH='6em'>
