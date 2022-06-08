@@ -1,39 +1,20 @@
 import {
   Box,
   Button,
-  Code,
-  Heading,
   HStack,
   IconButton,
   Image,
-  Link as CLink,
-  ListItem,
-  OrderedList,
-  Table,
-  Text,
-  Tr,
-  UnorderedList,
 } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { useEffect, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
-import remarkGfm from 'remark-gfm'
 import styled from 'styled-components'
+import Markdown from '../components/Markdown'
 
 import { NEWS_BASE_URL } from '../constants'
 import { IndexedPost, useBlog } from '../hooks/blog'
 import { ArrowBack, Telegram, Twitter } from '../icons'
-
-const StyledMarkdown = styled.div`
-  text-align: left;
-  .table, pre {
-    overflow-x: auto;
-    max-width: 100%;
-    margin-bottom: var(--chakra-space-2);
-  }
-`
 
 const SVGIconButton : typeof IconButton = styled(IconButton)`
   svg {
@@ -116,47 +97,7 @@ const PostPage = () => {
         </Box>
       </Box>
       <Image src={`${NEWS_BASE_URL}/images/${post?.image}`} alt={`${post?.slug} heading image`}/>
-      <StyledMarkdown>
-        <ReactMarkdown
-          children={post?.contents}
-          remarkPlugins={[remarkGfm]}
-          components={{
-            a({node, children, ...props}) {
-              return <CLink {...props}>{children}</CLink>
-            },
-            h1({node, children, ...props}) {
-              return <Heading size='lg' mt={5} mb={4} {...props}>{children}</Heading>
-            },
-            h2({node, children, ...props}) {
-              return <Heading size='md' mt={5} mb={4} {...props}>{children}</Heading>
-            },
-            h3({node, children, ...props}) {
-              return <Heading size='sm' mt={5} mb={4} {...props}>{children}</Heading>
-            },
-            ol({node, children, ...props}) {
-              return <OrderedList {...props}>{children}</OrderedList>
-            },
-            ul({node, children, ...props}) {
-              return <UnorderedList {...props}>{children}</UnorderedList>
-            },
-            li({node, children, ...props}) {
-              return <ListItem {...props}>{children}</ListItem>
-            },
-            p({node, children, ...props}) {
-              return <Text fontWeight='medium' mb={4}>{children}</Text>
-            },
-            table({node, children, ...props}) {
-              return <div className='table'><Table {...props}>{children}</Table></div>
-            },
-            tr({node, children, ...props}) {
-              return <Tr {...props}>{children}</Tr>
-            },
-            code({node, children, ...props}) {
-              return <Code {...props}>{children}</Code>
-            }
-          }}
-        />
-      </StyledMarkdown>
+      <Markdown contents={post?.contents} />
     </Box>
   )
 }
