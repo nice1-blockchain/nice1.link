@@ -1,5 +1,5 @@
 const Nfts = () => {
-  return <div>Nfts dude</div>
+  return <div>We're actively working on this 😊</div>
 }
 
 export default Nfts
