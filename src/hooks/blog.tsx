@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { parse } from 'date-fns'
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { NEWS_BASE_URL, NEWS_INDEX_URL } from '../constants'
 
 export interface BasePost {
