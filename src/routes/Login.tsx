@@ -1,18 +1,8 @@
-import { Box, Button, Flex, Heading, IconButton, Image, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, Image, Stack } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
-import styled from 'styled-components'
+import Footer from '../dashboard/Footer'
 
-import { Anchor, Discord, Mail, Telegram, Twitter } from '../icons'
-
-const SVGIconButton : typeof IconButton = styled(IconButton)`
-  svg {
-    max-height: 130%;
-
-    & * {
-      fill: white;
-    }
-  }
-`
+import { Anchor } from '../icons'
 
 const Login = () => {
   const { login } = useAnchor()
@@ -68,39 +58,7 @@ const Login = () => {
             >
               Login
             </Button>
-            <Stack direction='column' align='center'>
-              <Text fontSize='xs'>Follow/contact us</Text>
-              <Stack direction='row' justifyContent='center'>
-                <SVGIconButton
-                  aria-label='twitter'
-                  title='follow us on twitter'
-                  variant='link'
-                  icon={<Twitter />}
-                  onClick={() => {window.open('https://twitter.com/nice1blockchain', '_blank')}}
-                />
-                <SVGIconButton
-                  aria-label='Discord'
-                  title='connect with us'
-                  variant='link'
-                  icon={<Discord />}
-                  onClick={() => {window.open('https://t.co/ngDHr5wyjU', '_blank')}}
-                />
-                <SVGIconButton
-                  aria-label='telegram'
-                  title='come chat with us'
-                  variant='link'
-                  icon={<Telegram />}
-                  onClick={() => {window.open('https://t.me/nice1blockchain', '_blank')}}
-                />
-                <SVGIconButton
-                  aria-label='e-mail'
-                  title='e-mail us'
-                  variant='link'
-                  icon={<Mail />}
-                  onClick={() => {window.location.href = 'mailto:hello@nice1.org'}}
-                />
-              </Stack>
-            </Stack>
+            <Footer color='white' />
           </Stack>
         </Flex>
       </Flex>
