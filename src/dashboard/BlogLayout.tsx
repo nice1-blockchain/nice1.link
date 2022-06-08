@@ -20,7 +20,11 @@ const BlogLayout = ({children} : {children: ReactNode}) => (
       "sidebar footer footer"
     `,
   }}
-    height='100vh'
+    minH='100vh'
+    height={{
+      xs: '100%',
+      lg: '100vh',
+    }}
   >
     <GridItem
       bg='bgs.widgets'
@@ -37,9 +41,9 @@ const BlogLayout = ({children} : {children: ReactNode}) => (
       pr={{lg: 0}}
       minH='calc(100vh - 6em)'
       w={{
-        xs: 'calc(100vw - 4.4em - var(--chakra-space-5))',
-        lg: 'calc(100vw - 25em - 6em - var(--chakra-space-5))',
-        xl: 'calc(100vw - 35em - 6em - var(--chakra-space-5))',
+        xs: 'calc(100vw - 4.4em)',
+        lg: 'calc(100vw - 25em - 6em)',
+        xl: 'calc(100vw - 35em - 6em)',
       }}
       overflow='hidden'
     >
