@@ -1,5 +1,4 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { useEffect } from 'react'
 
 import BalanceCard from '../profile/BalanceCard'
 import ProfileCard from '../profile/ProfileCard'
@@ -8,10 +7,7 @@ import { NEWS_BASE_URL } from '../constants'
 import { useBlog } from '../hooks/blog'
 
 export default function Dashboard() {
-  const { load, posts, featured } = useBlog()
-  useEffect(() => {
-    load()
-  }, [load])
+  const { posts, featured } = useBlog()
 
   return (
     <>

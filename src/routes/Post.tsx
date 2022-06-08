@@ -33,13 +33,9 @@ const SVGIconButton : typeof IconButton = styled(IconButton)`
 
 const PostPage = () => {
   const { slug } = useParams()
-  const { load, loaded, posts } = useBlog()
+  const { loaded, posts } = useBlog()
   const [ post, setPost ] = useState<IndexedPost|null>(null)
   const navigate = useNavigate()
-
-  useEffect(() => {
-    load()
-  }, [load])
 
   useEffect(() => {
     if (!slug || !loaded) return
@@ -51,11 +47,11 @@ const PostPage = () => {
       }
 
       setPost(found)
+      window.scrollTo(0, 0)
     } catch (e) {
       console.error(e)
     }
-
-  }, [load, loaded, posts, slug])
+  }, [loaded, posts, slug])
 
   if (!post) return null // should show some kind of loading or similar.. waiting for design
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { parse } from 'date-fns'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { NEWS_BASE_URL, NEWS_INDEX_URL } from '../constants'
 
 export interface BasePost {
@@ -29,7 +29,6 @@ export type IndexedPost = Post & {
 export interface BlogContext {
   error: Error | null
   featured: Featured | null
-  load: () => void
   loaded: boolean
   loading: boolean
   posts: IndexedPost[]
@@ -38,7 +37,6 @@ export interface BlogContext {
 export const BlogContextInstance = createContext<BlogContext>({
   error: null,
   featured: null,
-  load: () => {},
   loaded: false,
   loading: false,
   posts: [],
@@ -57,10 +55,8 @@ export const BlogProvider = ({children}: {children: ReactNode}) => {
   const [ loading, setLoading ] = useState<boolean>(false)
   const [ posts, setPosts ] = useState<IndexedPost[]>([])
 
-  const state = {
-    error,
-    featured,
-    load: async () => {
+  useEffect(() => {
+    (async () => {
       if (loaded || loading) return
 
       setLoading(true)
@@ -87,7 +83,12 @@ export const BlogProvider = ({children}: {children: ReactNode}) => {
       }
       setLoaded(true)
       setLoading(false)
-    },
+    })()
+  }, [loaded, loading])
+
+  const state = {
+    error,
+    featured,
     loaded,
     loading,
     posts,
