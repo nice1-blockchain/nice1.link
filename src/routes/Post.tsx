@@ -52,7 +52,7 @@ const SVGIconButton : typeof IconButton = styled(IconButton)`
 
 const PostPage = () => {
   const { slug } = useParams()
-  const { indexed, load, loaded, posts } = useBlog()
+  const { load, loaded, posts } = useBlog()
   const [ post, setPost ] = useState<IndexedPost|null>(null)
   const navigate = useNavigate()
 
@@ -61,10 +61,20 @@ const PostPage = () => {
   }, [load])
 
   useEffect(() => {
-    if (!slug || !loaded || !indexed[slug]?.contents) return
+    if (!slug || !loaded) return
 
-    setPost(indexed[slug])
-  }, [indexed, load, loaded, posts, slug])
+    try {
+      const found = posts.find((post) => post.slug === slug)
+      if (!found) {
+        throw new Error('post not found')
+      }
+
+      setPost(found)
+    } catch (e) {
+      console.error(e)
+    }
+
+  }, [load, loaded, posts, slug])
 
   if (!post) return null // should show some kind of loading or similar.. waiting for design
 

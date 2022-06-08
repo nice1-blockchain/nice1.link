@@ -26,18 +26,13 @@ export type IndexedPost = Post & {
   contents: string
 }
 
-export type IndexedPosts = {
-  [key: string]: IndexedPost
-}
-
 export interface BlogContext {
   error: Error | null
   featured: Featured | null
   load: () => void
   loaded: boolean
   loading: boolean
-  indexed: IndexedPosts
-  posts: Post[]
+  posts: IndexedPost[]
 }
 
 export const BlogContextInstance = createContext<BlogContext>({
@@ -46,7 +41,6 @@ export const BlogContextInstance = createContext<BlogContext>({
   load: () => {},
   loaded: false,
   loading: false,
-  indexed: {},
   posts: [],
 })
 
@@ -61,13 +55,11 @@ export const BlogProvider = ({children}: {children: ReactNode}) => {
   const [ featured, setFeatured ] = useState<Featured|null>(null)
   const [ loaded, setLoaded ] = useState<boolean>(false)
   const [ loading, setLoading ] = useState<boolean>(false)
-  const [ indexed, setIndexed ] = useState<IndexedPosts>({})
-  const [ posts, setPosts ] = useState<Post[]>([])
+  const [ posts, setPosts ] = useState<IndexedPost[]>([])
 
   const state = {
     error,
     featured,
-    indexed,
     load: async () => {
       if (loaded || loading) return
 
@@ -75,24 +67,18 @@ export const BlogProvider = ({children}: {children: ReactNode}) => {
       try {
         const result = await axios.get(NEWS_INDEX_URL)
         const p = result.data.posts
-        const ind : IndexedPosts = {}
 
-        await p.forEach(async (post: StoredPost, k: number) => {
+        for (const k in p as object[]) {
+          const post = p[k]
           const date = parse(post.date as string, 'yyyy-MM-dd', new Date())
+          const markdown = await axios.get(`${NEWS_BASE_URL}/posts/${post.file}`)
           const update = {
             ...post,
             date,
-          }
-          p[k] = update
-
-          const markdown = await axios.get(`${NEWS_BASE_URL}/posts/${post.file}`)
-          ind[post.slug] = {
-            ...update,
             contents: markdown.data,
           }
-
-          setIndexed(ind)
-        })
+          p[k] = update
+        }
 
         setPosts(p)
         setFeatured(result.data.featured)

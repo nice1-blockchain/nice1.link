@@ -7,7 +7,7 @@ import { useBlog } from '../hooks/blog'
 
 const BlogSidebar = () => {
   const { slug } = useParams()
-  const { load, indexed } = useBlog()
+  const { load, posts } = useBlog()
   useEffect(() => {
     load()
   }, [load])
@@ -15,9 +15,9 @@ const BlogSidebar = () => {
   return (
     <VStack gap={2}>
       {
-        Object.values(indexed).map((post) => {
+        posts.map((post, k) => {
           if (slug === post.slug) return null
-          return <PostCard post={post} />
+          return <PostCard key={k} post={post} />
         })
       }
     </VStack>

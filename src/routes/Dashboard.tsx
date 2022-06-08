@@ -8,7 +8,7 @@ import { NEWS_BASE_URL } from '../constants'
 import { useBlog } from '../hooks/blog'
 
 export default function Dashboard() {
-  const { load, indexed, featured } = useBlog()
+  const { load, posts, featured } = useBlog()
   useEffect(() => {
     load()
   }, [load])
@@ -34,7 +34,7 @@ export default function Dashboard() {
       </Grid>
       <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)' mt={2}>
         {
-          Object.values(indexed).map((post, k) => (
+          posts.map((post, k) => (
             <GridItem colSpan={{xs: 4, md: 2, lg: 1}} rowSpan={1} key={k} display='flex'>
               <PostCard post={post} />
             </GridItem>
