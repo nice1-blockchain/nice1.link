@@ -15,14 +15,14 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
-  VStack,
+  VStack
 } from '@chakra-ui/react'
 import { useAnchor, useNice1 } from '@nice1/react-tools'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
+import Avatar from '../components/Avatar'
 import ModalUploader from './ModalUploader'
 import ModalURL from './ModalUrl'
-import Avatar from '../components/Avatar'
 
 const ChangeAvatarOverlay = styled.div`
   position: absolute;

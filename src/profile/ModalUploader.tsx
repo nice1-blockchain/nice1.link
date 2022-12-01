@@ -1,4 +1,3 @@
-import { create } from 'ipfs-http-client'
 import {
   Button,
   FormControl,
@@ -9,8 +8,9 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  ModalOverlay,
+  ModalOverlay
 } from '@chakra-ui/react'
+import { create } from 'ipfs-http-client'
 import { useRef, useState } from 'react'
 import { IMAGE_ALLOWED_TYPES } from '../constants'
 
