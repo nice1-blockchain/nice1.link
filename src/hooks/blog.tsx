@@ -48,6 +48,22 @@ export const useBlog = () => {
   return blog
 }
 
+const castStoredPosts = async (posts: StoredPost[]) : Promise<IndexedPost[]> => {
+  let ip : IndexedPost[] = []
+
+  for (const post of posts) {
+    const date = parse(post.date as string, 'yyyy-MM-dd', new Date())
+    const markdown = await axios.get(`${NEWS_BASE_URL}/posts/${post.file}`)
+    ip.push({
+      ...post,
+      date,
+      contents: markdown.data,
+    })
+  }
+
+  return ip
+}
+
 export const BlogProvider = ({children}: {children: ReactNode}) => {
   const [ error, setError ] = useState<Error|null>(null)
   const [ featured, setFeatured ] = useState<Featured|null>(null)
@@ -62,21 +78,21 @@ export const BlogProvider = ({children}: {children: ReactNode}) => {
       setLoading(true)
       try {
         const result = await axios.get(NEWS_INDEX_URL)
-        const p = result.data.posts
+        const p : StoredPost[] = result.data.posts
+        let ip = await castStoredPosts(p)
 
-        for (const k in p as object[]) {
-          const post = p[k]
-          const date = parse(post.date as string, 'yyyy-MM-dd', new Date())
-          const markdown = await axios.get(`${NEWS_BASE_URL}/posts/${post.file}`)
-          const update = {
-            ...post,
-            date,
-            contents: markdown.data,
+        // sort results by date (desc) and trim to only 4 results
+        ip = ip.sort((a, b) => {
+          if (a.date.getTime() < b.date.getTime()) {
+            return 1
           }
-          p[k] = update
-        }
+          if (a.date.getTime() > b.date.getTime()) {
+            return -1
+          }
+          return 0
+        }).splice(0, 4)
 
-        setPosts(p)
+        setPosts(ip)
         setFeatured(result.data.featured)
       } catch (e: any) {
         setError(e)
