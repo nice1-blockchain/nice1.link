@@ -7,6 +7,7 @@ export interface NftBase {
     owner: string | null
     author: string | null
     category: string | null
+    idata: string | null
 }
 
 
