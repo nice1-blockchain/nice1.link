@@ -30,7 +30,7 @@ root.render(
               <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <Routes />
               </BrowserRouter>
-            </SimpleAssetsNFTsProvider>              
+            </SimpleAssetsNFTsProvider>
           </BlogProvider>
         </Nice1Provider>
       </AnchorProvider>
