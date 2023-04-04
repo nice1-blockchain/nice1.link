@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import DashboardLayout from '../dashboard/DashboardLayout'
 import Login from './Login'
 import Dashboard from './Dashboard'
-import Nfts from './NFTS'
+import Nfts from '../nfts/NftCard'
 import Post from './Post'
 import BlogLayout from '../dashboard/BlogLayout'
 
