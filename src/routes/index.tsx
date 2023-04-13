@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import DashboardLayout from '../dashboard/DashboardLayout'
 import Login from './Login'
 import Dashboard from './Dashboard'
-import Nfts from '../nfts/NftCard'
+import NftCard from '../nfts/NftCard'
 import Post from './Post'
 import BlogLayout from '../dashboard/BlogLayout'
 
@@ -19,7 +19,7 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route path='/' element={<DashboardLayout><Dashboard /></DashboardLayout>} />
-        <Route path='/nfts' element={<DashboardLayout><Nfts /></DashboardLayout>} />
+        <Route path='/nfts' element={<DashboardLayout><NftCard /></DashboardLayout>} />
         <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
       </Routes>
     </>

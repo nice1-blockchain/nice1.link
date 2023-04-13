@@ -16,11 +16,11 @@ import {
   FormLabel,
   Input,
 
+
 } from '@chakra-ui/react'
 
 
-const NftModalTransfer = ({ asset }: any) => {
-
+const NftTransferModal = ({ asset }: any) => {
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const inputAssetIdTransferRef = useRef<HTMLInputElement>(null);
@@ -28,15 +28,10 @@ const NftModalTransfer = ({ asset }: any) => {
   const inputMemoTransferRef = useRef<HTMLInputElement>(null);
 
 
-
-
   function submitTransfer() {
-
     if (inputAssetIdTransferRef.current && inputToTransferRef.current && inputMemoTransferRef.current) {
       const valueAssetIdTransfer = inputAssetIdTransferRef.current.value;
-      const valueAssetIdTransferFormat = [valueAssetIdTransfer];
-      //const valueAssetIdTransferXXX = [100000000000004];
-
+      const valueAssetIdTransferFormat = [valueAssetIdTransfer]; //Format
       const valueInputToTransfer = inputToTransferRef.current.value;
       const valueInputMemoTransfer = inputMemoTransferRef.current.value;
 
@@ -59,10 +54,8 @@ const NftModalTransfer = ({ asset }: any) => {
     }
   }
 
-
   return (
     <>
-
       <Box p={4}>
         <Button onClick={onOpen}>Transfer</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -100,5 +93,5 @@ const NftModalTransfer = ({ asset }: any) => {
 }
 
 
-export default NftModalTransfer;
+export default NftTransferModal;
 
