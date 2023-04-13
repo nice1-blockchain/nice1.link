@@ -1,8 +1,5 @@
-import React from 'react';
+import { useRef } from 'react';
 import { useAnchor } from '@nice1/react-tools'
-import { useNftSimpleAssets } from '../hooks/NftsProvider'
-import { useRef, useState } from 'react'
-
 
 import {
   Button,
@@ -16,83 +13,92 @@ import {
   ModalCloseButton,
   useDisclosure,
   FormControl,
-  VStack,
-  Text,
   FormLabel,
   Input,
-  GridItem
 
 } from '@chakra-ui/react'
 
 
+const NftModalTransfer = ({ asset }: any) => {
 
-const NftModalTransfer = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const { session } = useAnchor()
-  const { nfts } = useNftSimpleAssets()
-  const aliasRef = useRef<HTMLInputElement>(null)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const inputAssetIdTransferRef = useRef<HTMLInputElement>(null);
+  const inputToTransferRef = useRef<HTMLInputElement>(null);
+  const inputMemoTransferRef = useRef<HTMLInputElement>(null);
+
+
+
 
   function submitTransfer() {
 
-    session?.transact({
-      action : {
-        account: 'simpleassets',
-        name: 'transfer',
-        authorization: [session.auth],
-        data: {
-          from: session.auth.actor,
-          to: 'niceonetest1',
-          assetids: [100000000000006],
-          memo: 'Test transfer...'
+    if (inputAssetIdTransferRef.current && inputToTransferRef.current && inputMemoTransferRef.current) {
+      const valueAssetIdTransfer = inputAssetIdTransferRef.current.value;
+      const valueAssetIdTransferFormat = [valueAssetIdTransfer];
+      //const valueAssetIdTransferXXX = [100000000000004];
+
+      const valueInputToTransfer = inputToTransferRef.current.value;
+      const valueInputMemoTransfer = inputMemoTransferRef.current.value;
+
+      session?.transact({
+        action: {
+          account: 'simpleassets',
+          name: 'transfer',
+          authorization: [session.auth],
+          data: {
+            from: session.auth.actor,
+            to: valueInputToTransfer,
+            assetids: valueAssetIdTransferFormat,
+            memo: valueInputMemoTransfer
+          }
         }
-      }
-    }).then((result) => {
-      console.log(result);
+      }).then((result) => {
+        console.log(result);
         return result;
-    })
+      })
+    }
   }
 
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} size='sm' initialFocusRef={aliasRef}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader fontSize='md' textAlign='center'>Transfer Assets:</ModalHeader>
-          <ModalBody>
-            <VStack spacing={2} align='start'>
+
+      <Box p={4}>
+        <Button onClick={onOpen}>Transfer</Button>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transfer Asset</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
               <FormControl mt={4}>
-                <FormLabel htmlFor='account'>From:</FormLabel>
-                <Input id='account' type='text' readOnly value={session?.auth.actor.toString()} />
+                <FormLabel>From: </FormLabel>
+                <Input readOnly value={session?.auth.actor.toString()} />
               </FormControl>
               <FormControl mt={4}>
-                <FormLabel htmlFor='accountTo'>To:</FormLabel>
-                <Input type='text' placeholder='Indicar Cuenta que Recibe el Asset...' />
+                <FormLabel>Assets ID:</FormLabel>
+                <Input ref={inputAssetIdTransferRef} readOnly value={asset.id}/>
               </FormControl>
-
-              {/* TODO: Pendiente autocompletar....*/}
               <FormControl mt={4}>
-                <FormLabel htmlFor='assetids'>Asset Id:</FormLabel>
-                <Input type='text' placeholder='Indicar assetids entre []...' />
+                <FormLabel>To:</FormLabel>
+                <Input type='text' ref={inputToTransferRef} placeholder='Account name...' />
               </FormControl>
-
               <FormControl mt={4}>
-                <FormLabel htmlFor='memo'>Memo:</FormLabel>
-                <Input type='text' placeholder='Campo memo...' />
+                <FormLabel>MEMO (optional)</FormLabel>
+                <Input type='text' ref={inputMemoTransferRef} placeholder='Memo...' />
               </FormControl>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={submitTransfer} mr={3}>Submit Transfer</Button>
-            <Button onClick={onClose} variant='outline'>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-
-
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme={"red"} mr={3} onClick={submitTransfer}>Tranfer</Button>
+              <Button colorScheme={"red"} mr={3} onClick={onClose}>Close</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
     </>
   )
 }
+
 
 export default NftModalTransfer;
 

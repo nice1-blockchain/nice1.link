@@ -1,4 +1,6 @@
 import React from 'react';
+import { useAnchor } from '@nice1/react-tools'
+
 import {
   Button,
   Box,
@@ -17,22 +19,33 @@ import {
 } from '@chakra-ui/react'
 
 
-{/* DEVELOP DELEGATE FUNCTION....*/ }
+const DelegateNTF = ({ asset }: any ) => {
 
-const DelegateNTF = () => {
+  const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+
   return (
     <>
+
       <Box p={4}>
-        <Button onClick={onOpen}>Delegate...</Button>
+        <Button onClick={onOpen}>Delegate</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Delegate NFT asset</ModalHeader>
+            <ModalHeader>Delegate Asset</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <FormControl mt={4}>
-                <FormLabel>Recipient account name:</FormLabel>
+                <FormLabel>From: </FormLabel>
+                <Input readOnly value={session?.auth.actor.toString()} />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Assets ID:</FormLabel>
+                <Input readOnly value={asset.id} />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>To:</FormLabel>
                 <Input placeholder='Account name...' />
               </FormControl>
               <FormControl mt={4}>
