@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useAnchor } from '@nice1/react-tools'
+import NftTransferConfirmModal from './NftTransferConfirmModal';
 
 import {
   Button,
@@ -15,44 +16,19 @@ import {
   FormControl,
   FormLabel,
   Input,
-
-
 } from '@chakra-ui/react'
+
 
 
 const NftTransferModal = ({ asset }: any) => {
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   const inputAssetIdTransferRef = useRef<HTMLInputElement>(null);
   const inputToTransferRef = useRef<HTMLInputElement>(null);
   const inputMemoTransferRef = useRef<HTMLInputElement>(null);
 
 
-  function submitTransfer() {
-    if (inputAssetIdTransferRef.current && inputToTransferRef.current && inputMemoTransferRef.current) {
-      const valueAssetIdTransfer = inputAssetIdTransferRef.current.value;
-      const valueAssetIdTransferFormat = [valueAssetIdTransfer]; //Format
-      const valueInputToTransfer = inputToTransferRef.current.value;
-      const valueInputMemoTransfer = inputMemoTransferRef.current.value;
-
-      session?.transact({
-        action: {
-          account: 'simpleassets',
-          name: 'transfer',
-          authorization: [session.auth],
-          data: {
-            from: session.auth.actor,
-            to: valueInputToTransfer,
-            assetids: valueAssetIdTransferFormat,
-            memo: valueInputMemoTransfer
-          }
-        }
-      }).then((result) => {
-        console.log(result);
-        return result;
-      })
-    }
-  }
 
   return (
     <>
@@ -70,7 +46,7 @@ const NftTransferModal = ({ asset }: any) => {
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>Assets ID:</FormLabel>
-                <Input ref={inputAssetIdTransferRef} readOnly value={asset.id}/>
+                <Input readOnly value={asset.id} ref={inputAssetIdTransferRef} />
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>To:</FormLabel>
@@ -82,8 +58,17 @@ const NftTransferModal = ({ asset }: any) => {
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme={"red"} mr={3} onClick={submitTransfer}>Tranfer</Button>
-              <Button colorScheme={"red"} mr={3} onClick={onClose}>Close</Button>
+
+              <Box>
+                <NftTransferConfirmModal
+                  transfAssetId={inputAssetIdTransferRef}
+                  transfTo={inputToTransferRef}
+                  transfMemo={inputMemoTransferRef}
+                />
+              </Box>
+              {/*<Button colorScheme={"red"} mr={3} onClick={submitTransfer}>Tranfer</Button>*/}
+              <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button>
+
             </ModalFooter>
           </ModalContent>
         </Modal>

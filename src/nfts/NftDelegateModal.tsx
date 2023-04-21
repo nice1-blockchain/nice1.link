@@ -1,5 +1,12 @@
 import { useRef, useState } from 'react';
-import { useAnchor } from '@nice1/react-tools'
+import { useAnchor } from '@nice1/react-tools';
+import NftDelegateConfirmModal from './NftDelegateConfirmModal';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import './DatePickerStyle.css'; // Change for styled-components
+//import styled from 'styled-components'
+
 
 import {
   Button,
@@ -16,7 +23,7 @@ import {
   FormLabel,
   Input,
   Switch,
-  Checkbox
+  color,
 
 } from '@chakra-ui/react'
 
@@ -24,47 +31,22 @@ import {
 const NftDelegateModal = ({ asset }: any ) => {
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   const inputAssetIdDelegateRef = useRef<HTMLInputElement>(null);
   const inputToDelegateRef = useRef<HTMLInputElement>(null);
-  const inputTimeDelegateRef = useRef<HTMLInputElement>(null);
+  const inputEpochClickNftTabRef = useRef<HTMLInputElement>(null);
+  const inputEpochLimiteRef = useRef<HTMLInputElement>(null);
   const inputMemoDelegateRef = useRef<HTMLInputElement>(null);
+
   const [valueSwitchRedelegate, setValueSwitchRedelegate] = useState(false);
+  const [epochClickNftTab, setEpochClickNftTab] = useState(Date.now());
+  const [epochLimite, setEpochLimite] = useState(Date.now());
 
 
   const handleChangeRedelegate = () => {
     setValueSwitchRedelegate(!valueSwitchRedelegate);
   };
 
-
-  function submitDelegate() {
-    if (inputAssetIdDelegateRef.current && inputToDelegateRef.current && inputTimeDelegateRef.current && inputMemoDelegateRef.current) {
-        const valueAssetIdDelegate = inputAssetIdDelegateRef.current.value;
-        const valueAssetIdDelegateFormat = [valueAssetIdDelegate]; //Format
-        const valueToDelegate = inputToDelegateRef.current.value;
-        const valueTimeDelegate = inputTimeDelegateRef.current.value;
-        const valueTimeDelegateFormat = [valueTimeDelegate]; //Format
-        const valueMemoDelegate = inputMemoDelegateRef.current.value;
-
-        session?.transact({
-          action: {
-            account: 'simpleassets',
-            name: 'delegate',
-            authorization: [session.auth],
-            data: {
-              owner: session.auth.actor,
-              to: valueToDelegate,
-              assetids: valueAssetIdDelegateFormat,
-              period: valueTimeDelegateFormat,
-              redelegate: valueSwitchRedelegate,
-              memo: valueMemoDelegate
-            }
-          }
-        }).then((result) => {
-          console.log(result);
-          return result;
-        })
-    }
-  }
 
   return (
     <>
@@ -89,9 +71,24 @@ const NftDelegateModal = ({ asset }: any ) => {
                 <Input type='text' ref={inputToDelegateRef} placeholder='Account name...' />
               </FormControl>
               <FormControl mt={4}>
-                <FormLabel>Delegate time:</FormLabel>
-                <Input ref={inputTimeDelegateRef} placeholder='Time in seconds...' />
+                <FormLabel>Epoch Click Pestaña NFT:</FormLabel>
+                <Input value={Math.floor(epochClickNftTab / 1000)} ref={inputEpochClickNftTabRef} />
               </FormControl>
+              <FormControl>
+                <FormLabel>Fecha Limite :</FormLabel>
+                <DatePicker
+                  selected={epochLimite}
+                  onChange={(date) => setEpochLimite(date)}
+                  dateFormat="dd/MM/yyyy"
+                  className="custom-picker"
+                />
+                <FormLabel>Epoch Limite:</FormLabel>
+                <Input value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
+              </FormControl>
+              {/*<FormControl mt={4}>
+                <FormLabel>Epoch Time Delegate (Limite - Actual):</FormLabel>
+                <Input ref={inputEpochLimiteRef} />
+              </FormControl>*/}
               <FormControl mt={4}>
                 <FormLabel>Redelegate (Allow redelegate)</FormLabel>
                 <Switch isChecked={valueSwitchRedelegate} onChange={handleChangeRedelegate} />
@@ -102,8 +99,19 @@ const NftDelegateModal = ({ asset }: any ) => {
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme={"red"} mr={3} onClick={submitDelegate}>Delegate</Button>
-              <Button colorScheme={"red"} mr={3} onClick={onClose}>Close</Button>
+
+              <Box>
+                <NftDelegateConfirmModal
+                  delegTo={inputToDelegateRef}
+                  delegAssetId={inputAssetIdDelegateRef}
+                  delegEpochLimite={inputEpochLimiteRef}
+                  delegRedeleg={valueSwitchRedelegate}
+                  delegMemo={inputMemoDelegateRef}
+                />
+              </Box>
+              {/*<Button colorScheme={"red"} mr={3} onClick={submitTransfer}>Tranfer</Button>*/}
+              <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button>
+
             </ModalFooter>
           </ModalContent>
         </Modal>
