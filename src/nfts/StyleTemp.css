@@ -1,7 +1,9 @@
 .custom-picker {
   background-color: #2d384b;
   border: 1px solid rgb(114, 111, 111);
+}
 
-
-
+.custom-modal-confirm {
+  background-color: #c2441d;
+  border: 2px solid #726f6f;
 }

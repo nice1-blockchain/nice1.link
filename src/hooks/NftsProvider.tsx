@@ -70,7 +70,7 @@ export const SimpleAssetsNFTsProvider = ({ children }: { children: ReactNode }) 
 
         })()
 
-    }, [session])
+    }, [session, nfts])
 
     return (
         <NftSimpleAssetsContext.Provider value={{ nfts }}>

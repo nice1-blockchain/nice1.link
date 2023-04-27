@@ -4,7 +4,8 @@ import NftDelegateConfirmModal from './NftDelegateConfirmModal';
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import './DatePickerStyle.css'; // Change for styled-components
+
+import './StyleTemp.css'; // validate....
 //import styled from 'styled-components'
 
 
@@ -34,18 +35,27 @@ const NftDelegateModal = ({ asset }: any ) => {
 
   const inputAssetIdDelegateRef = useRef<HTMLInputElement>(null);
   const inputToDelegateRef = useRef<HTMLInputElement>(null);
-  const inputEpochClickNftTabRef = useRef<HTMLInputElement>(null);
   const inputEpochLimiteRef = useRef<HTMLInputElement>(null);
   const inputMemoDelegateRef = useRef<HTMLInputElement>(null);
+  //const inputEpochClickNftTabRef = useRef<HTMLInputElement>(null);
 
   const [valueSwitchRedelegate, setValueSwitchRedelegate] = useState(false);
-  const [epochClickNftTab, setEpochClickNftTab] = useState(Date.now());
   const [epochLimite, setEpochLimite] = useState(Date.now());
+  //const [epochClickNftTab, setEpochClickNftTab] = useState(Date.now());
 
 
   const handleChangeRedelegate = () => {
     setValueSwitchRedelegate(!valueSwitchRedelegate);
   };
+
+  // Pending validation Ctrol V + Ctrol C
+  const handleKeyPress = (event) => {
+    const char = event.key;
+    if (!(/[a-z0-9]/.test(char))) {
+      event.preventDefault();
+      alert("Only Lowercase Letters and Numbers !!!")
+     }
+  }
 
 
   return (
@@ -58,24 +68,24 @@ const NftDelegateModal = ({ asset }: any ) => {
             <ModalHeader>Delegate Asset</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <FormControl mt={4}>
+              {/* <FormControl mt={4}>
                 <FormLabel>From: </FormLabel>
                 <Input readOnly value={session?.auth.actor.toString()} />
-              </FormControl>
+              </FormControl>*/}
               <FormControl mt={4}>
                 <FormLabel>Assets ID:</FormLabel>
                 <Input ref={inputAssetIdDelegateRef} readOnly value={asset.id} />
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>To:</FormLabel>
-                <Input type='text' ref={inputToDelegateRef} placeholder='Account name...' />
+                <Input type='text' ref={inputToDelegateRef} onKeyPress={handleKeyPress} placeholder='Account name...' />
               </FormControl>
-              <FormControl mt={4}>
+              {/* <FormControl mt={4}>
                 <FormLabel>Epoch Click Pestaña NFT:</FormLabel>
                 <Input value={Math.floor(epochClickNftTab / 1000)} ref={inputEpochClickNftTabRef} />
-              </FormControl>
+              </FormControl> */}
               <FormControl>
-                <FormLabel>Fecha Limite :</FormLabel>
+                <FormLabel > Fecha Limite :</FormLabel>
                 <DatePicker
                   selected={epochLimite}
                   onChange={(date) => setEpochLimite(date)}
@@ -85,10 +95,6 @@ const NftDelegateModal = ({ asset }: any ) => {
                 <FormLabel>Epoch Limite:</FormLabel>
                 <Input value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
               </FormControl>
-              {/*<FormControl mt={4}>
-                <FormLabel>Epoch Time Delegate (Limite - Actual):</FormLabel>
-                <Input ref={inputEpochLimiteRef} />
-              </FormControl>*/}
               <FormControl mt={4}>
                 <FormLabel>Redelegate (Allow redelegate)</FormLabel>
                 <Switch isChecked={valueSwitchRedelegate} onChange={handleChangeRedelegate} />

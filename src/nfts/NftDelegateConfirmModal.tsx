@@ -27,9 +27,9 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
   const [epochActual, setEpochActual] = useState(Date.now());
 
 
-  function calcularPeriodo() {
-    setEpochActual (Date.now())
-  }
+  // function calcularPeriodo() {
+  //   setEpochActual (Date.now())
+  // }
 
 
   function confirmDelegate() {
@@ -78,24 +78,26 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
           <ModalOverlay />
           <ModalContent>
 
-            <ModalHeader>Confirmar Datos Transfer !!!</ModalHeader>
+            <ModalHeader>Confirmar Datos Delegation !!!</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <Box p='2'>
-                <Text fontSize='lg'>To: <strong>{delegTo.current?.value}</strong></Text>
+                <Text fontSize='lg'>Cuenta From: {session?.auth.actor.toString()} </Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Asset Id:<strong>{delegAssetId.current?.value}</strong> </Text>
-              </Box>
-
-              <Box p='2'>
-                <Text fontSize='lg'>Redelegate: <strong>{delegRedeleg ? "Activated" : "Deactivated"}</strong> </Text>
+                <Text fontSize='lg'>Asset Id: {delegAssetId.current?.value}</Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Memo: <strong>{delegMemo.current?.value}</strong></Text>
+                <Text fontSize='lg'>Cuenta To: {delegTo.current?.value}</Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Fecha Actual: <strong>{Math.floor(epochActual / 1000)}</strong> </Text>
+                <Text fontSize='lg'>Redelegate: {delegRedeleg ? "Activated" : "Deactivated"} </Text>
+              </Box>
+              <Box p='2'>
+                <Text fontSize='lg'>Info Memo: {delegMemo.current?.value}</Text>
+              </Box>
+              <Box p='2'>
+                <Text fontSize='lg'>Fecha Actual: {Math.floor(epochActual / 1000)} </Text>
               </Box>
               {/*<Box p='2'>
                 <Text fontSize='lg'>Fecha Limite: <strong>{Math.floor(delegEpochLimite.current.value )}</strong> </Text>
@@ -105,7 +107,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
               </Box>*/}
               </ModalBody>
             <ModalFooter>
-              <Button colorScheme={"red"} mr={3} onClick={calcularPeriodo}>Capturar Fecha Actual</Button>
+              {/* <Button colorScheme={"red"} mr={3} onClick={calcularPeriodo}>Capturar Fecha Actual</Button> */}
               <Button colorScheme={"red"} mr={3} onClick={confirmDelegate}>Confirm</Button>
               <Button colorScheme={"red"} mr={3} onClick={onClose}>Reject</Button>
               </ModalFooter>

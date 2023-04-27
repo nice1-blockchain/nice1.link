@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNftSimpleAssets } from '../hooks/NftsProvider'
 import NftTransferModal from './NftTransferModal'
 import NftDelegateModal from './NftDelegateModal'
@@ -17,17 +17,18 @@ import {
 const NftCard = () => {
   const { nfts } = useNftSimpleAssets()
   const [indexSelected, setIndexSelected] = useState(null);
-  
+
 
   /***
    * Updates the state of indexSelected with the Grid index
    */
-  function selectedIndex(index: any) {
+  const selectedIndex = (index: any) =>{
     setIndexSelected(index);
   }
 
   return (
     <>
+      
       <Grid gap={5} templateRows='repeat(1, 1fr)' templateColumns='repeat(6, 1fr)' mt={2} >
           {
             nfts.map((nft, k) => (
@@ -40,21 +41,20 @@ const NftCard = () => {
                   />
                 </AspectRatio>
                 <Box p='1'>
-                  <Text fontSize='sm' color='gray.400'>{nft.idata}</Text>
+                  <Text fontSize='md' color='gray.400'><strong>{nft.idata}</strong></Text>
                 </Box>
-                <Box p='1'>
+                {/* <Box p='1'>
                   <Text  fontSize='sm' color='gray.400'>Asset Id: {nft.id}</Text>
-                </Box>
-                {/* Displays the value of the Grid Index.... REMOVE
-                <Box p='1'>
+                </Box> */}
+                {/* Displays the value of the Grid Index.... REMOVE */}
+                {/* <Box p='1'>
                   <Text fontSize='sm' color='gray.400'> Valor: { indexSelected }</Text>
-                </Box>*/}
-
+                </Box> */}
                 <Box p='1'>
-                  <Text fontSize='sm' color='gray.400'> Author: { nft.author }</Text>
+                  <Text fontSize='xs' color='gray.400'> Author: { nft.author }</Text>
                 </Box>
                 <Box p='1'>
-                  <Text fontSize='sm' color='gray.400'>Category: { nft.category }</Text>
+                  <Text fontSize='xs' color='gray.400'>Category: { nft.category }</Text>
                 </Box>
                 <HStack>
                   <Box>
