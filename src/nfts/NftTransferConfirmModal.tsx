@@ -7,7 +7,6 @@ import {
   Button,
   Box,
   Code,
-  HStack,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -29,6 +28,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
   const [timeLeft, setTimeLeft] = useState(10);
   const [isCountdownActive, setIsCountdownActive] = useState(false);
 
+
   useEffect(() => {
     if (isCountdownActive && timeLeft > 0) {
       const interval = setInterval(() => {
@@ -36,7 +36,6 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
       }, 1000);
       return () => clearInterval(interval);
     } else if (isCountdownActive && timeLeft === 0) {
-      // tiempoAgotado()
       //alert('Tiempo Agotado')
       //onClose();
     }
@@ -48,12 +47,6 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
     setTimeLeft(10)
     onOpen()
   }
-
-  // function tiempoAgotado() {
-  //   close()
-
-  //  }
-
 
 
   function confirmTransfer() {
@@ -80,7 +73,6 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
       })
     }
     onClose()
-
   }
 
 
@@ -92,7 +84,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent >
-            <ModalHeader>Confirmar Datos Transfer !!!</ModalHeader>
+            <ModalHeader>Confirm Transfer Data !!!</ModalHeader>
             <ModalCloseButton />
             <Code border={'1px'} background={'#47474b;'}>
             <ModalBody>

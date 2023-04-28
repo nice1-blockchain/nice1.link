@@ -1,11 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAnchor } from '@nice1/react-tools'
 
 import {
   Button,
   Box,
-  FormControl,
-  FormLabel,
+  Code,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -13,10 +12,9 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Switch,
   Text,
   useDisclosure,
-  Input
+
 
 } from '@chakra-ui/react'
 
@@ -24,12 +22,31 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
 
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   const [epochActual, setEpochActual] = useState(Date.now());
+  const [timeLeft, setTimeLeft] = useState(10);
+  const [isCountdownActive, setIsCountdownActive] = useState(false);
 
 
-  // function calcularPeriodo() {
-  //   setEpochActual (Date.now())
-  // }
+  useEffect(() => {
+    if (isCountdownActive && timeLeft > 0) {
+      const interval = setInterval(() => {
+        setTimeLeft(prevTimeLeft => prevTimeLeft - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    } else if (isCountdownActive && timeLeft === 0) {
+      //alert('Tiempo Agotado')
+      //onClose();
+    }
+  }, [isCountdownActive, timeLeft, onClose]);
+
+
+  function handleStartCountdown() {
+    setIsCountdownActive(true);
+    setTimeLeft(10)
+    onOpen()
+  }
+
 
 
   function confirmDelegate() {
@@ -67,49 +84,64 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
         return result;
       })
     }
+    onClose()
   }
+
+
 
   return (
     <>
 
       <Box p={4}>
-        <Button onClick={onOpen}>Submit</Button>
+        <Button onClick={handleStartCountdown}>Submit</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-
-            <ModalHeader>Confirmar Datos Delegation !!!</ModalHeader>
+            <ModalHeader>Confirm Delegation Data !!!</ModalHeader>
             <ModalCloseButton />
+            <Code border={'1px'} background={'#47474b;'}>
             <ModalBody>
               <Box p='2'>
-                <Text fontSize='lg'>Cuenta From: {session?.auth.actor.toString()} </Text>
+                <Text fontSize='lg'>From: {session?.auth.actor.toString()} </Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Asset Id: {delegAssetId.current?.value}</Text>
+                  <Text fontSize='lg'>To: {delegTo.current?.value}</Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Cuenta To: {delegTo.current?.value}</Text>
+                <Text fontSize='lg'>Asset_Id: {delegAssetId.current?.value}</Text>
               </Box>
+
               <Box p='2'>
                 <Text fontSize='lg'>Redelegate: {delegRedeleg ? "Activated" : "Deactivated"} </Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Info Memo: {delegMemo.current?.value}</Text>
+                <Text fontSize='lg'>Memo: {delegMemo.current?.value}</Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Fecha Actual: {Math.floor(epochActual / 1000)} </Text>
+                  <Text fontSize='lg'>Fecha Actual (Epoch): {Math.floor(epochActual / 1000)} </Text>
               </Box>
-              {/*<Box p='2'>
-                <Text fontSize='lg'>Fecha Limite: <strong>{Math.floor(delegEpochLimite.current.value )}</strong> </Text>
+              {/* <Box p='2'>
+                  <Text fontSize='lg'>Fecha Limite (Epoch): {Math.floor(delegEpochLimite.current.value )}</Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Time Delegate: <strong>{Math.floor((delegEpochLimite.current.value) - (epochActual / 1000))}</strong> </Text>
-              </Box>*/}
-              </ModalBody>
+                  <Text fontSize='lg'>Time Delegate (Epoch): {Math.floor((delegEpochLimite.current.value) - (epochActual / 1000))} </Text>
+              </Box> */}
+            </ModalBody>
+            </Code>
             <ModalFooter>
-              {/* <Button colorScheme={"red"} mr={3} onClick={calcularPeriodo}>Capturar Fecha Actual</Button> */}
-              <Button colorScheme={"red"} mr={3} onClick={confirmDelegate}>Confirm</Button>
-              <Button colorScheme={"red"} mr={3} onClick={onClose}>Reject</Button>
+              <Box p='2'>
+                <Text
+                  fontSize="lg"
+                  color={'orange'}> {timeLeft === 0 ? "Time limit exceeded !!!" : `Time to confirm: ${timeLeft}`}
+                </Text>
+              </Box>
+              <Box p='2'>
+                <Button
+                  colorScheme={"red"}
+                  mr={3}
+                  onClick={() => timeLeft === 0 ? onClose() : confirmDelegate()}> {timeLeft === 0 ? 'Back' : 'Confirm'}
+                </Button>
+              </Box>
               </ModalFooter>
           </ModalContent>
         </Modal>

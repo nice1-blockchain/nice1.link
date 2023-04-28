@@ -49,7 +49,7 @@ const NftTransferModal = ({ asset }: any) => {
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Transfer Asset</ModalHeader>
+            <ModalHeader>Assets Transfer</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               {/* <FormControl mt={4}>

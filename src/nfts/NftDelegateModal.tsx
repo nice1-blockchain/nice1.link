@@ -6,7 +6,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import './StyleTemp.css'; // validate....
-//import styled from 'styled-components'
 
 
 import {
@@ -24,7 +23,7 @@ import {
   FormLabel,
   Input,
   Switch,
-  color,
+
 
 } from '@chakra-ui/react'
 
@@ -65,35 +64,38 @@ const NftDelegateModal = ({ asset }: any ) => {
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Delegate Asset</ModalHeader>
+            <ModalHeader>Assets Delegation</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              {/* <FormControl mt={4}>
-                <FormLabel>From: </FormLabel>
-                <Input readOnly value={session?.auth.actor.toString()} />
-              </FormControl>*/}
-              <FormControl mt={4}>
-                <FormLabel>Assets ID:</FormLabel>
-                <Input ref={inputAssetIdDelegateRef} readOnly value={asset.id} />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>To:</FormLabel>
-                <Input type='text' ref={inputToDelegateRef} onKeyPress={handleKeyPress} placeholder='Account name...' />
-              </FormControl>
               {/* <FormControl mt={4}>
                 <FormLabel>Epoch Click Pestaña NFT:</FormLabel>
                 <Input value={Math.floor(epochClickNftTab / 1000)} ref={inputEpochClickNftTabRef} />
               </FormControl> */}
+              {/* <FormControl mt={4}>
+                <FormLabel>From: </FormLabel>
+                <Input readOnly value={session?.auth.actor.toString()} />
+              </FormControl>*/}
+              <pre>
+                <FormControl mt={4}>
+                  <FormLabel>Assets Id:
+                    <Input border={'0px'} readOnly value={asset.id} ref={inputAssetIdDelegateRef} />
+                  </FormLabel>
+                </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>To:</FormLabel>
+                <Input type='text' ref={inputToDelegateRef} onKeyPress={handleKeyPress} placeholder='Account name...' />
+              </FormControl>
               <FormControl>
-                <FormLabel > Fecha Limite :</FormLabel>
+                  <FormLabel mt={4}>Fecha Limite :</FormLabel>
                 <DatePicker
                   selected={epochLimite}
                   onChange={(date) => setEpochLimite(date)}
                   dateFormat="dd/MM/yyyy"
                   className="custom-picker"
                 />
-                <FormLabel>Epoch Limite:</FormLabel>
-                <Input value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
+                <FormLabel mt={4}>Epoch Limite:
+                    <Input border={'0px'} readOnly value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
+                </FormLabel>
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>Redelegate (Allow redelegate)</FormLabel>
@@ -103,6 +105,7 @@ const NftDelegateModal = ({ asset }: any ) => {
                 <FormLabel>MEMO (optional)</FormLabel>
                 <Input type='text' ref={inputMemoDelegateRef} placeholder='Max 64 length....' />
               </FormControl>
+              </pre>
             </ModalBody>
             <ModalFooter>
 
@@ -116,8 +119,7 @@ const NftDelegateModal = ({ asset }: any ) => {
                 />
               </Box>
               {/*<Button colorScheme={"red"} mr={3} onClick={submitTransfer}>Tranfer</Button>*/}
-              <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button>
-
+              {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button> */}
             </ModalFooter>
           </ModalContent>
         </Modal>
