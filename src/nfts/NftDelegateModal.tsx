@@ -1,13 +1,9 @@
 import { useRef, useState } from 'react';
-import { useAnchor } from '@nice1/react-tools';
+//import { useAnchor } from '@nice1/react-tools';
 import NftDelegateConfirmModal from './NftDelegateConfirmModal';
-
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import './StyleTemp.css'; // validate....
-
-
 import {
   Button,
   Box,
@@ -23,44 +19,40 @@ import {
   FormLabel,
   Input,
   Switch,
-
-
 } from '@chakra-ui/react'
 
 
+
+
 const NftDelegateModal = ({ asset }: any ) => {
-  const { session } = useAnchor()
+  //const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const inputAssetIdDelegateRef = useRef<HTMLInputElement>(null);
-  const inputToDelegateRef = useRef<HTMLInputElement>(null);
+  const inputToDelegRef = useRef<HTMLInputElement>(null);
   const inputEpochLimiteRef = useRef<HTMLInputElement>(null);
-  const inputMemoDelegateRef = useRef<HTMLInputElement>(null);
-  //const inputEpochClickNftTabRef = useRef<HTMLInputElement>(null);
+  const inputMemoDelegRef = useRef<HTMLInputElement>(null);
+  const inputMesErrorDelegRef = useRef<HTMLInputElement>(null);
 
   const [valueSwitchRedelegate, setValueSwitchRedelegate] = useState(false);
   const [epochLimite, setEpochLimite] = useState(Date.now());
-  //const [epochClickNftTab, setEpochClickNftTab] = useState(Date.now());
 
 
   const handleChangeRedelegate = () => {
     setValueSwitchRedelegate(!valueSwitchRedelegate);
   };
 
-  // Pending validation Ctrol V + Ctrol C
-  const handleKeyPress = (event) => {
-    const char = event.key;
-    if (!(/[a-z0-9]/.test(char))) {
-      event.preventDefault();
-      alert("Only Lowercase Letters and Numbers !!!")
-     }
+
+  const cleanInputs = () => {
+    setEpochLimite(Date.now())
+    onOpen()
   }
+
 
 
   return (
     <>
       <Box p={4}>
-        <Button onClick={onOpen}>Delegate</Button>
+        <Button onClick={cleanInputs}>Delegate</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
@@ -68,34 +60,49 @@ const NftDelegateModal = ({ asset }: any ) => {
             <ModalCloseButton />
             <ModalBody>
               {/* <FormControl mt={4}>
-                <FormLabel>Epoch Click Pestaña NFT:</FormLabel>
-                <Input value={Math.floor(epochClickNftTab / 1000)} ref={inputEpochClickNftTabRef} />
-              </FormControl> */}
-              {/* <FormControl mt={4}>
                 <FormLabel>From: </FormLabel>
                 <Input readOnly value={session?.auth.actor.toString()} />
               </FormControl>*/}
               <pre>
                 <FormControl mt={4}>
                   <FormLabel>Assets Id:
-                    <Input border={'0px'} readOnly value={asset.id} ref={inputAssetIdDelegateRef} />
+                    <Input
+                      border={'0px'}
+                      readOnly
+                      value={asset.id} />
                   </FormLabel>
                 </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>To:</FormLabel>
-                <Input type='text' ref={inputToDelegateRef} onKeyPress={handleKeyPress} placeholder='Account name...' />
+                <FormControl mt={4} isRequired>
+                  <FormLabel>To:</FormLabel>
+                  <Input
+                    type='text'
+                    placeholder='Account name...'
+                    ref={inputToDelegRef}
+                  />
               </FormControl>
               <FormControl>
-                  <FormLabel mt={4}>Fecha Limite :</FormLabel>
+                  <Input
+                    type='text'
+                    border={'0px'}
+                    color='tomato'
+                    readOnly
+                    ref={inputMesErrorDelegRef}
+                  />
+              </FormControl>
+              <FormControl>
+                  <FormLabel mt={4}>Fecha Limite:</FormLabel>
                 <DatePicker
+                  minDate={new Date()}
                   selected={epochLimite}
                   onChange={(date) => setEpochLimite(date)}
                   dateFormat="dd/MM/yyyy"
                   className="custom-picker"
                 />
-                <FormLabel mt={4}>Epoch Limite:
+              </FormControl>
+              <FormControl>
+                  <FormLabel mt={4}>Epoch Limite:
                     <Input border={'0px'} readOnly value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
-                </FormLabel>
+                  </FormLabel>
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>Redelegate (Allow redelegate)</FormLabel>
@@ -103,7 +110,7 @@ const NftDelegateModal = ({ asset }: any ) => {
               </FormControl>
               <FormControl mt={4}>
                 <FormLabel>MEMO (optional)</FormLabel>
-                <Input type='text' ref={inputMemoDelegateRef} placeholder='Max 64 length....' />
+                <Input type='text' ref={inputMemoDelegRef} placeholder='Max 64 length....' />
               </FormControl>
               </pre>
             </ModalBody>
@@ -111,14 +118,14 @@ const NftDelegateModal = ({ asset }: any ) => {
 
               <Box>
                 <NftDelegateConfirmModal
-                  delegTo={inputToDelegateRef}
-                  delegAssetId={inputAssetIdDelegateRef}
-                  delegEpochLimite={inputEpochLimiteRef}
+                  delegTo={inputToDelegRef}
+                  delegAssetId={asset.id}
+                  delegEpochLimit={inputEpochLimiteRef}
                   delegRedeleg={valueSwitchRedelegate}
-                  delegMemo={inputMemoDelegateRef}
+                  delegMemo={inputMemoDelegRef}
+                  delMesError={inputMesErrorDelegRef}
                 />
               </Box>
-              {/*<Button colorScheme={"red"} mr={3} onClick={submitTransfer}>Tranfer</Button>*/}
               {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button> */}
             </ModalFooter>
           </ModalContent>

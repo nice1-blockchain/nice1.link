@@ -20,13 +20,16 @@ import {
 } from '@chakra-ui/react'
 
 
-const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) => {
 
+const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMesError }: any) => {
+
+  const timeCountDown = 10 // Indicate number of definitive seconds
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const [timeLeft, setTimeLeft] = useState(10);
-  const [isCountdownActive, setIsCountdownActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(timeCountDown)
+  const [isCountdownActive, setIsCountdownActive] = useState(false)
+  //const [valueToTransf, setValueToTransf] = useState('')
 
 
   useEffect(() => {
@@ -36,24 +39,43 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
       }, 1000);
       return () => clearInterval(interval);
     } else if (isCountdownActive && timeLeft === 0) {
-      //alert('Tiempo Agotado')
       //onClose();
     }
   }, [isCountdownActive, timeLeft, onClose]);
 
 
-  function handleStartCountdown() {
-    setIsCountdownActive(true);
-    setTimeLeft(10)
-    onOpen()
+  /***
+   * If you validate that it is not empty and that there are only lowercase and numbers, activate the countdown...
+   */
+  const handValidateInputs = () => {
+    if (transfTo.current.value.trim() !== '') {
+      if (validateValueInput(transfTo.current.value)) {
+        setIsCountdownActive(true);
+        setTimeLeft(timeCountDown)
+        //setvalueToTransf(transfTo.current.value)
+        onOpen()
+      } else {
+        transMesError.current.value = "Only lowercase and numbers !!!"
+        }
+    } else {
+      transMesError.current.value = "Enter target account !!!"
+      }
+  }
+
+
+  /***
+   * Validate that there are only lowercase and numbers...
+   */
+  const validateValueInput = (text) => {
+    const regex = /^[a-z0-9]+$/;
+    return regex.test(text);
   }
 
 
   function confirmTransfer() {
-    if (transfTo.current && transfAssetId.current && transfMemo.current) {
+    if (transfTo.current && transfAssetId && transfMemo.current) {
       const valueInputToTransfer = transfTo.current.value;
-      const valueAssetIdTransfer = transfAssetId.current.value;
-      const valueAssetIdTransferFormat = [valueAssetIdTransfer];
+      const valueAssetIdTransferFormat = [transfAssetId];
       const valueInputMemoTransfer = transfMemo.current.value;
       session?.transact({
         action: {
@@ -80,7 +102,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
   return (
     <>
       <Box p={4}>
-        <Button onClick={handleStartCountdown}>Submit</Button>
+        <Button onClick={handValidateInputs}>Submit</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent >
@@ -95,7 +117,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
                 <Text fontSize='lg'>To: {transfTo.current?.value} </Text>
               </Box>
               <Box p='2'>
-                  <Text fontSize='lg'>Asset_Id: {transfAssetId.current?.value} </Text>
+                <Text fontSize='lg'>Asset_Id: {transfAssetId} </Text>
               </Box>
               <Box p='2'>
                 <Text fontSize='lg'>Memo: {transfMemo.current?.value}</Text>
@@ -115,7 +137,6 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo }: any) =
                   mr={3}
                   onClick={() => timeLeft === 0 ? onClose() : confirmTransfer()}> {timeLeft === 0 ? 'Back' : 'Confirm'}
                 </Button>
-                {/* <Button colorScheme={"red"} mr={3} onClick={confirmTransfer}>Confirm </Button> */}
                 {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Reject</Button> */}
               </Box>
             </ModalFooter>

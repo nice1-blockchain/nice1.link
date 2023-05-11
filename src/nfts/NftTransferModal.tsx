@@ -1,7 +1,6 @@
-import { useRef, useState } from 'react';
-import { useAnchor } from '@nice1/react-tools'
+import { useRef } from 'react';
+//import { useAnchor } from '@nice1/react-tools'
 import NftTransferConfirmModal from './NftTransferConfirmModal';
-
 import {
   Button,
   Box,
@@ -17,28 +16,18 @@ import {
   FormLabel,
   Input,
 
-
 } from '@chakra-ui/react'
 
 
 
+
 const NftTransferModal = ({ asset }: any) => {
-  const { session } = useAnchor()
+  //const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const inputAssetIdTransferRef = useRef<HTMLInputElement>(null);
   const inputToTransferRef = useRef<HTMLInputElement>(null);
   const inputMemoTransferRef = useRef<HTMLInputElement>(null);
-
-
-  // Pending validation Ctrol V + Ctrol C
-  const handleKeyPress = (event) => {
-    const char = event.key;
-    if (!(/[a-z0-9]/.test(char))) {
-      event.preventDefault();
-      alert("Only Lowercase Letters and Numbers !!!")
-    }
-  }
+  const inputMensajeErrorTransferRef = useRef<HTMLInputElement>(null);
 
 
 
@@ -49,39 +38,46 @@ const NftTransferModal = ({ asset }: any) => {
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Assets Transfer</ModalHeader>
+            <ModalHeader>Asset Transfer</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               {/* <FormControl mt={4}>
                 <FormLabel>From: </FormLabel>
                 <Input readOnly value={session?.auth.actor.toString()} />
-              </FormControl>*/}
+              </FormControl>
+              */}
               <pre>
-                <FormControl mt={4}>
-                  <FormLabel>Assets Id:
-                    <Input border={'0px'} readOnly value={asset.id} ref={inputAssetIdTransferRef} />
+                <FormControl mt={2} >
+                  <FormLabel>Id:
+                    <Input border={'0px'} isReadOnly value={asset.id} />
                   </FormLabel>
                 </FormControl>
-                <FormControl mt={4}>
+                <FormControl mt={4} isRequired>
                   <FormLabel>To:</FormLabel>
+                  <Input type="text" ref={inputToTransferRef} placeholder='Account name... (required)' />
+                </FormControl>
+                <FormControl>
                   <Input
                     type='text'
-                    ref={inputToTransferRef}
-                    onKeyPress={handleKeyPress}
-                    placeholder='Account name...' />
+                    border={'0px'}
+                    color='tomato'
+                    readOnly
+                    ref={inputMensajeErrorTransferRef}
+                  />
                 </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>MEMO (optional)</FormLabel>
-                  <Input type='text' ref={inputMemoTransferRef} placeholder='Memo...' />
+                <FormControl mt={2} >
+                  <FormLabel>MEMO:</FormLabel>
+                  <Input type='text' ref={inputMemoTransferRef} placeholder='Memo... (optional)' />
                 </FormControl>
               </pre>
-              </ModalBody>
+            </ModalBody>
             <ModalFooter>
               <Box>
                 <NftTransferConfirmModal
                   transfTo={inputToTransferRef}
-                  transfAssetId={inputAssetIdTransferRef}
+                  transfAssetId={asset.id}
                   transfMemo={inputMemoTransferRef}
+                  transMesError={inputMensajeErrorTransferRef}
                 />
               </Box>
               {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button> */}

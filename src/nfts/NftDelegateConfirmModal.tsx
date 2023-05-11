@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useAnchor } from '@nice1/react-tools'
-
 import {
   Button,
   Box,
@@ -14,18 +13,30 @@ import {
   ModalCloseButton,
   Text,
   useDisclosure,
-
-
 } from '@chakra-ui/react'
 
-const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, delegRedeleg, delegMemo } : any) => {
+
+
+
+const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError } : any) => {
+
+  const timeCountDown = 10 // Indicate number of definitive seconds
+  const secondsDay = 86400 // seconds in a day
+  const oneThousand = 1000
 
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const [epochActual, setEpochActual] = useState(Date.now());
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(timeCountDown);
   const [isCountdownActive, setIsCountdownActive] = useState(false);
+
+  const [epochCurrent, setEpochActual] = useState(Date.now());
+  const dateCurrent = new Date(epochCurrent);
+  const dateCurrentFormat = dateCurrent.toDateString();
+
+  const epochLimit = delegEpochLimit.current?.value * oneThousand
+  const dateLimit = new Date(epochLimit);
+  const dateLimitFormat = dateLimit.toDateString();
 
 
   useEffect(() => {
@@ -35,35 +46,40 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
       }, 1000);
       return () => clearInterval(interval);
     } else if (isCountdownActive && timeLeft === 0) {
-      //alert('Tiempo Agotado')
       //onClose();
     }
   }, [isCountdownActive, timeLeft, onClose]);
 
 
-  function handleStartCountdown() {
-    setIsCountdownActive(true);
-    setTimeLeft(10)
-    onOpen()
+  const handValidateInputs = () => {
+    if (delegTo.current.value.trim() !== '') {
+      if (validateValueInput(delegTo.current.value)) {
+        setIsCountdownActive(true);
+        setTimeLeft(timeCountDown)
+        onOpen()
+      } else {
+        delMesError.current.value = "Only lowercase and numbers !!!"
+      }
+    } else {
+      delMesError.current.value = "Enter target account !!!"
+    }
+  }
+
+  const validateValueInput = (text) => {
+    const regex = /^[a-z0-9]+$/;
+    return regex.test(text);
   }
 
 
-
   function confirmDelegate() {
-    if (delegTo.current && delegAssetId.current && delegEpochLimite.current && delegRedeleg && delegMemo.current) {
+    if (delegTo.current && delegAssetId && delegEpochLimit.current && delegRedeleg && delegMemo.current) {
 
       const valueToDelegate = delegTo.current.value;
-      const valueAssetIdDelegate = delegAssetId.current.value;
-      const valueAssetIdDelegateFormat = [valueAssetIdDelegate];
-      const valueEpochLimite = delegEpochLimite.current.value;
+      const valueAssetIdDelegateFormat = [delegAssetId];
+      const valueEpochLimite = delegEpochLimit.current.value - Math.floor(epochCurrent / oneThousand) ;
       const valueEpochLimiteFor = [valueEpochLimite];
-      //const valueDelegRedeleg = delegRedeleg
-
-      //const valuePeriod = valueEpochLimiteFor - epochActual / 1000
-      // valueSwitchRedelegate
-
+      const valueDelegRedeleg = delegRedeleg
       const valueMemoDelegate = delegMemo.current.value;
-
 
       session?.transact({
         action: {
@@ -74,8 +90,8 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
             owner: session.auth.actor,
             to: valueToDelegate,
             assetids: valueAssetIdDelegateFormat,
-            //period: valueEpochLimiteFor ,
-            //redelegate: valueSwitchRedelegate,
+            period: valueEpochLimiteFor,
+            redelegate: valueDelegRedeleg,
             memo: valueMemoDelegate
           }
         }
@@ -93,7 +109,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
     <>
 
       <Box p={4}>
-        <Button onClick={handleStartCountdown}>Submit</Button>
+        <Button onClick={handValidateInputs}>Submit</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
@@ -108,7 +124,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
                   <Text fontSize='lg'>To: {delegTo.current?.value}</Text>
               </Box>
               <Box p='2'>
-                <Text fontSize='lg'>Asset_Id: {delegAssetId.current?.value}</Text>
+                <Text fontSize='lg'>Asset_Id: {delegAssetId}</Text>
               </Box>
 
               <Box p='2'>
@@ -117,15 +133,25 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimite, dele
               <Box p='2'>
                 <Text fontSize='lg'>Memo: {delegMemo.current?.value}</Text>
               </Box>
+
               <Box p='2'>
-                  <Text fontSize='lg'>Fecha Actual (Epoch): {Math.floor(epochActual / 1000)} </Text>
-              </Box>
-              {/* <Box p='2'>
-                  <Text fontSize='lg'>Fecha Limite (Epoch): {Math.floor(delegEpochLimite.current.value )}</Text>
+                <Text fontSize='lg'>Fecha Actual: {dateCurrentFormat} </Text>
               </Box>
               <Box p='2'>
-                  <Text fontSize='lg'>Time Delegate (Epoch): {Math.floor((delegEpochLimite.current.value) - (epochActual / 1000))} </Text>
-              </Box> */}
+                  <Text fontSize='lg'>Epoch Actual: {Math.floor(epochCurrent / oneThousand)} </Text>
+              </Box>
+              <Box p='2'>
+                <Text fontSize='lg'>Fecha Limite: {dateLimitFormat}</Text>
+                </Box>
+              <Box p='2'>
+                <Text fontSize='lg'>Epoch Limite: {Math.floor(delegEpochLimit.current?.value)}</Text>
+              </Box>
+              <Box p='2'>
+                  <Text fontSize='lg'>Time legate: {Math.floor(delegEpochLimit.current?.value) - Math.floor(epochCurrent / oneThousand)} </Text>
+              </Box>
+              <Box p='2'>
+                  <Text fontSize='lg'>Dias Aprox.: {(Math.floor(delegEpochLimit.current?.value) - Math.floor(epochCurrent / oneThousand)) / secondsDay} </Text>
+              </Box>
             </ModalBody>
             </Code>
             <ModalFooter>
