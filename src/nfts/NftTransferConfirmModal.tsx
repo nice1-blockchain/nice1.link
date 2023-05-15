@@ -109,29 +109,25 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
             <ModalHeader>Confirm Transfer Data !!!</ModalHeader>
             <ModalCloseButton />
             <Code border={'1px'} background={'#47474b;'}>
-            <ModalBody>
-              <Box p='2'>
-                <Text fontSize='lg'>From: {session?.auth.actor.toString()} </Text>
-              </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>To: {transfTo.current?.value} </Text>
-              </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>Asset_Id: {transfAssetId} </Text>
-              </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>Memo: {transfMemo.current?.value}</Text>
+              <ModalBody>
+                <Box p='1'>
+                  <Text fontSize='lg'>From: {session?.auth.actor.toString()} </Text>
+                  <Text fontSize='lg'>To: {transfTo.current?.value} </Text>
+                </Box>
+                <Box p='1'>
+                  <Text fontSize='lg'>Asset_Id: {transfAssetId} </Text>
+                  <Text fontSize='lg'>Memo: {transfMemo.current?.value}</Text>
                 </Box>
             </ModalBody>
             </Code>
             <ModalFooter>
-              <Box p='2'>
+              <Box p='1'>
                 <Text
                   fontSize="lg"
                   color={'orange'}> {timeLeft === 0 ? "Time limit exceeded !!!" : `Time to confirm: ${timeLeft}`}
                 </Text>
               </Box>
-              <Box p='2'>
+              <Box p='1'>
                 <Button
                   colorScheme={"red"}
                   mr={3}

@@ -8,6 +8,7 @@ export interface NftBase {
     author: string | null
     category: string | null
     idata: string | null
+    mdata: string | null
 }
 
 
@@ -54,8 +55,7 @@ export const SimpleAssetsNFTsProvider = ({ children }: { children: ReactNode }) 
                 //upper_bound: '{"name":"GRYON - LegendaryLegends"}',
                 //lower_bound: session.auth.actor,
                 //upper_bound: session.auth.actor,
-
-                limit: 10,
+                limit: 1000,
                 reverse: false,
                 show_payer: false,
             })

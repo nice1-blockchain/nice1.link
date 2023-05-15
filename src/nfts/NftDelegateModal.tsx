@@ -19,6 +19,7 @@ import {
   FormLabel,
   Input,
   Switch,
+  Text
 } from '@chakra-ui/react'
 
 
@@ -59,63 +60,56 @@ const NftDelegateModal = ({ asset }: any ) => {
             <ModalHeader>Assets Delegation</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              {/* <FormControl mt={4}>
-                <FormLabel>From: </FormLabel>
-                <Input readOnly value={session?.auth.actor.toString()} />
-              </FormControl>*/}
               <pre>
-                <FormControl mt={4}>
-                  <FormLabel>Assets Id:
+                <Box>
+                  {/* <Text>From: {session?.auth.actor.toString()}</Text> */}
+                  <Text>Id: {asset.id}</Text>
+                </Box>
+                <Box>
+                  <FormControl mt={4} isRequired>
+                    <FormLabel>To:</FormLabel>
                     <Input
+                      type='text'
+                      placeholder='Account name...'
+                      ref={inputToDelegRef}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <Input
+                      type='text'
                       border={'0px'}
+                      color='tomato'
                       readOnly
-                      value={asset.id} />
-                  </FormLabel>
-                </FormControl>
-                <FormControl mt={4} isRequired>
-                  <FormLabel>To:</FormLabel>
-                  <Input
-                    type='text'
-                    placeholder='Account name...'
-                    ref={inputToDelegRef}
-                  />
-              </FormControl>
-              <FormControl>
-                  <Input
-                    type='text'
-                    border={'0px'}
-                    color='tomato'
-                    readOnly
-                    ref={inputMesErrorDelegRef}
-                  />
-              </FormControl>
-              <FormControl>
-                  <FormLabel mt={4}>Fecha Limite:</FormLabel>
-                <DatePicker
-                  minDate={new Date()}
-                  selected={epochLimite}
-                  onChange={(date) => setEpochLimite(date)}
-                  dateFormat="dd/MM/yyyy"
-                  className="custom-picker"
-                />
-              </FormControl>
-              <FormControl>
-                  <FormLabel mt={4}>Epoch Limite:
-                    <Input border={'0px'} readOnly value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
-                  </FormLabel>
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Redelegate (Allow redelegate)</FormLabel>
-                <Switch isChecked={valueSwitchRedelegate} onChange={handleChangeRedelegate} />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>MEMO (optional)</FormLabel>
-                <Input type='text' ref={inputMemoDelegRef} placeholder='Max 64 length....' />
-              </FormControl>
+                      ref={inputMesErrorDelegRef}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel mt={4}>Fecha Limite:</FormLabel>
+                    <DatePicker
+                      minDate={new Date()}
+                      selected={epochLimite}
+                      onChange={(date) => setEpochLimite(date)}
+                      dateFormat="dd/MM/yyyy"
+                      className="custom-picker"
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel mt={4}>Epoch Limite:
+                      <Input border={'0px'} readOnly value={Math.floor(epochLimite / 1000)} ref={inputEpochLimiteRef} />
+                    </FormLabel>
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>Redelegate (Allow redelegate)</FormLabel>
+                    <Switch isChecked={valueSwitchRedelegate} onChange={handleChangeRedelegate} />
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>MEMO (optional)</FormLabel>
+                    <Input type='text' ref={inputMemoDelegRef} placeholder='Max 64 length....' />
+                  </FormControl>
+                </Box>
               </pre>
             </ModalBody>
             <ModalFooter>
-
               <Box>
                 <NftDelegateConfirmModal
                   delegTo={inputToDelegRef}

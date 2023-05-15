@@ -77,7 +77,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
       const valueToDelegate = delegTo.current.value;
       const valueAssetIdDelegateFormat = [delegAssetId];
       const valueEpochLimite = delegEpochLimit.current.value - Math.floor(epochCurrent / oneThousand) ;
-      const valueEpochLimiteFor = [valueEpochLimite];
+      //const valueEpochLimiteFor = [valueEpochLimite];
       const valueDelegRedeleg = delegRedeleg
       const valueMemoDelegate = delegMemo.current.value;
 
@@ -90,7 +90,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
             owner: session.auth.actor,
             to: valueToDelegate,
             assetids: valueAssetIdDelegateFormat,
-            period: valueEpochLimiteFor,
+            period: valueEpochLimite,
             redelegate: valueDelegRedeleg,
             memo: valueMemoDelegate
           }
@@ -116,42 +116,28 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
             <ModalHeader>Confirm Delegation Data !!!</ModalHeader>
             <ModalCloseButton />
             <Code border={'1px'} background={'#47474b;'}>
-            <ModalBody>
-              <Box p='2'>
-                <Text fontSize='lg'>From: {session?.auth.actor.toString()} </Text>
-              </Box>
-              <Box p='2'>
+              <ModalBody>
+                <Box p={1}>
+                  <Text fontSize='lg'>From: {session?.auth.actor.toString()} </Text>
                   <Text fontSize='lg'>To: {delegTo.current?.value}</Text>
-              </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>Asset_Id: {delegAssetId}</Text>
-              </Box>
-
-              <Box p='2'>
-                <Text fontSize='lg'>Redelegate: {delegRedeleg ? "Activated" : "Deactivated"} </Text>
-              </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>Memo: {delegMemo.current?.value}</Text>
-              </Box>
-
-              <Box p='2'>
-                <Text fontSize='lg'>Fecha Actual: {dateCurrentFormat} </Text>
-              </Box>
-              <Box p='2'>
-                  <Text fontSize='lg'>Epoch Actual: {Math.floor(epochCurrent / oneThousand)} </Text>
-              </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>Fecha Limite: {dateLimitFormat}</Text>
                 </Box>
-              <Box p='2'>
-                <Text fontSize='lg'>Epoch Limite: {Math.floor(delegEpochLimit.current?.value)}</Text>
-              </Box>
-              <Box p='2'>
+                <Box p={1}>
+                  <Text fontSize='lg'>Asset_Id: {delegAssetId}</Text>
+                  <Text fontSize='lg'>Redelegate: {delegRedeleg ? "Activated" : "Deactivated"} </Text>
+                  <Text fontSize='lg'>Memo: {delegMemo.current?.value}</Text>
+                </Box>
+                <Box p={1}>
+                  <Text fontSize='lg'>Fecha Actual: {dateCurrentFormat} </Text>
+                  <Text fontSize='lg'>Epoch Actual: {Math.floor(epochCurrent / oneThousand)} </Text>
+                </Box>
+                <Box p={1}>
+                  <Text fontSize='lg'>Fecha Limite: {dateLimitFormat}</Text>
+                  <Text fontSize='lg'>Epoch Limite: {Math.floor(delegEpochLimit.current?.value)}</Text>
+                </Box>
+                <Box p={1}>
                   <Text fontSize='lg'>Time legate: {Math.floor(delegEpochLimit.current?.value) - Math.floor(epochCurrent / oneThousand)} </Text>
-              </Box>
-              <Box p='2'>
                   <Text fontSize='lg'>Dias Aprox.: {(Math.floor(delegEpochLimit.current?.value) - Math.floor(epochCurrent / oneThousand)) / secondsDay} </Text>
-              </Box>
+                </Box>
             </ModalBody>
             </Code>
             <ModalFooter>

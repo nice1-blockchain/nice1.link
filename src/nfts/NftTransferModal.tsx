@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-//import { useAnchor } from '@nice1/react-tools'
+import { useAnchor } from '@nice1/react-tools'
 import NftTransferConfirmModal from './NftTransferConfirmModal';
 import {
   Button,
@@ -15,6 +15,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Text
 
 } from '@chakra-ui/react'
 
@@ -22,7 +23,7 @@ import {
 
 
 const NftTransferModal = ({ asset }: any) => {
-  //const { session } = useAnchor()
+  const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const inputToTransferRef = useRef<HTMLInputElement>(null);
@@ -41,34 +42,30 @@ const NftTransferModal = ({ asset }: any) => {
             <ModalHeader>Asset Transfer</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              {/* <FormControl mt={4}>
-                <FormLabel>From: </FormLabel>
-                <Input readOnly value={session?.auth.actor.toString()} />
-              </FormControl>
-              */}
               <pre>
-                <FormControl mt={2} >
-                  <FormLabel>Id:
-                    <Input border={'0px'} isReadOnly value={asset.id} />
-                  </FormLabel>
-                </FormControl>
-                <FormControl mt={4} isRequired>
-                  <FormLabel>To:</FormLabel>
-                  <Input type="text" ref={inputToTransferRef} placeholder='Account name... (required)' />
-                </FormControl>
-                <FormControl>
-                  <Input
-                    type='text'
-                    border={'0px'}
-                    color='tomato'
-                    readOnly
-                    ref={inputMensajeErrorTransferRef}
-                  />
-                </FormControl>
-                <FormControl mt={2} >
-                  <FormLabel>MEMO:</FormLabel>
-                  <Input type='text' ref={inputMemoTransferRef} placeholder='Memo... (optional)' />
-                </FormControl>
+                <Box>
+                  {/* <Text>From: {session?.auth.actor.toString()}</Text> */}
+                  <Text>Id: {asset.id}</Text>
+                </Box>
+                <Box>
+                  <FormControl mt={4} isRequired>
+                    <FormLabel>To:</FormLabel>
+                    <Input type="text" ref={inputToTransferRef} placeholder='Account name... (required)' />
+                  </FormControl>
+                  <FormControl>
+                    <Input
+                      type='text'
+                      border={'0px'}
+                      color='tomato'
+                      readOnly
+                      ref={inputMensajeErrorTransferRef}
+                    />
+                  </FormControl>
+                  <FormControl mt={2} >
+                    <FormLabel>MEMO:</FormLabel>
+                    <Input type='text' ref={inputMemoTransferRef} placeholder='Memo... (optional)' />
+                  </FormControl>
+                </Box>
               </pre>
             </ModalBody>
             <ModalFooter>
