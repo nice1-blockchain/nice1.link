@@ -106,7 +106,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent >
-            <ModalHeader>Confirm Transfer Data !!!</ModalHeader>
+            <ModalHeader fontSize='md' textAlign='center'>Confirm Transfer Data !!!</ModalHeader>
             <ModalCloseButton />
             <Code border={'1px'} background={'#47474b;'}>
               <ModalBody>

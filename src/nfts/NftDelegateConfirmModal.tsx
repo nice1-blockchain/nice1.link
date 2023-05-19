@@ -113,7 +113,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Confirm Delegation Data !!!</ModalHeader>
+            <ModalHeader fontSize='md' textAlign='center'>Confirm Delegation Data !!!</ModalHeader>
             <ModalCloseButton />
             <Code border={'1px'} background={'#47474b;'}>
               <ModalBody>

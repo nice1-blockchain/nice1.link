@@ -36,10 +36,10 @@ const NftTransferModal = ({ asset }: any) => {
     <>
       <Box p={4}>
         <Button onClick={onOpen}>Transfer</Button>
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={inputToTransferRef}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Asset Transfer</ModalHeader>
+            <ModalHeader fontSize='md' textAlign='center'>Asset Transfer</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <pre>

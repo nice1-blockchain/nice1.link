@@ -54,10 +54,10 @@ const NftDelegateModal = ({ asset }: any ) => {
     <>
       <Box p={4}>
         <Button onClick={cleanInputs}>Delegate</Button>
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={inputToDelegRef}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Assets Delegation</ModalHeader>
+            <ModalHeader fontSize='md' textAlign='center'>Assets Delegation</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <pre>
