@@ -17,7 +17,6 @@ import {
 
 
 
-
 const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError } : any) => {
 
   const timeCountDown = 10 // Indicate number of definitive seconds
@@ -107,7 +106,6 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
 
   return (
     <>
-
       <Box p={4}>
         <Button onClick={handValidateInputs}>Submit</Button>
         <Modal isOpen={isOpen} onClose={onClose}>

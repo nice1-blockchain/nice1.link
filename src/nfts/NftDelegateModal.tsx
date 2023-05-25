@@ -24,7 +24,6 @@ import {
 
 
 
-
 const NftDelegateModal = ({ asset }: any ) => {
   //const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -52,8 +51,8 @@ const NftDelegateModal = ({ asset }: any ) => {
 
   return (
     <>
-      <Box p={4}>
-        <Button onClick={cleanInputs}>Delegate</Button>
+      <Box margin={4}>
+        <Button border={'1px'} onClick={cleanInputs}>Delegate</Button>
         <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={inputToDelegRef}>
           <ModalOverlay />
           <ModalContent>

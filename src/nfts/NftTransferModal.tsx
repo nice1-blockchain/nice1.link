@@ -16,9 +16,7 @@ import {
   FormLabel,
   Input,
   Text
-
 } from '@chakra-ui/react'
-
 
 
 
@@ -31,11 +29,10 @@ const NftTransferModal = ({ asset }: any) => {
   const inputMensajeErrorTransferRef = useRef<HTMLInputElement>(null);
 
 
-
   return (
     <>
-      <Box p={4}>
-        <Button onClick={onOpen}>Transfer</Button>
+      <Box margin={4}>
+        <Button border={'1px'} onClick={onOpen}>Transfer</Button>
         <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={inputToTransferRef}>
           <ModalOverlay />
           <ModalContent>

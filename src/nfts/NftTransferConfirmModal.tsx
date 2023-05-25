@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAnchor } from '@nice1/react-tools'
-
-//import './StyleTemp.css'; // validate....
-
 import {
   Button,
   Box,
@@ -16,7 +13,6 @@ import {
   ModalCloseButton,
   useDisclosure,
   Text,
-
 } from '@chakra-ui/react'
 
 
@@ -29,8 +25,6 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
 
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
   const [isCountdownActive, setIsCountdownActive] = useState(false)
-  //const [valueToTransf, setValueToTransf] = useState('')
-
 
   useEffect(() => {
     if (isCountdownActive && timeLeft > 0) {
@@ -62,7 +56,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
       }
   }
 
-
+  
   /***
    * Validate that there are only lowercase and numbers...
    */
