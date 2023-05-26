@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { useAnchor } from '@nice1/react-tools'
+import { useRef, useState } from 'react';
+//import { useAnchor } from '@nice1/react-tools'
 import NftTransferConfirmModal from './NftTransferConfirmModal';
 import {
   Button,
@@ -21,12 +21,21 @@ import {
 
 
 const NftTransferModal = ({ asset }: any) => {
-  const { session } = useAnchor()
+  //const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const inputToTransferRef = useRef<HTMLInputElement>(null);
   const inputMemoTransferRef = useRef<HTMLInputElement>(null);
   const inputMensajeErrorTransferRef = useRef<HTMLInputElement>(null);
+
+  const [resultTransfer, setResultTransfer] = useState(false)
+
+  const closeModalTransfer = (resTrans) => {
+    if (resTrans) {
+      onClose()
+    }
+  }
+
 
 
   return (
@@ -72,6 +81,8 @@ const NftTransferModal = ({ asset }: any) => {
                   transfAssetId={asset.id}
                   transfMemo={inputMemoTransferRef}
                   transMesError={inputMensajeErrorTransferRef}
+                  resultTransaction={resultTransfer}
+                  closeModalTransfer={closeModalTransfer}
                 />
               </Box>
               {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button> */}

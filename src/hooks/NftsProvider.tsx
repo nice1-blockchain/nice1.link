@@ -44,7 +44,6 @@ export const SimpleAssetsNFTsProvider = ({ children }: { children: ReactNode }) 
             if (session === null) {
                 return
             }
-
             const { rows } = await session.client.v1.chain.get_table_rows({
                 json: true,
                 code: 'simpleassets',
@@ -59,17 +58,12 @@ export const SimpleAssetsNFTsProvider = ({ children }: { children: ReactNode }) 
                 reverse: false,
                 show_payer: false,
             })
-
             const nft_rows = rows
-
             if (!nft_rows) {
                 return
             }
-
             setNfts(nft_rows)
-
         })()
-
     }, [session, nfts])
 
     return (

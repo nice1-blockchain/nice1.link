@@ -36,6 +36,14 @@ const NftDelegateModal = ({ asset }: any ) => {
   const [valueSwitchRedelegate, setValueSwitchRedelegate] = useState(false);
   const [epochLimite, setEpochLimite] = useState(Date.now());
 
+  const [resultDelegation, setResultDelegation] = useState(false)
+
+  const closeModalDelegation = (resDeleg) => {
+    if (resDeleg) {
+      onClose()
+    }
+  }
+
 
   const handleChangeRedelegate = () => {
     setValueSwitchRedelegate(!valueSwitchRedelegate);
@@ -117,6 +125,8 @@ const NftDelegateModal = ({ asset }: any ) => {
                   delegRedeleg={valueSwitchRedelegate}
                   delegMemo={inputMemoDelegRef}
                   delMesError={inputMesErrorDelegRef}
+                  resultDelegation={resultDelegation}
+                  closeModalDelegation={closeModalDelegation}
                 />
               </Box>
               {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button> */}

@@ -17,9 +17,9 @@ import {
 
 
 
-const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMesError }: any) => {
+const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, closeModalTransfer }: any) => {
 
-  const timeCountDown = 10 // Indicate number of definitive seconds
+  const timeCountDown = 60 // Indicate number of definitive seconds
   const { session } = useAnchor()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -56,7 +56,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
       }
   }
 
-  
+
   /***
    * Validate that there are only lowercase and numbers...
    */
@@ -88,6 +88,8 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
         return result;
       })
     }
+    resultTransfer = true
+    closeModalTransfer(resultTransfer)
     onClose()
   }
 

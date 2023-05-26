@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-//import { useAnchor } from '@nice1/react-tools'
+import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleAssets } from '../hooks/NftsProvider'
 import NftTransferModal from './NftTransferModal'
 import NftDelegateModal from './NftDelegateModal'
@@ -19,7 +19,7 @@ import {
 
 
 const NftCard = () => {
-  //const { session } = useAnchor()
+  const { session } = useAnchor()
   const { nfts } = useNftSimpleAssets()
   const [indexSelected, setIndexSelected] = useState(null);
 
@@ -71,6 +71,8 @@ const NftCard = () => {
 
   return (
     <>
+      
+
       <Grid gap={5} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
           {
             nfts.map((nft, k) => (
@@ -84,7 +86,7 @@ const NftCard = () => {
                     borderRadius={'30px'}
                     objectFit={'cover'}
                     src={getImgField(nft.idata, nft.mdata)}
-                    alt={getImgField(nft.idata, nft.mdata)}
+                    //alt={getImgField(nft.idata, nft.mdata)}
                   />
                 </Stack>
                 <VStack alignItems='left'>

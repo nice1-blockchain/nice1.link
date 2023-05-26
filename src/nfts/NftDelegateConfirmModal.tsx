@@ -17,9 +17,9 @@ import {
 
 
 
-const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError } : any) => {
+const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, resultDelegation, closeModalDelegation } : any) => {
 
-  const timeCountDown = 10 // Indicate number of definitive seconds
+  const timeCountDown = 60 // Indicate number of definitive seconds
   const secondsDay = 86400 // seconds in a day
   const oneThousand = 1000
 
@@ -99,6 +99,8 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
         return result;
       })
     }
+    resultDelegation = true
+    closeModalDelegation(resultDelegation)
     onClose()
   }
 
