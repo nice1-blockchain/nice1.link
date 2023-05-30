@@ -101,7 +101,7 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
     }
     resultDelegation = true
     closeModalDelegation(resultDelegation)
-    onClose()
+    //onClose()
   }
 
 

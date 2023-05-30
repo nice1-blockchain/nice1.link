@@ -1,5 +1,6 @@
 {
   "name": "components-showcase",
+  "homepage": "http://nice1-blockchain.github.io/nice1.link/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -36,6 +37,7 @@
     "file-loader": "^6.2.0",
     "framer-motion": "^6.3.1",
     "fs-extra": "^10.1.0",
+    "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "ipfs-http-client": "^56.0.3",
@@ -81,7 +83,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"

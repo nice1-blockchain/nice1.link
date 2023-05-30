@@ -90,7 +90,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
     }
     resultTransfer = true
     closeModalTransfer(resultTransfer)
-    onClose()
+    //onClose()
   }
 
 

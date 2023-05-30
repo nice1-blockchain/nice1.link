@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useAnchor } from '@nice1/react-tools'
+//import { useState, useEffect } from 'react'
+//import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleAssets } from '../hooks/NftsProvider'
 import NftTransferModal from './NftTransferModal'
 import NftDelegateModal from './NftDelegateModal'
@@ -19,9 +19,9 @@ import {
 
 
 const NftCard = () => {
-  const { session } = useAnchor()
+  //const { session } = useAnchor()
   const { nfts } = useNftSimpleAssets()
-  const [indexSelected, setIndexSelected] = useState(null);
+  //const [indexSelected, setIndexSelected] = useState(null);
 
   const cleanFieldName = (cad) => {
     try {
@@ -64,29 +64,21 @@ const NftCard = () => {
   /***
    * Updates the state of indexSelected with the Grid index
    */
-  const selectedIndex = (index: any) =>{
-    setIndexSelected(index);
-  }
+  // const selectedIndex = (index: any) =>{
+  //   setIndexSelected(index);
+  // }
 
 
   return (
     <>
       
-
       <Grid gap={5} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
           {
             nfts.map((nft, k) => (
-              <GridItem
-                key={k}
-                onClick={() => selectedIndex(k)}
-                colSpan={1} rowSpan={1} bg='bgs.widgets' mt={1} p={1} className="custom-grid-item">
+              <GridItem key={k} className="custom-grid-item" colSpan={1} rowSpan={1} bg='bgs.widgets' mt={1} p={1}  //onClick={() => selectedIndex(k)}
+              >
                 <Stack >
-                  <Image
-                    m={2}
-                    borderRadius={'30px'}
-                    objectFit={'cover'}
-                    src={getImgField(nft.idata, nft.mdata)}
-                    //alt={getImgField(nft.idata, nft.mdata)}
+                  <Image m={2} borderRadius={'30px'} objectFit={'cover'} src={getImgField(nft.idata, nft.mdata)} //alt={getImgField(nft.idata, nft.mdata)}
                   />
                 </Stack>
                 <VStack alignItems='left'>
