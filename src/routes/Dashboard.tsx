@@ -5,6 +5,7 @@ import ProfileCard from '../profile/ProfileCard'
 import PostCard from '../components/PostCard'
 import { NEWS_BASE_URL } from '../constants'
 import { useBlog } from '../hooks/blog'
+import { NftBalance } from '../nfts/NftBalance'
 
 export default function Dashboard() {
   const { posts, featured } = useBlog()
@@ -19,6 +20,9 @@ export default function Dashboard() {
             </GridItem>
             <GridItem colSpan={{xs: 2, md: 1, lg: 2}} display='flex' maxW='100%'>
               <BalanceCard />
+            </GridItem>
+            <GridItem colSpan={{ xs: 2, md: 1, lg: 2 }} display='flex' maxW='100%'>
+              <NftBalance />
             </GridItem>
           </Grid>
         </GridItem>
