@@ -1,6 +1,8 @@
 //import { useState, useEffect } from 'react'
 //import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleAssets } from '../hooks/NftsProvider'
+import ProfileCard from '../profile/ProfileCard'
+import BalanceCard from '../profile/BalanceCard'
 import NftTransferModal from './NftTransferModal'
 import NftDelegateModal from './NftDelegateModal'
 import { MdPerson, MdCollections } from 'react-icons/md'
@@ -67,19 +69,26 @@ const NftCard = () => {
   // const selectedIndex = (index: any) =>{
   //   setIndexSelected(index);
   // }
+  // onClick = {() => selectedIndex(k)}
 
 
   return (
     <>
-      
-      <Grid gap={5} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
+      <HStack ml={-6} mt={-5}  bg='bgs.widgets' justifyContent="flex-end">
+        <Box >
+          <BalanceCard />
+        </Box>
+        <Box >
+          <ProfileCard />
+        </Box>
+      </HStack>
+
+      <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
           {
             nfts.map((nft, k) => (
-              <GridItem key={k} className="custom-grid-item" colSpan={1} rowSpan={1} bg='bgs.widgets' mt={1} p={1}  //onClick={() => selectedIndex(k)}
-              >
-                <Stack >
-                  <Image m={2} borderRadius={'30px'} objectFit={'cover'} src={getImgField(nft.idata, nft.mdata)} //alt={getImgField(nft.idata, nft.mdata)}
-                  />
+              <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1}mt={1} p={1} >
+                <Stack>
+                  <Image m={2} borderRadius={'30px'} objectFit={'cover'} src={getImgField(nft.idata, nft.mdata)} />
                 </Stack>
                 <VStack alignItems='left'>
                   <Box ml={5} mt={2}>
