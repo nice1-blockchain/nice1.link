@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 //import { useAnchor } from '@nice1/react-tools'
-import NftTransferConfirmModal from './NftTransferConfirmModal';
+import NftTransferConfModal from './NftTransferConfModal'
 import {
   Button,
   Box,
@@ -77,7 +77,7 @@ const NftTransferModal = ({ asset }: any) => {
             </ModalBody>
             <ModalFooter>
               <Box>
-                <NftTransferConfirmModal
+                <NftTransferConfModal
                   transfTo={inputToTransferRef}
                   transfAssetId={asset.id}
                   transfMemo={inputMemoTransferRef}

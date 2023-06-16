@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAnchor } from '@nice1/react-tools'
+import { useNft } from '../hooks/Nfts'
 import {
   Button,
   Box,
@@ -17,13 +18,14 @@ import {
 
 
 
-const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, resultDelegation, closeModalDelegation } : any) => {
+const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, resultDelegation, closeModalDelegation } : any) => {
 
   const timeCountDown = 60 // Indicate number of definitive seconds
   const secondsDay = 86400 // seconds in a day
   const oneThousand = 1000
 
   const { session } = useAnchor()
+  const { updateNfts } = useNft()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [timeLeft, setTimeLeft] = useState(timeCountDown);
@@ -95,13 +97,13 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
           }
         }
       }).then((result) => {
-        console.log(result);
+        resultDelegation = true
+        closeModalDelegation(resultDelegation)
+        setTimeout(updateNfts, 500,); // To do with Async function
+        //alert('updating Nfts...')
         return result;
       })
     }
-    resultDelegation = true
-    closeModalDelegation(resultDelegation)
-    //onClose()
   }
 
 
@@ -162,4 +164,4 @@ const NftDelegateConfirmModal = ({ delegTo, delegAssetId, delegEpochLimit, deleg
   )
 }
 
-export default NftDelegateConfirmModal
+export default NftDelegateConfModal

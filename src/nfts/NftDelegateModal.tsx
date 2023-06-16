@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 //import { useAnchor } from '@nice1/react-tools';
-import NftDelegateConfirmModal from './NftDelegateConfirmModal';
+import NftDelegateConfModal from './NftDelegateConfModal';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './StyleTemp.css'; // validate....
@@ -118,7 +118,7 @@ const NftDelegateModal = ({ asset }: any ) => {
             </ModalBody>
             <ModalFooter>
               <Box>
-                <NftDelegateConfirmModal
+                <NftDelegateConfModal
                   delegTo={inputToDelegRef}
                   delegAssetId={asset.id}
                   delegEpochLimit={inputEpochLimiteRef}

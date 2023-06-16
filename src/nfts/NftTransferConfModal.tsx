@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAnchor } from '@nice1/react-tools'
+import { useNft } from '../hooks/Nfts'
 import {
   Button,
   Box,
@@ -17,12 +18,12 @@ import {
 
 
 
-const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, closeModalTransfer }: any) => {
+const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, closeModalTransfer }: any) => {
 
-  const timeCountDown = 60 // Indicate number of definitive seconds
   const { session } = useAnchor()
+  const { updateNfts } = useNft()
+  const timeCountDown = 60 // Indicate number of definitive seconds
   const { isOpen, onOpen, onClose } = useDisclosure()
-
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
   const [isCountdownActive, setIsCountdownActive] = useState(false)
 
@@ -50,10 +51,10 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
         onOpen()
       } else {
         transMesError.current.value = "Only lowercase and numbers !!!"
-        }
+      }
     } else {
       transMesError.current.value = "Enter target account !!!"
-      }
+    }
   }
 
 
@@ -66,31 +67,31 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
   }
 
 
-  function confirmTransfer() {
-    if (transfTo.current && transfAssetId && transfMemo.current) {
-      const valueInputToTransfer = transfTo.current.value;
-      const valueAssetIdTransferFormat = [transfAssetId];
-      const valueInputMemoTransfer = transfMemo.current.value;
-      session?.transact({
-        action: {
-          account: 'simpleassets',
-          name: 'transfer',
-          authorization: [session.auth],
-          data: {
-            from: session.auth.actor,
-            to: valueInputToTransfer,
-            assetids: valueAssetIdTransferFormat,
-            memo: valueInputMemoTransfer
+  const confirmTransfer = () => {
+
+      if (transfTo.current && transfAssetId && transfMemo.current) {
+        const valueInputToTransfer = transfTo.current.value;
+        const valueAssetIdTransferFormat = [transfAssetId];
+        const valueInputMemoTransfer = transfMemo.current.value;
+        session?.transact({
+          action: {
+            account: 'simpleassets',
+            name: 'transfer',
+            authorization: [session.auth],
+            data: {
+              from: session.auth.actor,
+              to: valueInputToTransfer,
+              assetids: valueAssetIdTransferFormat,
+              memo: valueInputMemoTransfer
+            }
           }
-        }
-      }).then((result) => {
-        console.log(result);
-        return result;
-      })
-    }
-    resultTransfer = true
-    closeModalTransfer(resultTransfer)
-    //onClose()
+        }).then((result) => {
+          resultTransfer = true
+          closeModalTransfer(resultTransfer)
+          setTimeout(updateNfts, 250,); // To do with Async function
+          return result;
+        })
+      }
   }
 
 
@@ -114,7 +115,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
                   <Text fontSize='lg'>Asset_Id: {transfAssetId} </Text>
                   <Text fontSize='lg'>Memo: {transfMemo.current?.value}</Text>
                 </Box>
-            </ModalBody>
+              </ModalBody>
             </Code>
             <ModalFooter>
               <Box p='1'>
@@ -127,6 +128,7 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
                 <Button
                   colorScheme={"red"}
                   mr={3}
+                  // onClick={() => timeLeft === 0 ? onClose() : confirmTransfer()}> {timeLeft === 0 ? 'Back' : 'Confirm'}
                   onClick={() => timeLeft === 0 ? onClose() : confirmTransfer()}> {timeLeft === 0 ? 'Back' : 'Confirm'}
                 </Button>
                 {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Reject</Button> */}
@@ -139,6 +141,4 @@ const NftTransferConfirmModal = ({ transfTo, transfAssetId, transfMemo, transMes
   )
 }
 
-
-
-export default NftTransferConfirmModal
+export default NftTransferConfModal
