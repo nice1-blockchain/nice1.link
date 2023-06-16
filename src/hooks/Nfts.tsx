@@ -37,12 +37,12 @@ export const NftsProvider = ({ children }: { children: ReactNode }) => {
   const [nfts, setNfts] = useState<NftBase[]>([])
   const [nftsInit, setNftsInit] = useState<boolean>(false)
 
-
+  // Update NFTs after any actions
   const updateNfts = () => {
     setNftsInit(false)
   }
 
-  
+
   // get NFTs SimpleAssets
   useEffect(() => {
     ; (async () => {
@@ -69,11 +69,22 @@ export const NftsProvider = ({ children }: { children: ReactNode }) => {
       if (!nft_rows) {
         return
       }
+
       setNfts(nft_rows)
       setNftsInit(true)
 
     })()
-  }, [session, nftsInit]) // session, nfts
+  }, [session, nftsInit]) //
+
+
+  // logout
+  useEffect(() => {
+    if (nftsInit && session === null) {
+      setNfts([])
+      setNftsInit(false)
+
+    }
+  }, [session, nftsInit])
 
 
 

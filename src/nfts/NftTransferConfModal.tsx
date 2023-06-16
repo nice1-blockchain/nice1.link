@@ -68,30 +68,31 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
 
 
   const confirmTransfer = () => {
-
-      if (transfTo.current && transfAssetId && transfMemo.current) {
-        const valueInputToTransfer = transfTo.current.value;
-        const valueAssetIdTransferFormat = [transfAssetId];
-        const valueInputMemoTransfer = transfMemo.current.value;
-        session?.transact({
-          action: {
-            account: 'simpleassets',
-            name: 'transfer',
-            authorization: [session.auth],
-            data: {
-              from: session.auth.actor,
-              to: valueInputToTransfer,
-              assetids: valueAssetIdTransferFormat,
-              memo: valueInputMemoTransfer
-            }
+    if (transfTo.current && transfAssetId && transfMemo.current) {
+      const valueInputToTransfer = transfTo.current.value;
+      const valueAssetIdTransferFormat = [transfAssetId];
+      const valueInputMemoTransfer = transfMemo.current.value;
+      session?.transact({
+        action: {
+          account: 'simpleassets',
+          name: 'transfer',
+          authorization: [session.auth],
+          data: {
+            from: session.auth.actor,
+            to: valueInputToTransfer,
+            assetids: valueAssetIdTransferFormat,
+            memo: valueInputMemoTransfer
           }
-        }).then((result) => {
-          resultTransfer = true
-          closeModalTransfer(resultTransfer)
-          setTimeout(updateNfts, 250,); // To do with Async function
-          return result;
-        })
-      }
+        }
+      }).then((result) => {
+        resultTransfer = true
+        closeModalTransfer(resultTransfer)
+        setTimeout(updateNfts, 250,); // To do with Async function ?
+        return result;
+      }).catch((e) => {
+        console.log(`Error: ${e}`)
+      })
+    }
   }
 
 

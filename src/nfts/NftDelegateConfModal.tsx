@@ -74,7 +74,6 @@ const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRed
 
   function confirmDelegate() {
     if (delegTo.current && delegAssetId && delegEpochLimit.current && delegRedeleg && delegMemo.current) {
-
       const valueToDelegate = delegTo.current.value;
       const valueAssetIdDelegateFormat = [delegAssetId];
       const valueEpochLimite = delegEpochLimit.current.value - Math.floor(epochCurrent / oneThousand) ;
@@ -99,9 +98,11 @@ const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRed
       }).then((result) => {
         resultDelegation = true
         closeModalDelegation(resultDelegation)
-        setTimeout(updateNfts, 500,); // To do with Async function
-        //alert('updating Nfts...')
+        setTimeout(updateNfts, 500,); // To do with Async function ?
         return result;
+
+      }).catch((e) => {
+        console.log(`Error: ${e}`)
       })
     }
   }
