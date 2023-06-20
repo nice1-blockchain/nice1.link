@@ -5,8 +5,9 @@ import ProfileCard from '../profile/ProfileCard'
 import PostCard from '../components/PostCard'
 import { NEWS_BASE_URL } from '../constants'
 import { useBlog } from '../hooks/blog'
-//import { NftBalanceCard } from '../nfts/NftBalanceCard'
 import { ProfileResourcesCard } from '../profile/ProfileResourcesCard'
+// import { NftBalanceCard } from '../nfts/NftBalanceCard'
+// import { ResourcesCard } from '../dashboard/ResourcesCard'
 
 
 export default function Dashboard() {
@@ -26,6 +27,9 @@ export default function Dashboard() {
             </GridItem>
             {/* <GridItem colSpan={{ xs: 2, md: 1, lg: 2 }} display='flex' maxW='100%'>
               <NftBalanceCard />
+            </GridItem>
+            <GridItem colSpan={{ xs: 2, md: 1, lg: 2 }} display='flex' maxW='100%'>
+              <ResourcesCard />
             </GridItem> */}
             <GridItem colSpan={{ xs: 2, md: 1, lg: 2 }} display='flex' maxW='100%'>
               <ProfileResourcesCard />

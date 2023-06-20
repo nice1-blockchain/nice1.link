@@ -3,7 +3,7 @@ import { useAnchor } from '@nice1/react-tools'
 import Decimal from 'decimal.js'
 import DashboardBox from '../components/DashboardBox'
 
-const ResourcesCard = () => {
+export const ResourcesCard = () => {
   const { account } = useAnchor()
 
   const cpu = (new Decimal(account?.cpu_limit.used.toString() as string)).div(account?.cpu_limit.max.toString() as string).mul(100)
@@ -19,4 +19,4 @@ const ResourcesCard = () => {
   )
 }
 
-export default ResourcesCard
+//export default ResourcesCard

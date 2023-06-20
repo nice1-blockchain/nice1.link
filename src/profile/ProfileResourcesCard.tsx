@@ -1,7 +1,9 @@
 import React from 'react'
-import { Box, HStack, StackDivider, Text, CircularProgress, CircularProgressLabel} from '@chakra-ui/react'
+import { Box, HStack, StackDivider, Text, CircularProgress, CircularProgressLabel, Progress, VStack } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
 import DashboardBox from '../components/DashboardBox'
+import Decimal from 'decimal.js'
+
 
 
 
