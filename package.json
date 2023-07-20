@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.362.0",
     "@babel/core": "^7.17.9",
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/react": "^1.8.8",
