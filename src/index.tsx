@@ -9,7 +9,8 @@ import Routes from './routes'
 import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
 import theme from './theme'
-import { NftsProvider } from './hooks/Nfts'
+import { NftSimpleAssetsProvider } from './hooks/NftSimpleAssets'
+import { NftSimpleMarketProvider } from './hooks/NftSimpleMarket'
 
 const rootElement = document.getElementById('root')
 
@@ -26,11 +27,13 @@ root.render(
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
           <BlogProvider>
-            <NftsProvider>
-              <BrowserRouter basename={process.env.PUBLIC_URL}>
-                <Routes />
-              </BrowserRouter>
-            </NftsProvider>
+            <NftSimpleAssetsProvider>
+              <NftSimpleMarketProvider>
+                <BrowserRouter basename={process.env.PUBLIC_URL}>
+                  <Routes />
+                </BrowserRouter>
+              </NftSimpleMarketProvider>
+            </NftSimpleAssetsProvider>
           </BlogProvider>
         </Nice1Provider>
       </AnchorProvider>

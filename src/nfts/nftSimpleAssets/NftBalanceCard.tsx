@@ -1,13 +1,13 @@
 //import React from 'react'
 import { Box, HStack, Text } from '@chakra-ui/react'
 
-import { useNft } from '../hooks/Nfts'
-import DashboardBox from '../components/DashboardBox'
+import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
+import DashboardBox from '../../components/DashboardBox'
 
 
 export const NftBalanceCard = () => {
 
-  const { nfts } = useNft()
+  const { nfts } = useNftSimpleAssets()
 
   return (
     <DashboardBox childProps={{ justifyContent: 'center' }} justifyContent='center'>

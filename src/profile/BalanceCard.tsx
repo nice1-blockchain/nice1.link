@@ -3,7 +3,7 @@ import NumberFormat from 'react-number-format'
 import styled from 'styled-components'
 
 import { useAnchor, useNice1 } from '@nice1/react-tools'
-import { useNft } from '../hooks/Nfts'
+import { useNftSimpleAssets } from '../hooks/NftSimpleAssets'
 
 import DashboardBox from '../components/DashboardBox'
 import { EOS, N1Token, NFT } from '../icons'
@@ -20,7 +20,7 @@ const SVGIcon : typeof Box  = styled(Box)`
 const BalanceCard = () => {
   const { account } = useAnchor()
   const { balance } = useNice1()
-  const { nfts } = useNft()
+  const { nfts } = useNftSimpleAssets()
 
 
 

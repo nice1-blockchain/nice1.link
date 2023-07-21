@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { useAnchor } from '@nice1/react-tools'
 
 
-export interface NftBase {
+export interface NftBaseSimpleAssets {
   id: number | null
   owner: string | null
   author: string | null
@@ -11,20 +11,20 @@ export interface NftBase {
   mdata: string | null}
 
 
-export interface Nft {
-  nfts: NftBase[]
+export interface NftSimpleAssets {
+  nfts: NftBaseSimpleAssets[]
   updateNfts: () => any
 }
 
 
-export const NftContext = createContext<Nft>({
+export const NftSimpleAssetsContext = createContext<NftSimpleAssets>({
   nfts: [],
   updateNfts: () => { },
 })
 
 
-export const useNft = () => {
-  const contxt = useContext(NftContext)
+export const useNftSimpleAssets = () => {
+  const contxt = useContext(NftSimpleAssetsContext)
   if (contxt === null) {
     throw new Error('useNft() can only be used on children of <NftsProvider />')
   }
@@ -32,9 +32,9 @@ export const useNft = () => {
 }
 
 
-export const NftsProvider = ({ children }: { children: ReactNode }) => {
+export const NftSimpleAssetsProvider = ({ children }: { children: ReactNode }) => {
   const { session } = useAnchor()
-  const [nfts, setNfts] = useState<NftBase[]>([])
+  const [nfts, setNfts] = useState<NftBaseSimpleAssets[]>([])
   const [nftsInit, setNftsInit] = useState<boolean>(false)
 
   // Update NFTs after any actions
@@ -90,9 +90,9 @@ export const NftsProvider = ({ children }: { children: ReactNode }) => {
 
 
   return (
-    <NftContext.Provider value={{ nfts, updateNfts }}>
+    <NftSimpleAssetsContext.Provider value={{ nfts, updateNfts }}>
       {children}
-    </NftContext.Provider>
+    </NftSimpleAssetsContext.Provider>
   )
 }
 

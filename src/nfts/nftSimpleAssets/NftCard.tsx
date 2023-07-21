@@ -1,8 +1,8 @@
 //import { useState, useEffect } from 'react'
 //import { useAnchor } from '@nice1/react-tools'
-import { useNft } from '../hooks/Nfts'
-import ProfileCard from '../profile/ProfileCard'
-import BalanceCard from '../profile/BalanceCard'
+import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
+import ProfileCard from '../../profile/ProfileCard'
+import BalanceCard from '../../profile/BalanceCard'
 import NftTransferModal from './NftTransferModal'
 import NftDelegateModal from './NftDelegateModal'
 import { MdPerson, MdCollections } from 'react-icons/md'
@@ -22,7 +22,7 @@ import {
 
 const NftCard = () => {
   //const { session } = useAnchor()
-  const { nfts } = useNft()
+  const { nfts } = useNftSimpleAssets()
   //const [indexSelected, setIndexSelected] = useState(null);
 
   const cleanFieldName = (cad) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAnchor } from '@nice1/react-tools'
-import { useNft } from '../hooks/Nfts'
+import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import {
   Button,
   Box,
@@ -21,7 +21,7 @@ import {
 const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, closeModalTransfer }: any) => {
 
   const { session } = useAnchor()
-  const { updateNfts } = useNft()
+  const { updateNfts } = useNftSimpleAssets()
   const timeCountDown = 60 // Indicate number of definitive seconds
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
