@@ -129,7 +129,6 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
                 <Button
                   colorScheme={"red"}
                   mr={3}
-                  // onClick={() => timeLeft === 0 ? onClose() : confirmTransfer()}> {timeLeft === 0 ? 'Back' : 'Confirm'}
                   onClick={() => timeLeft === 0 ? onClose() : confirmTransfer()}> {timeLeft === 0 ? 'Back' : 'Confirm'}
                 </Button>
                 {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Reject</Button> */}

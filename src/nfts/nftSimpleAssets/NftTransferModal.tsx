@@ -30,7 +30,7 @@ const NftTransferModal = ({ asset }: any) => {
 
   const [resultTransfer, setResultTransfer] = useState(false)
 
-  
+
   const closeModalTransfer = (resTrans) => {
     if (resTrans) {
       onClose()
