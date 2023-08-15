@@ -7,13 +7,13 @@ import DashboardBox from '../../components/DashboardBox'
 
 export const NftBalanceCard = () => {
 
-  const { nfts } = useNftSimpleAssets()
+  const { nftsSA } = useNftSimpleAssets()
 
   return (
     <DashboardBox childProps={{ justifyContent: 'center' }} justifyContent='center'>
       <HStack align='stretch'>
         <Box>
-          <Text alignContent='left' fontSize='md'>NFTs: {nfts.length}</Text>
+          <Text alignContent='left' fontSize='md'>NFTs: {nftsSA.length}</Text>
         </Box>
       </HStack>
     </DashboardBox>

@@ -14,12 +14,12 @@ export interface NftBaseSimpleMarket {
 
 
 export interface NftSimpleMarket {
-  nfts: NftBaseSimpleMarket[]
+  nftsSM: NftBaseSimpleMarket[]
   updateNfts: () => any
 }
 
 export const NftSimpleMarketContext = createContext<NftSimpleMarket>({
-  nfts: [],
+  nftsSM: [],
   updateNfts: () => { },
 })
 
@@ -36,7 +36,7 @@ export const useNftSimpleMarket = () => {
 
 export const NftSimpleMarketProvider = ({ children }: { children: ReactNode }) => {
   const {session} = useAnchor()
-  const [nfts, setNfts] = useState<NftBaseSimpleMarket[]>([])
+  const [nftsSM, setNfts] = useState<NftBaseSimpleMarket[]>([])
   const [nftsInit, setNftsInit] = useState<boolean>(false)
 
 
@@ -92,7 +92,7 @@ export const NftSimpleMarketProvider = ({ children }: { children: ReactNode }) =
 
 
   return (
-    <NftSimpleMarketContext.Provider value={{ nfts, updateNfts }}>
+    <NftSimpleMarketContext.Provider value={{ nftsSM, updateNfts }}>
       {children}
     </NftSimpleMarketContext.Provider>
   )

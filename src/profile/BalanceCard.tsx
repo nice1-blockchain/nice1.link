@@ -20,7 +20,7 @@ const SVGIcon : typeof Box  = styled(Box)`
 const BalanceCard = () => {
   const { account } = useAnchor()
   const { balance } = useNice1()
-  const { nfts } = useNftSimpleAssets()
+  const { nftsSA } = useNftSimpleAssets()
 
 
 
@@ -72,7 +72,7 @@ const BalanceCard = () => {
             </Text>
             <Text fontWeight='bold' fontSize='md'>
               <NumberFormat
-                value={nfts.length.toString()}
+                value={nftsSA.length.toString()}
                 displayType='text'
               />
             </Text>

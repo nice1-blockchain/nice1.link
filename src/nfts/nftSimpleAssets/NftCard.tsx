@@ -22,7 +22,7 @@ import {
 
 const NftCard = () => {
   //const { session } = useAnchor()
-  const { nfts } = useNftSimpleAssets()
+  const { nftsSA } = useNftSimpleAssets()
   //const [indexSelected, setIndexSelected] = useState(null);
 
   const cleanFieldName = (cad) => {
@@ -85,7 +85,7 @@ const NftCard = () => {
 
       <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
           {
-            nfts.map((nft, k) => (
+          nftsSA.map((nft, k) => (
               <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1}mt={1} p={1} >
                 <Stack>
                   <Image m={2} borderRadius={'30px'} objectFit={'cover'} src={getImgField(nft.idata, nft.mdata)} />

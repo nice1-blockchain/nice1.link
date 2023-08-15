@@ -12,13 +12,13 @@ export interface NftBaseSimpleAssets {
 
 
 export interface NftSimpleAssets {
-  nfts: NftBaseSimpleAssets[]
+  nftsSA: NftBaseSimpleAssets[]
   updateNfts: () => any
 }
 
 
 export const NftSimpleAssetsContext = createContext<NftSimpleAssets>({
-  nfts: [],
+  nftsSA: [],
   updateNfts: () => { },
 })
 
@@ -34,7 +34,7 @@ export const useNftSimpleAssets = () => {
 
 export const NftSimpleAssetsProvider = ({ children }: { children: ReactNode }) => {
   const { session } = useAnchor()
-  const [nfts, setNfts] = useState<NftBaseSimpleAssets[]>([])
+  const [nftsSA, setNfts] = useState<NftBaseSimpleAssets[]>([])
   const [nftsInit, setNftsInit] = useState<boolean>(false)
 
   // Update NFTs after any actions
@@ -90,7 +90,7 @@ export const NftSimpleAssetsProvider = ({ children }: { children: ReactNode }) =
 
 
   return (
-    <NftSimpleAssetsContext.Provider value={{ nfts, updateNfts }}>
+    <NftSimpleAssetsContext.Provider value={{ nftsSA, updateNfts }}>
       {children}
     </NftSimpleAssetsContext.Provider>
   )
