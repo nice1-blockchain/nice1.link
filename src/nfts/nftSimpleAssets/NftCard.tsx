@@ -1,5 +1,3 @@
-//import { useState, useEffect } from 'react'
-//import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import ProfileCard from '../../profile/ProfileCard'
 import BalanceCard from '../../profile/BalanceCard'
@@ -21,7 +19,6 @@ import {
 
 
 const NftCard = () => {
-  //const { session } = useAnchor()
   const { nftsSA } = useNftSimpleAssets()
   //const [indexSelected, setIndexSelected] = useState(null);
 

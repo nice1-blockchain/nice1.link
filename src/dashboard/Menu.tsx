@@ -43,14 +43,21 @@ const Menu = () => {
           icon={<User />}
         />
       </Link>
-      <Link to='/nfts'>
+      <Link to='/simple-asset'>
         <SVGIconButton
           variant='link'
           aria-label='Nft collection'
           icon={<NFT />}
         />
       </Link>
-      <Link to='/markets'>
+      <Link to='/simple-market'>
+        <SVGIconButton
+          variant='link'
+          aria-label='Nft collection'
+          icon={<NFT />}
+        />
+      </Link>
+      <Link to='/atomic-asset'>
         <SVGIconButton
           variant='link'
           aria-label='Nft collection'

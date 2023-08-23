@@ -11,6 +11,7 @@ import * as serviceWorker from './serviceWorker'
 import theme from './theme'
 import { NftSimpleAssetsProvider } from './hooks/NftSimpleAssets'
 import { NftSimpleMarketProvider } from './hooks/NftSimpleMarket'
+import { NftAtomicAssetsProvider } from './hooks/NftAtomicAssets'
 
 const rootElement = document.getElementById('root')
 
@@ -29,9 +30,11 @@ root.render(
           <BlogProvider>
             <NftSimpleAssetsProvider>
               <NftSimpleMarketProvider>
-                <BrowserRouter basename={process.env.PUBLIC_URL}>
-                  <Routes />
-                </BrowserRouter>
+                <NftAtomicAssetsProvider>
+                  <BrowserRouter basename={process.env.PUBLIC_URL}>
+                    <Routes />
+                  </BrowserRouter>
+                </NftAtomicAssetsProvider>
               </NftSimpleMarketProvider>
             </NftSimpleAssetsProvider>
           </BlogProvider>

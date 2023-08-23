@@ -36,20 +36,18 @@ export const useNftSimpleMarket = () => {
 
 export const NftSimpleMarketProvider = ({ children }: { children: ReactNode }) => {
   const {session} = useAnchor()
-  const [nftsSM, setNfts] = useState<NftBaseSimpleMarket[]>([])
-  const [nftsInit, setNftsInit] = useState<boolean>(false)
-
+  const [nftsSM, setNftsSM] = useState<NftBaseSimpleMarket[]>([])
+  const [nftsSMInit, setNftsSMInit] = useState<boolean>(false)
 
 
   const updateNfts = () => {
-    setNftsInit(false)
+    setNftsSMInit(false)
   }
-
 
   // get NFTs SIMPLE_MARKET
   useEffect(() => {
     ; (async () => {
-      if (nftsInit || session === null) {
+      if (nftsSMInit || session === null) {
         return
       }
 
@@ -58,11 +56,6 @@ export const NftSimpleMarketProvider = ({ children }: { children: ReactNode }) =
         code: 'simplemarket',
         table: 'sells',
         scope: 'simplemarket',
-        //index_position: 'fifth',
-        //lower_bound: 'name":"GRYON - LegendaryLegends',
-        //upper_bound: '{"name":"GRYON - LegendaryLegends"}',
-        //lower_bound: session.auth.actor,
-        //upper_bound: session.auth.actor,
         limit: 1000,
         reverse: false,
         show_payer: false,
@@ -73,21 +66,21 @@ export const NftSimpleMarketProvider = ({ children }: { children: ReactNode }) =
         return
       }
 
-      setNfts(nft_rows)
-      setNftsInit(true)
+      setNftsSM(nft_rows)
+      setNftsSMInit(true)
 
     })()
-  }, [session, nftsInit]) //
+  }, [session, nftsSMInit]) //
 
 
   // logout
   useEffect(() => {
-    if (nftsInit && session === null) {
-      setNfts([])
-      setNftsInit(false)
+    if (nftsSMInit && session === null) {
+      setNftsSM([])
+      setNftsSMInit(false)
 
     }
-  }, [session, nftsInit])
+  }, [session, nftsSMInit])
 
 
 

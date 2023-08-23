@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleMarket } from '../../hooks/NftSimpleMarket'
-import { NftBuyConfModal } from './NftBuyConfModal'
+import { NftBuyConfModal } from './NftBuyConfModalSM'
+import ProfileCard from '../../profile/ProfileCard'
+import BalanceCard from '../../profile/BalanceCard'
 import {
-  Box,
   Grid,
   GridItem,
+  Box,
   Text,
+  HStack,
   Image,
 } from '@chakra-ui/react'
 
@@ -112,6 +115,15 @@ const NftCardSimpleMarket = () => {
 
   return (
     <>
+      <HStack ml={-6} mt={-5} bg='bgs.widgets' justifyContent="flex-end">
+        <Box >
+          <BalanceCard />
+        </Box>
+        <Box >
+          <ProfileCard />
+        </Box>
+      </HStack>
+
       <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
         {
           nftsSM.map((nft, k) => (

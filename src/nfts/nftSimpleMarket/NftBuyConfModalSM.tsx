@@ -96,7 +96,7 @@ export const NftBuyConfModal = ({ asset }: any ) => {
             <Code border={'1px'} background={'#47474b;'}>
               <ModalBody>
                 <Box p='1'>
-                  <Text fontSize='lg'>From: Simple Market </Text>
+                  <Text fontSize='lg'>From: simplemarket </Text>
                 </Box>
                 <Box p='1'>
                   <Text fontSize='lg'>To: {session?.auth.actor.toString()} </Text>
