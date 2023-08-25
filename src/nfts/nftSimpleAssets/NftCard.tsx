@@ -71,7 +71,10 @@ const NftCard = () => {
 
   return (
     <>
-      <HStack ml={-6} mt={-5}  bg='bgs.widgets' justifyContent="flex-end">
+      <HStack ml={-6} mt={-5} bg='bgs.widgets' justifyContent="flex-end">
+        <Box ml={5}>
+          <Text color='gray.400'>SIMPLE ASSETS ----</Text>
+        </Box>
         <Box >
           <BalanceCard />
         </Box>

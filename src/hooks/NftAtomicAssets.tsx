@@ -5,11 +5,10 @@ import { useAnchor } from '@nice1/react-tools'
 export interface NftBaseAtomicAssets {
   asset_id: number | null
   collection_name: string | null
-  // owner: string | null
-  // author: string | null
-  // category: string | null
-  // idata: string | null
-  // mdata: string | null
+  schema_name: string | null
+  template_id: number | null
+  immutable_serialized_data: [] | null
+  mutable_serialized_data: [] | null
 }
 
 
@@ -40,7 +39,6 @@ export const NftAtomicAssetsProvider = ({ children }: { children: ReactNode }) =
   const [nftsAA, setNftsAA] = useState<NftBaseAtomicAssets[]>([])
   const [nftsAAInit, setNftsAAInit] = useState<boolean>(false)
 
-
   const updateNftsAA = () => {
     setNftsAAInit(false)
   }
@@ -56,7 +54,7 @@ export const NftAtomicAssetsProvider = ({ children }: { children: ReactNode }) =
         json: true,
         code: 'atomicassets',
         table: 'assets',
-        scope: session.auth.actor,
+        scope: session.auth.actor, // CHANGE FOR TEST
         limit: 1000,
         reverse: false,
         show_payer: false,
