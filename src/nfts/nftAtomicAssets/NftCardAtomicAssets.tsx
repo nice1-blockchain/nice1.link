@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useAnchor } from '@nice1/react-tools'
 import { useNftAtomicAssets } from '../../hooks/NftAtomicAssets'
 import ProfileCard from '../../profile/ProfileCard'
@@ -37,39 +37,11 @@ const NftCardAtomicAssets = () => {
   const { session } = useAnchor()
   const [templateAA, setTemplateAA] = useState<TemplateBaseAtomicAssets[]>([])
   const [templateAAInit, setTemplateAAInit] = useState<boolean>(false)
-  //const [collecNameTemp, setCollecTemp] = useState<string>('')
-
-  //get Template of atomicassets
-  // useEffect(() => {
-  //   ; (async () => {
-  //     if (templateAAInit || session === null) {
-  //       return
-  //     }
-
-  //     const { rows } = await session.client.v1.chain.get_table_rows({
-  //       json: true,
-  //       code: 'atomicassets',
-  //       table: 'templates',
-  //       scope: collecNameTemp, // 'pomelo', TODO WITH CHANGE WITH UPGRADEABLE COLLECTION
-  //       limit: 1000,
-  //       reverse: false,
-  //       show_payer: false,
-  //     })
-  //       const nft_rows = rows
-
-  //      if (!nft_rows) {
-  //       return
-  //     }
-
-  //     setTemplateAA(nft_rows)
-  //     setTemplateAAInit(true)
-
-  //   })()
-  // }, [session, templateAAInit]) //
 
 
 
-  const updateCollectionNameAA = async (nameCollect: any) => {
+
+  const updateCollectionNameAA = async (nameCollect: any, idTemp: any) => {
     if (templateAAInit || session === null) {
       return
     }
@@ -78,7 +50,9 @@ const NftCardAtomicAssets = () => {
       json: true,
       code: 'atomicassets',
       table: 'templates',
-      scope: nameCollect, // 'pomelo', TODO WITH CHANGE WITH UPGRADEABLE COLLECTION
+      scope: nameCollect,
+      //lower_bound: idTemp, // Test for search optimisation...
+      //upper_bound: idTemp,
       limit: 1000,
       reverse: false,
       show_payer: false,
@@ -89,15 +63,16 @@ const NftCardAtomicAssets = () => {
       return
     }
 
-    setTemplateAA(nft_rows)
+    setTemplateAA(prevTemplateAA => [...prevTemplateAA, ...nft_rows]);
     setTemplateAAInit(true)
+
   }
 
 
 
   const searchMatchesInTempAA = (nameCollect: any, idTemp: any) => {
 
-    updateCollectionNameAA(nameCollect)
+    updateCollectionNameAA(nameCollect, idTemp)
 
     const MatchesInTempAA = templateAA.find(listTemplateAA => listTemplateAA.template_id === idTemp);
 
@@ -168,10 +143,10 @@ const NftCardAtomicAssets = () => {
                   <Text fontSize='xs' color='gray.400'>Collection: {nft.collection_name}</Text>
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='xs' color='gray.400'>Category: {nft.schema_name}</Text>
+                  <Text fontSize='xs' color='gray.400'>Template: {nft.template_id}</Text>
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='xs' color='gray.400'>Template: {nft.template_id}</Text>
+                  <Text fontSize='xs' color='gray.400'>Category/Schema: {nft.schema_name}</Text>
                 </Box>
               </VStack>
             </GridItem>

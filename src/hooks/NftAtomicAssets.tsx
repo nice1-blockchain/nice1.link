@@ -54,7 +54,7 @@ export const NftAtomicAssetsProvider = ({ children }: { children: ReactNode }) =
         json: true,
         code: 'atomicassets',
         table: 'assets',
-        scope: session.auth.actor, // CHANGE FOR TEST
+        scope: session.auth.actor, 
         limit: 1000,
         reverse: false,
         show_payer: false,
