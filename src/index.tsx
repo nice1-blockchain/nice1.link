@@ -12,6 +12,7 @@ import theme from './theme'
 import { NftSimpleAssetsProvider } from './hooks/NftSimpleAssets'
 import { NftSimpleMarketProvider } from './hooks/NftSimpleMarket'
 import { NftAtomicAssetsProvider } from './hooks/NftAtomicAssets'
+import { NftAtomicMarketProvider } from './hooks/NftAtomicMarket'
 
 const rootElement = document.getElementById('root')
 
@@ -31,9 +32,11 @@ root.render(
             <NftSimpleAssetsProvider>
               <NftSimpleMarketProvider>
                 <NftAtomicAssetsProvider>
-                  <BrowserRouter basename={process.env.PUBLIC_URL}>
-                    <Routes />
-                  </BrowserRouter>
+                  <NftAtomicMarketProvider>
+                    <BrowserRouter basename={process.env.PUBLIC_URL}>
+                      <Routes />
+                    </BrowserRouter>
+                  </NftAtomicMarketProvider>
                 </NftAtomicAssetsProvider>
               </NftSimpleMarketProvider>
             </NftSimpleAssetsProvider>
