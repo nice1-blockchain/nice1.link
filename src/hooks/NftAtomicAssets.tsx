@@ -7,7 +7,7 @@ export interface NftBaseAtomicAssets {
   collection_name: string | null
   schema_name: string | null
   template_id: number | null
-  immutable_serialized_data: [] | null
+  immutable_serialized_data: number[]
   mutable_serialized_data: [] | null
 }
 

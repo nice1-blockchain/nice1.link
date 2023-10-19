@@ -22,7 +22,7 @@ export interface TemplateBaseAtomicAssets {
   burnable: boolean | null
   max_supply: number | null
   issued_supply: number | null
-  immutable_serialized_data: [] | null
+  immutable_serialized_data: number[]
 }
 
 export interface TemplateAtomicAssets {
@@ -33,7 +33,7 @@ export interface TemplateAtomicAssets {
 
 export interface SchemaBaseAtomicAssets {
   schema_name: string | null
-  format: [{}] | null
+  format: [] 
 }
 
 export interface SchemaAtomicAssets {
@@ -115,7 +115,7 @@ const NftCardAtomicAssets = () => {
   }
 
 
-  const searchMatchesInTempAAImag = (nameCollect: any, idTemplate: any) => {  
+  const searchMatchesInTempAAImag = (nameCollect: any, idTemplate: any) => {
 
     try {
 
@@ -199,7 +199,7 @@ const NftCardAtomicAssets = () => {
 
     const result: any = {};
     let asciiIndex = 0;
-    let urlImg = ''
+    let cadTex = 'by default....'
 
     for (const field of schema) {
       const fieldName = field.name;
@@ -207,7 +207,7 @@ const NftCardAtomicAssets = () => {
 
       if (fieldType === 'string') {
         if ( fieldName === 'name') {
-          const indiceCampo = ascii[asciiIndex];
+          const indexField = ascii[asciiIndex];
           const strLength = ascii[asciiIndex + 1];
           const strBytes = ascii.slice(asciiIndex + 2, asciiIndex + strLength + 2);
           const str = String.fromCharCode(...strBytes);
@@ -218,7 +218,7 @@ const NftCardAtomicAssets = () => {
       }
     }
     console.log(result)
-    return urlImg;
+    return cadTex;
   }
 
 

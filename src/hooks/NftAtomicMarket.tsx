@@ -5,10 +5,13 @@ import { useAnchor } from '@nice1/react-tools'
 export interface NftBaseAtomicMarket {
   sale_id: number | null
   seller: string | null
-  asset_ids: [number] | null
+  asset_ids: number [] | null
   offer_id: number | null
   listing_price: number | null
+  settlement_symbol: string | null
   collection_name: string | null
+  collection_fee: number | null
+  ramPayer: string | null
 }
 
 
