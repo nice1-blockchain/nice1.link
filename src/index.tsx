@@ -23,8 +23,8 @@ if (!rootElement) {
 const root = createRoot(rootElement)
 
 root.render(
-  <React.StrictMode>
-    <ColorModeScript />
+  //  <React.StrictMode>
+  //  <ColorModeScript />
     <ChakraProvider theme={theme}>
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
@@ -44,7 +44,7 @@ root.render(
         </Nice1Provider>
       </AnchorProvider>
     </ChakraProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
 )
 
 // If you want your app to work offline and load faster, you can change
