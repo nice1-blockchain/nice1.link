@@ -33,6 +33,7 @@ const NftCardAtomicMarket = () => {
   const [is1RoundTemplate, setIs1RoundTemplate] = useState<boolean>(true)
   const [counterNFTs, setCounterNFTs] = useState<number>(0)
   const [counterTemplates, setCounterTemplates] = useState<number>(0)
+  const [disabledButtonNextPage, setDisabledButtonNextPage] = useState(true);
 
   let itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -41,7 +42,28 @@ const NftCardAtomicMarket = () => {
   const endIndex = startIndex + itemsPerPage;
   const currentData = nftsAM.slice(startIndex, endIndex);
 
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [imagesTotal, setImagesTotal] = useState(itemsPerPage);
+
+
+  const handlerImageLoading = () => {
+    setImagesLoaded(imagesLoaded + itemsPerPage);
+
+    if (imagesLoaded === imagesTotal) {
+      setDisabledButtonNextPage(false)
+    } else {
+      setTimeout(() => {
+        setDisabledButtonNextPage(false);
+      }, 1000);
+
+    }
+  }
+
+
   const nextPage = () => {
+    setImagesLoaded(0);
+    setDisabledButtonNextPage(true)
+
     setCurrentPage(currentPage + 1);
     setNftsAAImagInit(false)
     setTemplateAAImagInit(false)
@@ -117,8 +139,11 @@ const NftCardAtomicMarket = () => {
 
 
 
+
+
+
 // ***************************  GET ASSETS ************************************************************
-  async function getAssetImagFromAtomicAssets(seller, assetIds) {
+  async function getAssetImagFromAtomicAssets(seller: string, assetIds: any) {
 
     return new Promise((resolve, reject) => {
       updateSearchAssetImag(seller, assetIds)
@@ -137,7 +162,7 @@ const NftCardAtomicMarket = () => {
     });
   }
 
-  const updateSearchAssetImag = async (seller: any, assetIds: any) => {
+  const updateSearchAssetImag = async (seller: string, assetIds: any) => {
 
     if (nftsAAImagInit || session === null) {
       return
@@ -166,7 +191,7 @@ const NftCardAtomicMarket = () => {
 
 
   // ***************************  GET TEMPLATES ************************************************************
-  async function getTemplateImagFromAtomicAssets(collection, templateId) {
+  async function getTemplateImagFromAtomicAssets(collection: string, templateId: any) {
 
     return new Promise((resolve, reject) => {
       updateSearchTemplateImag(collection, templateId)
@@ -186,7 +211,7 @@ const NftCardAtomicMarket = () => {
   }
 
 
-  const updateSearchTemplateImag = async (collection: any, templateId: any) => {
+  const updateSearchTemplateImag = async (collection: string, templateId: any) => {
 
     if (templateAAImagInit || session === null) {
       return
@@ -215,7 +240,7 @@ const NftCardAtomicMarket = () => {
 
 
   // ***************************  GET SCHEMAS ************************************************************
-  const updateSearchSchemaByCollection = async (nameCollect: any, nameSchema: any) => {
+  const updateSearchSchemaByCollection = async (nameCollect: string, nameSchema: any) => {
 
     if (schemaAAInit || session === null) {
       return
@@ -344,7 +369,7 @@ const NftCardAtomicMarket = () => {
   }
 
 
-  const convertAsciiToText = (cadAscii) => {
+  const convertAsciiToText = (cadAscii: string) => {
     const asciiValues = cadAscii.split(' ');
     const urlText = 'https://atomichub-ipfs.com/ipfs/' + asciiValues.map(value => String.fromCharCode(parseInt(value, 10))).join('');
     return urlText;
@@ -359,14 +384,17 @@ const NftCardAtomicMarket = () => {
 
 
   const searchName = (asset_ids: any) => {
-    if (nftsAAImag.length > 0 && templateAAImag.length > 0 && nftsAAImag.length === templateAAImag.length) {
+        if (nftsAAImag.length > 0 && templateAAImag.length > 0 && nftsAAImag.length === templateAAImag.length) {
       return getNameTemplate(asset_ids)
     }
   }
 
 
+
+
   return (
     <>
+
       <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
         {
           currentData.map((nft, k) => (
@@ -376,22 +404,23 @@ const NftCardAtomicMarket = () => {
                   <Image m={2}
                     borderRadius={'30px'}
                     objectFit={'cover'}
-                    src={searchImg(nft.asset_ids)} />
+                    src={searchImg(nft.asset_ids)}
+                    onLoad={handlerImageLoading}/>
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='lg' color='gray.300'>Name: {searchName(nft.asset_ids)}</Text>
-                    </Box>
-                <Box ml={5}>
-                  <Text fontSize='md' color='gray.400'>Id: {nft.asset_ids}</Text>
+                  <Text fontSize='lg' color='gray.300' ><strong>{searchName(nft.asset_ids)}</strong></Text>
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='md' color='gray.400'>Sale_id: {nft.sale_id}</Text>
+                  <Text fontSize='xs' color='gray.400'>Id: {nft.asset_ids}</Text>
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='xl' color='gray.400'>Price: {nft.listing_price}</Text>
+                  <Text fontSize='xs' color='gray.400'>Sale_id: {nft.sale_id}</Text>
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='xl' color='gray.400'>Collection: {nft.collection_name}</Text>
+                  <Text fontSize='xs' color='gray.400'>Price: {nft.listing_price}</Text>
+                </Box>
+                <Box ml={5}>
+                  <Text fontSize='xs' color='gray.400'>Collection: {nft.collection_name}</Text>
                 </Box>
               </VStack>
               <Box >
@@ -404,7 +433,7 @@ const NftCardAtomicMarket = () => {
       <Box ml={5}>
         <Button onClick={prevPage} disabled={currentPage === 0}>Previous</Button>
         <span> Page {currentPage + 1} of {totalPages} </span>
-        <Button onClick={nextPage} disabled={currentPage === totalPages - 1}>Next</Button>
+        <Button onClick={nextPage} disabled={currentPage === totalPages - 1 || disabledButtonNextPage}>Next</Button>
       </Box>
 
     </>

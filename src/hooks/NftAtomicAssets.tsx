@@ -3,12 +3,13 @@ import { useAnchor } from '@nice1/react-tools'
 
 
 export interface NftBaseAtomicAssets {
-  asset_id: number | null
-  collection_name: string | null
-  schema_name: string | null
-  template_id: number | null
+  asset_id: number //| null
+  collection_name: string //| null
+  schema_name: string //| null
+  template_id: number //| null
   immutable_serialized_data: number[]
-  mutable_serialized_data: [] | null
+  mutable_serialized_data: [] //| null
+  //ramPayer: string //| null
 }
 
 

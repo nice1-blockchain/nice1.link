@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAnchor } from '@nice1/react-tools'
-import { useNftAtomicAssets } from '../../hooks/NftAtomicAssets'
+import { NftBaseAtomicAssets } from '../../hooks/NftAtomicAssets'
 import ProfileCard from '../../profile/ProfileCard'
 import BalanceCard from '../../profile/BalanceCard'
 
@@ -16,12 +16,12 @@ import {
 
 
 export interface TemplateBaseAtomicAssets {
-  template_id: number | null
-  schema_name: string | null
-  transferable: boolean | null
-  burnable: boolean | null
-  max_supply: number | null
-  issued_supply: number | null
+  template_id: number //| null
+  schema_name: string //| null
+  transferable: boolean //| null
+  burnable: boolean //| null
+  max_supply: number //| null
+  issued_supply: number //| null
   immutable_serialized_data: number[]
 }
 
@@ -32,8 +32,8 @@ export interface TemplateAtomicAssets {
 
 
 export interface SchemaBaseAtomicAssets {
-  schema_name: string | null
-  format: [] 
+  schema_name: string //| null
+  format: []
 }
 
 export interface SchemaAtomicAssets {
@@ -44,50 +44,129 @@ export interface SchemaAtomicAssets {
 
 
 const NftCardAtomicAssets = () => {
-  const { nftsAA } = useNftAtomicAssets()
+
   const { session } = useAnchor()
+
+  const [nftsAA, setNftsAA] = useState<NftBaseAtomicAssets[]>([])
+  const [nftsAAInit, setNftsAAInit] = useState<boolean>(false)
 
   const [templateAA, setTemplateAA] = useState<TemplateBaseAtomicAssets[]>([])
   const [templateAAInit, setTemplateAAInit] = useState<boolean>(false)
 
-  //const [schemaAA, setSchemaAA] = useState<SchemaBaseAtomicAssets[]>([])
   const [schemaAA, setSchemaAA] = useState<SchemaBaseAtomicAssets[]>([])
   const [schemaAAInit, setSchemaAAInit] = useState<boolean>(false)
 
+  const [counterNFTs, setCounterNFTs] = useState<number>(0)
 
 
-  const updateTemplateByCollection = async (nameCollect: any, idTemplate: any) => {
+
+  useEffect(() => {
+    ; (async () => {
+      if (nftsAAInit || session === null) {
+        return
+      }
+
+      const { rows } = await session.client.v1.chain.get_table_rows({
+        json: true,
+        code: 'atomicassets',
+        table: 'assets',
+        scope: session.auth.actor,
+        limit: 1000,
+        reverse: false,
+        show_payer: false,
+      })
+      const nft_rows = rows
+
+      if (!nft_rows) {
+        return
+      }
+
+      setNftsAA(nft_rows)
+      setNftsAAInit(true)
+      setCounterNFTs(nft_rows.length)
+
+    })()
+  }, [session, nftsAAInit])
+
+
+
+  useEffect(() => {
+
+    const loadTemplatesAA = async () => {
+
+      if (nftsAA.length > 0 && nftsAA.length === counterNFTs && nftsAAInit) {
+
+          for (const item of nftsAA) {
+            try {
+              const templateImagTemp = await getTemplateImagFromAtomicAssets(item.collection_name, item.template_id)
+            } catch (error) {
+              console.error("Error in useEffect > loadTemplatesAAImg/is1Round : ", error);
+            }
+          }
+
+        //}
+      }
+    }
+
+
+    loadTemplatesAA();
+
+  }, [nftsAA, templateAA, nftsAAInit, templateAAInit]);
+
+
+
+
+  // ***************************  GET TEMPLATES ************************************************************
+  async function getTemplateImagFromAtomicAssets(collection: string, templateId: any) {
+
+    return new Promise((resolve, reject) => {
+      updateSearchTemplateImag(collection, templateId)
+        .then(response => {
+          if (response) {
+            resolve(response)
+            setTemplateAA(prevTemplateAAImag => [...prevTemplateAAImag, ...response]);
+          }
+        })
+        .catch(error => {
+          reject(`Error in getTemplateImagFromAtomicAssets > updateSearchTemplateImag: ${error}`);
+        })
+        .finally(() => {
+          setTemplateAAInit(true)
+        })
+    });
+  }
+
+
+  const updateSearchTemplateImag = async (collection: string, templateId: any) => {
+
     if (templateAAInit || session === null) {
       return
     }
-
+    //await new Promise(resolve => setTimeout(resolve, 600));
     const { rows } = await session.client.v1.chain.get_table_rows({
       json: true,
       code: 'atomicassets',
       table: 'templates',
-      scope: nameCollect,
+      scope: collection,
       key_type: "i64",
-      lower_bound: idTemplate,
-      upper_bound: idTemplate,
+      lower_bound: templateId,
+      upper_bound: templateId,
       limit: 1000,
       reverse: false,
       show_payer: false,
     })
 
-    const nft_rows_Template = rows
+    const nft_rows_TemplateAAImag = rows
 
-    if (!nft_rows_Template) {
-      return
+    if (nft_rows_TemplateAAImag) {
+      return nft_rows_TemplateAAImag
     }
-
-    setTemplateAA(prevTemplateAA => [...prevTemplateAA, ...nft_rows_Template]);
-    //setTemplateAA(nft_rows_Template);
-    setTemplateAAInit(true)
-
   }
 
 
-  const updateSchemaByCollection = async (nameCollect: any, nameSchema: any) => {
+  // ***************************  GET SCHEMAS ************************************************************
+  const updateSearchSchemaByCollection = async (nameCollect: string, nameSchema: any) => {
+
     if (schemaAAInit || session === null) {
       return
     }
@@ -103,95 +182,49 @@ const NftCardAtomicAssets = () => {
       reverse: false,
       show_payer: false,
     })
-    const nft_rowSchema = rows
 
-    if (!nft_rowSchema) {
+    const nft_row_Schema = rows
+
+    if (!nft_row_Schema) {
       return
     }
 
-    setSchemaAA(prevSchemaAA => [...prevSchemaAA, ...nft_rowSchema]);
-    //setSchemaAA(nft_rowSchema);
+    setSchemaAA(prevSchemaAA => [...prevSchemaAA, ...nft_row_Schema]);
     setSchemaAAInit(true)
   }
 
 
-  const searchMatchesInTempAAImag = (nameCollect: any, idTemplate: any) => {
+  // ***************************  GET NAMES ************************************************************
+  const getNameTemplate = (asset_ids: any) => {
 
-    try {
+    let cadText
 
-      updateTemplateByCollection(nameCollect, idTemplate)
-      const MatchesInTempAA = templateAA.find(listTemplateAA => listTemplateAA.template_id === idTemplate);
-      let immutableSerDatTemp
+    if (nftsAA.length > 0) {
+      const MatchesInAssetsAAImag = nftsAA.find(listAssetsAAImag => listAssetsAAImag.asset_id == asset_ids);
 
-      const targetSequence = [81, 109]; // Sequence start url
-      let sequenceFound = false
-      let extractedAsciiString = ''
-      let cadText = ''
+      if (MatchesInAssetsAAImag) {
+        let collectionNameTemp = MatchesInAssetsAAImag.collection_name
+        let templateIdNameTemp = MatchesInAssetsAAImag.template_id
 
-      if (MatchesInTempAA) {
-        immutableSerDatTemp = MatchesInTempAA.immutable_serialized_data
+        if (templateAA.length > 0) {
+          const MatchesInTemplateAAImag = templateAA.find(listTemplateAAImag => listTemplateAAImag.template_id == templateIdNameTemp);
 
-        for (let i = 0; i <= immutableSerDatTemp.length - targetSequence.length; i++) {
-          if (immutableSerDatTemp.slice(i, i + targetSequence.length).every((value, index) => value === targetSequence[index])) {
-            sequenceFound = true;
-            extractedAsciiString = immutableSerDatTemp.slice(i, i + targetSequence.length + 44).join(' ');
-            cadText = convertAsciiToText(extractedAsciiString)
-            break;
+          if (MatchesInTemplateAAImag) {
+            let immutableSerDatTemp = MatchesInTemplateAAImag.immutable_serialized_data
+            let schemaTemp = MatchesInTemplateAAImag.schema_name
+
+            updateSearchSchemaByCollection(collectionNameTemp, schemaTemp)
+            const MatchesInSchemaAA = schemaAA.find(listSchemaAA => listSchemaAA.schema_name == schemaTemp);
+
+            if (MatchesInSchemaAA) {
+              let formatSchemaTemp = MatchesInSchemaAA.format
+              cadText = deserializeSchemaName(immutableSerDatTemp, formatSchemaTemp)
+            }
           }
         }
-      } else {
-          cadText = 'Immutable Serial Data No Found...'
-        }
-
-      return cadText
-
-    } catch (error) {
-        console.error('Error:', error);
       }
-  }
-
-
-  const convertAsciiToText = (cadAscii) => {
-    const asciiValues = cadAscii.split(' ');
-    const urlText = 'https://atomichub-ipfs.com/ipfs/' + asciiValues.map(value => String.fromCharCode(parseInt(value, 10))).join('');
-    return urlText;
-  };
-
-
-
-  const searchMatchesInTempAAName = (nameCollect: any, nameSchema: any, idTemplate: any) => {
-
-    try {
-      updateTemplateByCollection(nameCollect, idTemplate,)
-      const MatchesInTempAA = templateAA.find(listTemplateAA => listTemplateAA.template_id === idTemplate);
-      const MatchesInTempAAClone = structuredClone(MatchesInTempAA)
-
-      updateSchemaByCollection(nameCollect, nameSchema)
-      const MatchesInShemaAA = schemaAA.find(listSchemaAA => listSchemaAA.schema_name === nameSchema);
-      const MatchesInShemaAAClone = structuredClone(MatchesInShemaAA)
-
-      let cadText = ''
-
-      if (MatchesInTempAAClone && MatchesInShemaAAClone) {
-
-        let immutableSerDatTemp
-        immutableSerDatTemp = MatchesInTempAAClone.immutable_serialized_data
-
-        let formatSchema
-        formatSchema = MatchesInShemaAAClone.format
-
-        cadText = deserializeSchemaName(immutableSerDatTemp, formatSchema)
-
-      } else {
-        cadText = 'Sin coincidencias....'
-      }
-
-      return cadText
-
-    } catch (error) {
-      console.error('Error:', error);
     }
-
+    return cadText
   }
 
 
@@ -206,7 +239,7 @@ const NftCardAtomicAssets = () => {
       const fieldType = field.type;
 
       if (fieldType === 'string') {
-        if ( fieldName === 'name') {
+        if (fieldName === 'name') {
           const indexField = ascii[asciiIndex];
           const strLength = ascii[asciiIndex + 1];
           const strBytes = ascii.slice(asciiIndex + 2, asciiIndex + strLength + 2);
@@ -220,6 +253,67 @@ const NftCardAtomicAssets = () => {
     console.log(result)
     return cadTex;
   }
+
+
+
+  // ***************************  GET IMAGS ************************************************************
+  const getImagTemplate = (asset_ids: any) => {
+
+    let cadText
+
+    if (nftsAA.length > 0) {
+      const MatchesInAssetsAAImag = nftsAA.find(listAssetsAAImag => listAssetsAAImag.asset_id == asset_ids);
+
+      if (MatchesInAssetsAAImag) {
+        //let collectionImagTemp = MatchesInAssetsAAImag.collection_name
+        let templateIdImagTemp = MatchesInAssetsAAImag.template_id
+
+        if (templateAA.length > 0) {
+          const MatchesInTemplateAAImag = templateAA.find(listTemplateAAImag => listTemplateAAImag.template_id == templateIdImagTemp);
+
+          if (MatchesInTemplateAAImag) {
+            let immutableSerDatTemp
+            const targetSequence = [81, 109]; // Sequence start url
+            let sequenceFound = false
+            let extractedAsciiString = ''
+            immutableSerDatTemp = MatchesInTemplateAAImag.immutable_serialized_data
+
+            for (let i = 0; i <= immutableSerDatTemp.length - targetSequence.length; i++) {
+              if (immutableSerDatTemp.slice(i, i + targetSequence.length).every((value, index) => value === targetSequence[index])) {
+                sequenceFound = true;
+                extractedAsciiString = immutableSerDatTemp.slice(i, i + targetSequence.length + 44).join(' ');
+                cadText = convertAsciiToText(extractedAsciiString)
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+    return cadText
+  }
+
+
+  const convertAsciiToText = (cadAscii: string) => {
+    const asciiValues = cadAscii.split(' ');
+    const urlText = 'https://atomichub-ipfs.com/ipfs/' + asciiValues.map(value => String.fromCharCode(parseInt(value, 10))).join('');
+    return urlText;
+  }
+
+
+  const searchImg = (asset_id: any) => {
+    if (nftsAA.length > 0 && templateAA.length > 0 && nftsAA.length === templateAA.length) {
+      return getImagTemplate(asset_id)
+    }
+  }
+
+
+  const searchName = (asset_id: any) => {
+    if (nftsAA.length > 0 && templateAA.length > 0 && nftsAA.length === templateAA.length) {
+      return getNameTemplate(asset_id)
+    }
+  }
+
 
 
   return (
@@ -247,10 +341,10 @@ const NftCardAtomicAssets = () => {
                   <Image m={2}
                     borderRadius={'30px'}
                     objectFit={'cover'}
-                    src={searchMatchesInTempAAImag(nft.collection_name, nft.template_id)} />
+                    src={searchImg(nft.asset_id)} />
                 </Box>
                 <Box ml={5}>
-                  <Text fontSize='lg' color='gray.300'><strong>Name: {searchMatchesInTempAAName(nft.collection_name, nft.schema_name, nft.template_id)}</strong></Text>
+                  <Text fontSize='lg' color='gray.300'><strong>{searchName(nft.asset_id)}</strong></Text>
                 </Box>
                 <Box ml={5}>
                   <Text fontSize='xs' color='gray.400'>Id: {nft.asset_id}</Text>
