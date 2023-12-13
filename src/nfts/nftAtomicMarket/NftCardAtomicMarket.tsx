@@ -45,6 +45,18 @@ const NftCardAtomicMarket = () => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [imagesTotal, setImagesTotal] = useState(itemsPerPage);
 
+  const templateVacio: TemplateBaseAtomicAssets[] = [
+    {
+      template_id: -1,
+      schema_name: 'schema sin template',
+      transferable: false,
+      burnable: false,
+      max_supply: 0,
+      issued_supply: 0,
+      immutable_serialized_data: []
+    }
+  ];
+
 
   const handlerImageLoading = () => {
     setImagesLoaded(imagesLoaded + itemsPerPage);
@@ -190,7 +202,7 @@ const NftCardAtomicMarket = () => {
 
 
 
-  // ***************************  GET TEMPLATES ************************************************************
+  // ***************************  GET TEMPLATES IMAG ************************************************************
   async function getTemplateImagFromAtomicAssets(collection: string, templateId: any) {
 
     return new Promise((resolve, reject) => {
@@ -198,7 +210,11 @@ const NftCardAtomicMarket = () => {
         .then(response => {
           if (response) {
             resolve(response)
-            setTemplateAAImag(prevTemplateAAImag => [...prevTemplateAAImag, ...response]);
+            if (response.length === 0) {
+              setTemplateAAImag(prevTemplateAAImag => [...prevTemplateAAImag, ...templateVacio]);
+            } else {
+              setTemplateAAImag(prevTemplateAAImag => [...prevTemplateAAImag, ...response]);
+            }
           }
         })
         .catch(error => {
@@ -240,6 +256,27 @@ const NftCardAtomicMarket = () => {
 
 
   // ***************************  GET SCHEMAS ************************************************************
+
+  async function getSchemaNameFromAtomicAssets(nameCollect: string, nameSchema: any) {
+
+    return new Promise((resolve, reject) => {
+      updateSearchSchemaByCollection(nameCollect, nameSchema)
+        .then(response => {
+          if (response) {
+            resolve(response)
+            setSchemaAA(prevSchemaAA => [...prevSchemaAA, ...response]);
+          }
+        })
+        .catch(error => {
+          reject(`Error in getSchemaNameFromAtomicAssets > updateSearchSchemaByCollection: ${error}`);
+        })
+        .finally(() => {
+          setSchemaAAInit(true)
+        })
+    });
+  }
+
+
   const updateSearchSchemaByCollection = async (nameCollect: string, nameSchema: any) => {
 
     if (schemaAAInit || session === null) {
@@ -260,12 +297,12 @@ const NftCardAtomicMarket = () => {
 
     const nft_row_Schema = rows
 
-    if (!nft_row_Schema) {
-      return
+    if (nft_row_Schema) {
+      return nft_row_Schema
     }
 
-    setSchemaAA(prevSchemaAA => [...prevSchemaAA, ...nft_row_Schema]);
-    setSchemaAAInit(true)
+    //setSchemaAA(prevSchemaAA => [...prevSchemaAA, ...nft_row_Schema]);
+    //setSchemaAAInit(true)
   }
 
 
@@ -289,12 +326,14 @@ const NftCardAtomicMarket = () => {
             let immutableSerDatTemp = MatchesInTemplateAAImag.immutable_serialized_data
             let schemaTemp = MatchesInTemplateAAImag.schema_name
 
-            updateSearchSchemaByCollection(collectionNameTemp, schemaTemp)
+            getSchemaNameFromAtomicAssets(collectionNameTemp, schemaTemp)
             const MatchesInSchemaAA = schemaAA.find(listSchemaAA => listSchemaAA.schema_name == schemaTemp);
 
             if (MatchesInSchemaAA) {
               let formatSchemaTemp = MatchesInSchemaAA.format
               cadText = deserializeSchemaName(immutableSerDatTemp, formatSchemaTemp)
+            } else {
+              cadText = 'Name No Found by Schema !!!'
             }
           }
         }
@@ -347,20 +386,27 @@ const NftCardAtomicMarket = () => {
           const MatchesInTemplateAAImag = templateAAImag.find(listTemplateAAImag => listTemplateAAImag.template_id == templateIdImagTemp);
 
           if (MatchesInTemplateAAImag) {
-            let immutableSerDatTemp
-            const targetSequence = [81, 109]; // Sequence start url
-            let sequenceFound = false
-            let extractedAsciiString = ''
-            immutableSerDatTemp = MatchesInTemplateAAImag.immutable_serialized_data
+            if (MatchesInTemplateAAImag.template_id === -1) {
+              cadText = 'https://www.shutterstock.com/image-vector/grunge-green-not-available-word-260nw-1882317979.jpg'
 
-            for (let i = 0; i <= immutableSerDatTemp.length - targetSequence.length; i++) {
-              if (immutableSerDatTemp.slice(i, i + targetSequence.length).every((value, index) => value === targetSequence[index])) {
-                sequenceFound = true;
-                extractedAsciiString = immutableSerDatTemp.slice(i, i + targetSequence.length + 44).join(' ');
-                cadText = convertAsciiToText(extractedAsciiString)
-                break;
+            } else {
+              let immutableSerDatTemp
+              const targetSequence = [81, 109]; // Sequence start url
+              let sequenceFound = false
+              let extractedAsciiString = ''
+              immutableSerDatTemp = MatchesInTemplateAAImag.immutable_serialized_data
+
+              for (let i = 0; i <= immutableSerDatTemp.length - targetSequence.length; i++) {
+                if (immutableSerDatTemp.slice(i, i + targetSequence.length).every((value, index) => value === targetSequence[index])) {
+                  sequenceFound = true;
+                  extractedAsciiString = immutableSerDatTemp.slice(i, i + targetSequence.length + 44).join(' ');
+                  cadText = convertAsciiToText(extractedAsciiString)
+                  break;
+                }
               }
+
             }
+
           }
         }
       }
@@ -371,7 +417,8 @@ const NftCardAtomicMarket = () => {
 
   const convertAsciiToText = (cadAscii: string) => {
     const asciiValues = cadAscii.split(' ');
-    const urlText = 'https://atomichub-ipfs.com/ipfs/' + asciiValues.map(value => String.fromCharCode(parseInt(value, 10))).join('');
+    //const urlText = 'https://atomichub-ipfs.com/ipfs/' + asciiValues.map(value => String.fromCharCode(parseInt(value, 10))).join('');
+    const urlText = 'https://cloudflare-ipfs.com/ipfs/' + asciiValues.map(value => String.fromCharCode(parseInt(value, 10))).join('');
     return urlText;
   }
 
