@@ -33,7 +33,7 @@ const NftCardAtomicMarket = () => {
   const [is1RoundTemplate, setIs1RoundTemplate] = useState<boolean>(true)
   const [counterNFTs, setCounterNFTs] = useState<number>(0)
   const [counterTemplates, setCounterTemplates] = useState<number>(0)
-  const [disabledButtonNextPage, setDisabledButtonNextPage] = useState(true);
+  const [disabledButtonNextPage, setDisabledButtonNextPage] = useState(false);
   const [disabledButtonPrevPage, setDisabledButtonPrevPage] = useState(false);
 
   let itemsPerPage = 6;
@@ -65,12 +65,12 @@ const NftCardAtomicMarket = () => {
 
     if (imagesLoaded === imagesTotal) {
       setDisabledButtonNextPage(false)
-      //setDisabledButtonPrevPage(false)
+      setDisabledButtonPrevPage(false)
 
     } else {
       setTimeout(() => {
         setDisabledButtonNextPage(false);
-        //setDisabledButtonPrevPage(false)
+        setDisabledButtonPrevPage(false)
       }, 1000);
 
     }
@@ -84,6 +84,7 @@ const NftCardAtomicMarket = () => {
     setCurrentPage(currentPage + 1);
     setNftsAAImagInit(false)
     setTemplateAAImagInit(false)
+    setSchemaAAInit(false)
   };
 
   const prevPage = () => {
@@ -91,8 +92,9 @@ const NftCardAtomicMarket = () => {
     setDisabledButtonPrevPage(true)
 
     setCurrentPage(currentPage - 1);
-    //setNftsAAImagInit(false)
-    //setTemplateAAImagInit(false)
+    setNftsAAImagInit(false)
+    setTemplateAAImagInit(false)
+    setSchemaAAInit(false)
   };
 
 
@@ -450,6 +452,7 @@ const NftCardAtomicMarket = () => {
 
   return (
     <>
+
 
       <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
         {
