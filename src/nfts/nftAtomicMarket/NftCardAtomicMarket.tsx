@@ -34,6 +34,7 @@ const NftCardAtomicMarket = () => {
   const [counterNFTs, setCounterNFTs] = useState<number>(0)
   const [counterTemplates, setCounterTemplates] = useState<number>(0)
   const [disabledButtonNextPage, setDisabledButtonNextPage] = useState(true);
+  const [disabledButtonPrevPage, setDisabledButtonPrevPage] = useState(false);
 
   let itemsPerPage = 6;
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -45,10 +46,10 @@ const NftCardAtomicMarket = () => {
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [imagesTotal, setImagesTotal] = useState(itemsPerPage);
 
-  const templateVacio: TemplateBaseAtomicAssets[] = [
+  const templatEmpty: TemplateBaseAtomicAssets[] = [
     {
       template_id: -1,
-      schema_name: 'schema sin template',
+      schema_name: 'Schema empty',
       transferable: false,
       burnable: false,
       max_supply: 0,
@@ -59,13 +60,17 @@ const NftCardAtomicMarket = () => {
 
 
   const handlerImageLoading = () => {
+
     setImagesLoaded(imagesLoaded + itemsPerPage);
 
     if (imagesLoaded === imagesTotal) {
       setDisabledButtonNextPage(false)
+      //setDisabledButtonPrevPage(false)
+
     } else {
       setTimeout(() => {
         setDisabledButtonNextPage(false);
+        //setDisabledButtonPrevPage(false)
       }, 1000);
 
     }
@@ -82,7 +87,12 @@ const NftCardAtomicMarket = () => {
   };
 
   const prevPage = () => {
+    setImagesLoaded(0);
+    setDisabledButtonPrevPage(true)
+
     setCurrentPage(currentPage - 1);
+    //setNftsAAImagInit(false)
+    //setTemplateAAImagInit(false)
   };
 
 
@@ -147,7 +157,7 @@ const NftCardAtomicMarket = () => {
     loadNftsAAImag();
     loadTemplatesAAImg();
 
-  }, [nftsAAImag, templateAAImag, nftsAAImagInit, templateAAImagInit, is1RoundTemplate]);
+  }, [nftsAAImag, templateAAImag, nftsAAImagInit, templateAAImagInit, is1RoundTemplate, currentPage]);
 
 
 
@@ -211,7 +221,7 @@ const NftCardAtomicMarket = () => {
           if (response) {
             resolve(response)
             if (response.length === 0) {
-              setTemplateAAImag(prevTemplateAAImag => [...prevTemplateAAImag, ...templateVacio]);
+              setTemplateAAImag(prevTemplateAAImag => [...prevTemplateAAImag, ...templatEmpty]);
             } else {
               setTemplateAAImag(prevTemplateAAImag => [...prevTemplateAAImag, ...response]);
             }
@@ -333,7 +343,7 @@ const NftCardAtomicMarket = () => {
               let formatSchemaTemp = MatchesInSchemaAA.format
               cadText = deserializeSchemaName(immutableSerDatTemp, formatSchemaTemp)
             } else {
-              cadText = 'Name No Found by Schema !!!'
+              cadText = 'Name no found !!!'
             }
           }
         }
@@ -387,8 +397,7 @@ const NftCardAtomicMarket = () => {
 
           if (MatchesInTemplateAAImag) {
             if (MatchesInTemplateAAImag.template_id === -1) {
-              cadText = 'https://www.shutterstock.com/image-vector/grunge-green-not-available-word-260nw-1882317979.jpg'
-
+              cadText = `${process.env.PUBLIC_URL}/Nice1_NoPic.png`
             } else {
               let immutableSerDatTemp
               const targetSequence = [81, 109]; // Sequence start url
@@ -478,7 +487,7 @@ const NftCardAtomicMarket = () => {
         }
       </Grid>
       <Box ml={5}>
-        <Button onClick={prevPage} disabled={currentPage === 0}>Previous</Button>
+        <Button onClick={prevPage} disabled={currentPage === 0 || disabledButtonPrevPage}>Previous</Button>
         <span> Page {currentPage + 1} of {totalPages} </span>
         <Button onClick={nextPage} disabled={currentPage === totalPages - 1 || disabledButtonNextPage}>Next</Button>
       </Box>
