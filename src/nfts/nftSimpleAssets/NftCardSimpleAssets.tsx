@@ -83,13 +83,20 @@ const NftCard = () => {
         </Box>
       </HStack>
 
-      <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
+      <Grid ml={-5} mt={2} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)'>
           {
           nftsSA.map((nft, k) => (
-              <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1}mt={1} p={1} >
-                <Stack>
-                  <Image m={2} borderRadius={'30px'} objectFit={'cover'} src={getImgField(nft.idata, nft.mdata)} />
-                </Stack>
+            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} ml={1} mr={1} p={1}>
+              <VStack alignItems='center'>
+                <Box margin={'3'}>
+                  <Image 
+                    borderRadius={'30px'}
+                    objectFit={'cover'}
+                    src={getImgField(nft.idata, nft.mdata)} />
+                </Box>
+              </VStack>
+
+
                 <VStack alignItems='left'>
                   <Box ml={5} mt={2}>
                     {/* <Text fontSize='sm' color='gray.400'>Index Grid: {indexSelected}</Text> */}

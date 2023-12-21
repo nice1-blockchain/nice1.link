@@ -332,13 +332,13 @@ const NftCardAtomicAssets = () => {
 
 
 
-      <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
+      <Grid ml={-5} mt={2} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
         {
           nftsAA.map((nft, k) => (
-            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} p={1} >
-              <VStack alignItems='left'>
+            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} ml={1} mr={1} p={1} >
+              <VStack margin={'2'} alignItems='left'>
                 <Box ml={5}>
-                  <Image m={2}
+                  <Image marginRight={2}
                     borderRadius={'30px'}
                     objectFit={'cover'}
                     src={searchImg(nft.asset_id)} />

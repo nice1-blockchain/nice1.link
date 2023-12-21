@@ -100,7 +100,7 @@ export const NftBuyConfModalAM = ({ asset }: any) => {
   return (
     <>
       <Box p={4}>
-        <Button border={'1px'} onClick={activateCounter}>Buy</Button>
+        <Button marginLeft={'-4'} border={'1px'} onClick={activateCounter}>Buy</Button>
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent >

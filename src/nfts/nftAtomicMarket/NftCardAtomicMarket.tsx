@@ -5,11 +5,14 @@ import { NftBaseAtomicAssets } from '../../hooks/NftAtomicAssets'
 import { TemplateBaseAtomicAssets } from '../nftAtomicAssets/NftCardAtomicAssets'
 import { SchemaBaseAtomicAssets } from '../nftAtomicAssets/NftCardAtomicAssets'
 import { NftBuyConfModalAM } from './NftBuyConfModalAM'
+import ProfileCard from '../../profile/ProfileCard'
+import BalanceCard from '../../profile/BalanceCard'
 import {
   Grid,
   GridItem,
   Box,
   Text,
+  HStack,
   Image,
   VStack,
   Button,
@@ -452,24 +455,40 @@ const NftCardAtomicMarket = () => {
 
   return (
     <>
+      <HStack ml={-6} mt={-5} bg='bgs.widgets' justifyContent="flex-end">
+        <Box ml={5}>
+          <Text color='gray.400'>ATOMIC MARKET ----</Text>
+        </Box>
+        <Box >
+          <BalanceCard />
+        </Box>
+        <Box >
+          <ProfileCard />
+        </Box>
+      </HStack>
 
 
-      <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
+      <Grid ml={-5} mt={2} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
         {
           currentData.map((nft, k) => (
-            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} p={1} >
-              <VStack alignItems='left'>
-                <Box ml={5}>
-                  <Image m={2}
+            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} ml={1} mr={1} p={1}>
+              <VStack alignItems='center'>
+                <Box margin={'3'}>
+                  <Image
                     borderRadius={'30px'}
                     objectFit={'cover'}
                     src={searchImg(nft.asset_ids)}
                     onLoad={handlerImageLoading}/>
                 </Box>
-                <Box ml={5}>
-                  <Text fontSize='lg' color='gray.300' ><strong>{searchName(nft.asset_ids)}</strong></Text>
+              </VStack>
+
+              <VStack alignItems='center'>
+                <Box margin={'1'}>
+                  <Text fontSize='lg' color='gray.300' >{searchName(nft.asset_ids)}</Text>
                 </Box>
-                <Box ml={5}>
+              </VStack>
+              <VStack alignItems='left' margin={'3'}>
+                <Box >
                   <Text fontSize='xs' color='gray.400'>Id: {nft.asset_ids}</Text>
                 </Box>
                 <Box ml={5}>
@@ -482,14 +501,15 @@ const NftCardAtomicMarket = () => {
                   <Text fontSize='xs' color='gray.400'>Collection: {nft.collection_name}</Text>
                 </Box>
               </VStack>
-              <Box >
+
+              <Box alignItems='left' margin={'3'}>
                 <NftBuyConfModalAM asset={nft} />
               </Box>
             </GridItem>
           ))
         }
       </Grid>
-      <Box ml={5}>
+      <Box ml={-4} mt={2} >
         <Button onClick={prevPage} disabled={currentPage === 0 || disabledButtonPrevPage}>Previous</Button>
         <span> Page {currentPage + 1} of {totalPages} </span>
         <Button onClick={nextPage} disabled={currentPage === totalPages - 1 || disabledButtonNextPage}>Next</Button>

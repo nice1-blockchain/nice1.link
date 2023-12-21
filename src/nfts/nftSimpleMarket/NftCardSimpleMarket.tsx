@@ -10,6 +10,7 @@ import {
   Box,
   Text,
   HStack,
+  VStack,
   Image,
 } from '@chakra-ui/react'
 
@@ -127,25 +128,27 @@ const NftCardSimpleMarket = () => {
         </Box>
       </HStack>
 
-      <Grid mt={5} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)' >
+
+      <Grid ml={-5} mt={2} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)'>
         {
           nftsSM.map((nft, k) => (
-            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} p={1} >
-              <Box ml={5}>
-                <Image m={2} borderRadius={'30px'} objectFit={'cover'} src={searchMatchesInSA(nft.id)} />
-              </Box>
-              <Box ml={5}>
-                <Text color='gray.400'>- Id: {nft.id}</Text>
-              </Box>
-              <Box ml={5}>
-                <Text color='gray.400'>- Author: {nft.author}</Text>
-              </Box>
-              <Box ml={5}>
-                <Text color='gray.400'>- Owner: {nft.owner}</Text>
-              </Box>
-              <Box ml={5}>
-                <Text color='gray.400'>- Price: {nft.price}</Text>
-              </Box>
+            <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} ml={1} mr={1} p={1}>
+              <VStack margin={'2'} alignItems='center'>
+                <Box margin={'2'}>
+                  <Image marginRight={2}
+                    borderRadius={'30px'}
+                    objectFit={'cover'}
+                    src={searchMatchesInSA(nft.id)} />
+                </Box>
+              </VStack>
+              <VStack alignItems='left'>
+                <Box ml={5}>
+                  <Text color='gray.400'>Id: {nft.id}</Text>
+                  <Text color='gray.400'>Author: {nft.author}</Text>
+                  <Text color='gray.400'>Owner: {nft.owner}</Text>
+                  <Text color='gray.400'>Price: {nft.price}</Text>
+                </Box>
+              </VStack>
               <Box >
                 <NftBuyConfModal asset={nft} />
               </Box>
