@@ -1,5 +1,11 @@
-This project was bootstrapped with
-[Create React App](https://github.com/facebook/create-react-app).
+
+# Nice1.link
+Nice1.link is a WEB3 portal for Nice1 users that provides access to a series of interactions with assets and campaigns related to the same project.
+
+In a first phase, users will be able to configure their public profile with an alias and avatar that will represent their player profile, as well as acquire and manage their licenses and assets in an easy and intuitive way. They will also have access to a news and campaigns feed and a direct communication about the whole ecosystem.
+
+New features will be added to this portal as they are required.
+
 
 ## Available Scripts
 
