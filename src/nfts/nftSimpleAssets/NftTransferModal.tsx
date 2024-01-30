@@ -30,18 +30,18 @@ const NftTransferModal = ({ asset }: any) => {
   const inputMemoTransferRef = useRef<HTMLInputElement>(null);
   const inputMensajeErrorTransferRef = useRef<HTMLInputElement>(null);
 
-  const [resultTransfer, setResultTransfer] = useState(false)
-  const [idTransaction, setIdTransaction] = useState('')
-
+  const [resultTransaction, setResulTransaction] = useState(false)
+  const [infoTransaction, setInfoTransaction] = useState('')
+  
   const [modalResulTranSuccess, setModalResulTranSuccess] = useState(false);
   const [modalResulTransError, setModalResulTransOpenError] = useState(false);
 
 
-  const closeModalTransfer = (resTrans, idTrans) => {
+  const closeModalTransfer = (resTrans, infoTrans) => {
     if (resTrans) {
       onClose()
       setModalResulTranSuccess(true)
-      setIdTransaction(idTrans)
+      setInfoTransaction(infoTrans)
     } else {
       onClose()
       setModalResulTransOpenError(true)
@@ -50,9 +50,10 @@ const NftTransferModal = ({ asset }: any) => {
 
   const closePopups = () => {
     setTimeout(updateNfts, 100,);
+    setResulTransaction(false)
+    setInfoTransaction('')
     setModalResulTranSuccess(false)
     setModalResulTransOpenError(false)
-    setResultTransfer(false)
   }
 
 
@@ -99,8 +100,8 @@ const NftTransferModal = ({ asset }: any) => {
                   transfAssetId={asset.id}
                   transfMemo={inputMemoTransferRef}
                   transMesError={inputMensajeErrorTransferRef}
-                  resultTransaction={resultTransfer}
-                  idTransaction={idTransaction}
+                  resultTransaction={resultTransaction}
+                  infoTransaction={infoTransaction}
                   closeModalTransfer={closeModalTransfer}
                 />
               </Box>
@@ -119,7 +120,7 @@ const NftTransferModal = ({ asset }: any) => {
             <ModalCloseButton />
             <ModalBody>
               <Box p='1'>
-                <Text fontSize='small'>Transaction: {idTransaction} was successful !!!</Text>
+                <Text fontSize='small'>Transaction: {infoTransaction} was successful !!!</Text>
               </Box>
             </ModalBody>
           </ModalContent>

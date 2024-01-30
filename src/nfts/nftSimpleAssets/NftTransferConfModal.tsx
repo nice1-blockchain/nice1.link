@@ -18,7 +18,7 @@ import {
 
 
 
-const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, idTransaction, closeModalTransfer }: any) => {
+const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransaction, infoTransaction, closeModalTransfer }: any) => {
 
   const { session } = useAnchor()
   //const { updateNfts } = useNftSimpleAssets()
@@ -86,14 +86,16 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
             memo: valueInputMemoTransfer
           }
         }
-      }).then((result) => {
-        console.log(result)
-        resultTransfer = true
-        closeModalTransfer(resultTransfer, result.payload.tx)
-        //setTimeout(updateNfts, 250,);
-        return result;
+      }).then((response) => {
+        console.log(`Result: ${response}`)
+        resultTransaction = true
+        infoTransaction = response.payload.tx //tx
+        closeModalTransfer(resultTransaction, infoTransaction)
+        return response;
       }).catch((e) => {
         console.log(`Error: ${e}`)
+        resultTransaction = false
+        closeModalTransfer(resultTransaction)
       })
     }
   }
