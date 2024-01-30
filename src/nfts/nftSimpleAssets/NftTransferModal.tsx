@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 //import { useAnchor } from '@nice1/react-tools'
+import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import NftTransferConfModal from './NftTransferConfModal'
 import {
   Button,
@@ -22,6 +23,7 @@ import {
 
 const NftTransferModal = ({ asset }: any) => {
   //const { session } = useAnchor()
+  const { updateNfts } = useNftSimpleAssets()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const inputToTransferRef = useRef<HTMLInputElement>(null);
@@ -29,14 +31,29 @@ const NftTransferModal = ({ asset }: any) => {
   const inputMensajeErrorTransferRef = useRef<HTMLInputElement>(null);
 
   const [resultTransfer, setResultTransfer] = useState(false)
+  const [idTransaction, setIdTransaction] = useState('')
+
+  const [modalResulTranSuccess, setModalResulTranSuccess] = useState(false);
+  const [modalResulTransError, setModalResulTransOpenError] = useState(false);
 
 
-  const closeModalTransfer = (resTrans) => {
+  const closeModalTransfer = (resTrans, idTrans) => {
     if (resTrans) {
       onClose()
+      setModalResulTranSuccess(true)
+      setIdTransaction(idTrans)
+    } else {
+      onClose()
+      setModalResulTransOpenError(true)
     }
   }
 
+  const closePopups = () => {
+    setTimeout(updateNfts, 100,);
+    setModalResulTranSuccess(false)
+    setModalResulTransOpenError(false)
+    setResultTransfer(false)
+  }
 
 
   return (
@@ -83,14 +100,47 @@ const NftTransferModal = ({ asset }: any) => {
                   transfMemo={inputMemoTransferRef}
                   transMesError={inputMensajeErrorTransferRef}
                   resultTransaction={resultTransfer}
+                  idTransaction={idTransaction}
                   closeModalTransfer={closeModalTransfer}
                 />
               </Box>
               {/* <Button colorScheme={"red"} mr={3} onClick={onClose}>Cancel</Button> */}
             </ModalFooter>
           </ModalContent>
-          </Modal>
+        </Modal>
       </Box>
+
+
+      <Box>
+        <Modal isOpen={modalResulTranSuccess} onClose={closePopups}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transaction result</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Box p='1'>
+                <Text fontSize='small'>Transaction: {idTransaction} was successful !!!</Text>
+              </Box>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+
+      <Box>
+        <Modal isOpen={modalResulTransError} onClose={closePopups}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transaction result</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Box p='1'>
+                <Text fontSize='small'>Error processing the transaction. Please try again !!!</Text>
+              </Box>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+
     </>
   )
 }

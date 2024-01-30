@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAnchor } from '@nice1/react-tools'
-import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
+//import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import {
   Button,
   Box,
@@ -18,14 +18,16 @@ import {
 
 
 
-const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, closeModalTransfer }: any) => {
+const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransfer, idTransaction, closeModalTransfer }: any) => {
 
   const { session } = useAnchor()
-  const { updateNfts } = useNftSimpleAssets()
+  //const { updateNfts } = useNftSimpleAssets()
   const timeCountDown = 60 // Indicate number of definitive seconds
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
   const [isCountdownActive, setIsCountdownActive] = useState(false)
+
+
 
   useEffect(() => {
     if (isCountdownActive && timeLeft > 0) {
@@ -85,9 +87,10 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
           }
         }
       }).then((result) => {
+        console.log(result)
         resultTransfer = true
-        closeModalTransfer(resultTransfer)
-        setTimeout(updateNfts, 250,); // To do with Async function ?
+        closeModalTransfer(resultTransfer, result.payload.tx)
+        //setTimeout(updateNfts, 250,);
         return result;
       }).catch((e) => {
         console.log(`Error: ${e}`)
@@ -137,6 +140,7 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
           </ModalContent>
         </Modal>
       </Box>
+
     </>
   )
 }
