@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleMarket } from '../../hooks/NftSimpleMarket'
-import { NftBuyConfModal } from './NftBuyConfModalSM'
+import { NftBuyConfModalSM } from './NftBuyConfModalSM'
 import ProfileCard from '../../profile/ProfileCard'
 import BalanceCard from '../../profile/BalanceCard'
 import {
@@ -150,7 +150,7 @@ const NftCardSimpleMarket = () => {
                 </Box>
               </VStack>
               <Box >
-                <NftBuyConfModal asset={nft} />
+                <NftBuyConfModalSM asset={nft} />
               </Box>
             </GridItem>
           ))

@@ -18,7 +18,7 @@ import {
 
 
 
-export const NftBuyConfModal = ({ asset }: any ) => {
+export const NftBuyConfModalSM = ({ asset }: any ) => {
 
   const { session } = useAnchor()
   const { updateNfts } = useNftSimpleMarket()
@@ -26,6 +26,13 @@ export const NftBuyConfModal = ({ asset }: any ) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
   const [isCountdownActive, setIsCountdownActive] = useState(false)
+
+  const [resultTransaction, setResulTransaction] = useState(false)
+  const [infoTransaction, setInfoTransaction] = useState('')
+
+  const [modalResulTranSuccess, setModalResulTranSuccess] = useState(false);
+  const [modalResulTransError, setModalResulTransOpenError] = useState(false);
+
 
 
   useEffect(() => {
@@ -66,11 +73,21 @@ export const NftBuyConfModal = ({ asset }: any ) => {
             }
           }
         ]
-      }).then((result) => {
-        setTimeout(updateNfts, 250,);
-        return result;
+      }).then((response) => {
+        //setTimeout(updateNfts, 250,);
+        //return result;
+        console.log(`Result: ${response}`)
+        let resultTrans = true
+        //setResulTransaction(resultTrans)
+        let infoTrans = response.payload.tx //tx
+        //setInfoTransaction(infoTrans)
+        closeModalTransfer(resultTrans, infoTrans)
+        return response
+
       }).catch((e) => {
         console.log(`Error: ${e}`)
+        let resultTrans = false
+        closeModalTransfer(resultTrans, e)
       })
     }
   }
@@ -80,6 +97,27 @@ export const NftBuyConfModal = ({ asset }: any ) => {
     setIsCountdownActive(true);
     setTimeLeft(timeCountDown)
     onOpen()
+  }
+
+
+  const closeModalTransfer = (resTrans: boolean, infoTrans: any) => {
+    if (resTrans) {
+      onClose()
+      setModalResulTranSuccess(true)
+      setInfoTransaction(infoTrans)
+    } else {
+      onClose()
+      setModalResulTransOpenError(true)
+      //setInfoTransaction(infoTrans)
+    }
+  }
+
+  const closePopups = () => {
+    setTimeout(updateNfts, 100,);
+    setResulTransaction(false)
+    setInfoTransaction('')
+    setModalResulTranSuccess(false)
+    setModalResulTransOpenError(false)
   }
 
 
@@ -127,6 +165,39 @@ export const NftBuyConfModal = ({ asset }: any ) => {
           </ModalContent>
         </Modal>
       </Box>
+
+
+      <Box>
+        <Modal isOpen={modalResulTranSuccess} onClose={closePopups}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transaction result</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Box p='1'>
+                <Text fontSize='small'>Transaction {infoTransaction} was successful !!!</Text>
+              </Box>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+
+      <Box>
+        <Modal isOpen={modalResulTransError} onClose={closePopups}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transaction result</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Box p='1'>
+                <Text fontSize='small'>Error processing the transaction. Please try again !!!</Text>
+              </Box>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+
+
     </>
   )
 }
