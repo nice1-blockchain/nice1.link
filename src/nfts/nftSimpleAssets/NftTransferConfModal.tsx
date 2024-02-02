@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAnchor } from '@nice1/react-tools'
-//import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import {
   Button,
   Box,
@@ -18,15 +17,12 @@ import {
 
 
 
-const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, resultTransaction, infoTransaction, closeModalTransfer }: any) => {
-
+const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesError, isOkResultTrans, infoTransaction, closeModalTransfer }: any) => {
   const { session } = useAnchor()
-  //const { updateNfts } = useNftSimpleAssets()
   const timeCountDown = 60 // Indicate number of definitive seconds
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
   const [isCountdownActive, setIsCountdownActive] = useState(false)
-
 
 
   useEffect(() => {
@@ -59,7 +55,6 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
     }
   }
 
-
   /***
    * Validate that there are only lowercase and numbers...
    */
@@ -88,14 +83,14 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
         }
       }).then((response) => {
         console.log(`Result: ${response}`)
-        resultTransaction = true
+        isOkResultTrans = true
         infoTransaction = response.payload.tx //tx
-        closeModalTransfer(resultTransaction, infoTransaction)
+        closeModalTransfer(isOkResultTrans, infoTransaction)
         return response;
       }).catch((e) => {
         console.log(`Error: ${e}`)
-        resultTransaction = false
-        closeModalTransfer(resultTransaction)
+        isOkResultTrans = false
+        closeModalTransfer(isOkResultTrans)
       })
     }
   }

@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-//import { useAnchor } from '@nice1/react-tools';
 import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import NftDelegateConfModal from './NftDelegateConfModal';
 import DatePicker from "react-datepicker";
@@ -26,7 +25,6 @@ import {
 
 
 const NftDelegateModal = ({ asset }: any ) => {
-  //const { session } = useAnchor()
   const { updateNfts } = useNftSimpleAssets()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -38,20 +36,11 @@ const NftDelegateModal = ({ asset }: any ) => {
   const [valueSwitchRedelegate, setValueSwitchRedelegate] = useState(false);
   const [epochLimite, setEpochLimite] = useState(Date.now());
 
-  //const [resultDelegation, setResultDelegation] = useState(false)
-
-  const [resultTransaction, setResulTransaction] = useState(false)
+  const [isOkResultTransaction, setIsOkResultTransaction] = useState(false)
   const [infoTransaction, setInfoTransaction] = useState('')
 
-  const [modalResulTranSuccess, setModalResulTranSuccess] = useState(false);
-  const [modalResulTransError, setModalResulTransOpenError] = useState(false);
-
-
-  // const closeModalDelegation = (resDeleg) => {
-  //   if (resDeleg) {
-  //     onClose()
-  //   }
-  // }
+  const [isOpenModalResulTranSuccess, setIsOpenModalResulTranSuccess] = useState(false);
+  const [isOpenModalResulTransError, setIsOpenModalResulTransOpenError] = useState(false);
 
 
   const handleChangeRedelegate = () => {
@@ -66,20 +55,20 @@ const NftDelegateModal = ({ asset }: any ) => {
   const closeModalDelegation = (resTrans, infoTrans) => {
     if (resTrans) {
       onClose()
-      setModalResulTranSuccess(true)
+      setIsOpenModalResulTranSuccess(true)
       setInfoTransaction(infoTrans)
     } else {
       onClose()
-      setModalResulTransOpenError(true)
+      setIsOpenModalResulTransOpenError(true)
     }
   }
 
   const closePopups = () => {
     setTimeout(updateNfts, 100,);
-    setResulTransaction(false)
+    setIsOkResultTransaction(false)
     setInfoTransaction('')
-    setModalResulTranSuccess(false)
-    setModalResulTransOpenError(false)
+    setIsOpenModalResulTranSuccess(false)
+    setIsOpenModalResulTransOpenError(false)
   }
 
 
@@ -152,7 +141,7 @@ const NftDelegateModal = ({ asset }: any ) => {
                   delegRedeleg={valueSwitchRedelegate}
                   delegMemo={inputMemoDelegRef}
                   delMesError={inputMesErrorDelegRef}
-                  resultTransaction={resultTransaction}
+                  isOkResultTrans={isOkResultTransaction}
                   closeModalDelegation={closeModalDelegation}
                 />
               </Box>
@@ -161,10 +150,8 @@ const NftDelegateModal = ({ asset }: any ) => {
           </ModalContent>
         </Modal>
       </Box>
-
-
       <Box>
-        <Modal isOpen={modalResulTranSuccess} onClose={closePopups}>
+        <Modal isOpen={isOpenModalResulTranSuccess} onClose={closePopups}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Transaction result</ModalHeader>
@@ -177,9 +164,8 @@ const NftDelegateModal = ({ asset }: any ) => {
           </ModalContent>
         </Modal>
       </Box>
-
       <Box>
-        <Modal isOpen={modalResulTransError} onClose={closePopups}>
+        <Modal isOpen={isOpenModalResulTransError} onClose={closePopups}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Transaction result</ModalHeader>
@@ -192,8 +178,6 @@ const NftDelegateModal = ({ asset }: any ) => {
           </ModalContent>
         </Modal>
       </Box>
-
-
 
     </>
   )

@@ -18,15 +18,15 @@ import {
 
 
 
-const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, resultTransaction, infoTransaction,  closeModalDelegation } : any) => {
+const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, isOkResultTrans, infoTransaction,  closeModalDelegation } : any) => {
+
+  const { session } = useAnchor()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
 
   const timeCountDown = 60 // Indicate number of definitive seconds
   const secondsDay = 86400 // seconds in a day
   const oneThousand = 1000
-
-  const { session } = useAnchor()
-  const { updateNfts } = useNftSimpleAssets()
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [timeLeft, setTimeLeft] = useState(timeCountDown);
   const [isCountdownActive, setIsCountdownActive] = useState(false);
@@ -96,26 +96,18 @@ const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRed
           }
         }
       }).then((response) => {
-        //resultDelegation = true
-        //closeModalDelegation(resultDelegation)
-        //setTimeout(updateNfts, 500,); // To do with Async function ?
-        //return result;
         console.log(`Result: ${response}`)
-        resultTransaction = true
+        isOkResultTrans = true
         infoTransaction = response.payload.tx //tx
-        closeModalDelegation(resultTransaction, infoTransaction)
+        closeModalDelegation(isOkResultTrans, infoTransaction)
         return response;
-
       }).catch((e) => {
         console.log(`Error: ${e}`)
-        resultTransaction = false
-        closeModalDelegation(resultTransaction)
+        isOkResultTrans = false
+        closeModalDelegation(isOkResultTrans)
       })
     }
   }
-
-
-
 
 
   return (

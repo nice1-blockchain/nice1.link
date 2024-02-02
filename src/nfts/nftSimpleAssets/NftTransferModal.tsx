@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-//import { useAnchor } from '@nice1/react-tools'
 import { useNftSimpleAssets } from '../../hooks/NftSimpleAssets'
 import NftTransferConfModal from './NftTransferConfModal'
 import {
@@ -22,7 +21,6 @@ import {
 
 
 const NftTransferModal = ({ asset }: any) => {
-  //const { session } = useAnchor()
   const { updateNfts } = useNftSimpleAssets()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -30,30 +28,30 @@ const NftTransferModal = ({ asset }: any) => {
   const inputMemoTransferRef = useRef<HTMLInputElement>(null);
   const inputMensajeErrorTransferRef = useRef<HTMLInputElement>(null);
 
-  const [resultTransaction, setResulTransaction] = useState(false)
+  const [isOkResultTransaction, setIsOkResultTransaction] = useState(false)
   const [infoTransaction, setInfoTransaction] = useState('')
-  
-  const [modalResulTranSuccess, setModalResulTranSuccess] = useState(false);
-  const [modalResulTransError, setModalResulTransOpenError] = useState(false);
+
+  const [isOpenModalResulTranSuccess, setIsOpenModalResulTranSuccess] = useState(false);
+  const [isOpenModalResulTransError, setIsOpenModalResulTransOpenError] = useState(false);
 
 
-  const closeModalTransfer = (resTrans, infoTrans) => {
-    if (resTrans) {
+  const closeModalTransfer = (isOkResTrans, infoTrans) => {
+    if (isOkResTrans) {
       onClose()
-      setModalResulTranSuccess(true)
+      setIsOpenModalResulTranSuccess(true)
       setInfoTransaction(infoTrans)
     } else {
       onClose()
-      setModalResulTransOpenError(true)
+      setIsOpenModalResulTransOpenError(true)
     }
   }
 
   const closePopups = () => {
     setTimeout(updateNfts, 100,);
-    setResulTransaction(false)
+    setIsOkResultTransaction(false)
     setInfoTransaction('')
-    setModalResulTranSuccess(false)
-    setModalResulTransOpenError(false)
+    setIsOpenModalResulTranSuccess(false)
+    setIsOpenModalResulTransOpenError(false)
   }
 
 
@@ -69,7 +67,6 @@ const NftTransferModal = ({ asset }: any) => {
             <ModalBody>
               <pre>
                 <Box>
-                  {/* <Text>From: {session?.auth.actor.toString()}</Text> */}
                   <Text>Id: {asset.id}</Text>
                 </Box>
                 <Box>
@@ -100,7 +97,7 @@ const NftTransferModal = ({ asset }: any) => {
                   transfAssetId={asset.id}
                   transfMemo={inputMemoTransferRef}
                   transMesError={inputMensajeErrorTransferRef}
-                  resultTransaction={resultTransaction}
+                  isOkResultTrans={isOkResultTransaction}
                   infoTransaction={infoTransaction}
                   closeModalTransfer={closeModalTransfer}
                 />
@@ -110,10 +107,8 @@ const NftTransferModal = ({ asset }: any) => {
           </ModalContent>
         </Modal>
       </Box>
-
-
       <Box>
-        <Modal isOpen={modalResulTranSuccess} onClose={closePopups}>
+        <Modal isOpen={isOpenModalResulTranSuccess} onClose={closePopups}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Transaction result</ModalHeader>
@@ -128,7 +123,7 @@ const NftTransferModal = ({ asset }: any) => {
       </Box>
 
       <Box>
-        <Modal isOpen={modalResulTransError} onClose={closePopups}>
+        <Modal isOpen={isOpenModalResulTransError} onClose={closePopups}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Transaction result</ModalHeader>
@@ -145,7 +140,6 @@ const NftTransferModal = ({ asset }: any) => {
     </>
   )
 }
-
 
 export default NftTransferModal;
 
