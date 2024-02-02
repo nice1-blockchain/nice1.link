@@ -18,7 +18,7 @@ import {
 
 
 
-const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, resultDelegation, closeModalDelegation } : any) => {
+const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRedeleg, delegMemo, delMesError, resultTransaction, infoTransaction,  closeModalDelegation } : any) => {
 
   const timeCountDown = 60 // Indicate number of definitive seconds
   const secondsDay = 86400 // seconds in a day
@@ -95,17 +95,26 @@ const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRed
             memo: valueMemoDelegate
           }
         }
-      }).then((result) => {
-        resultDelegation = true
-        closeModalDelegation(resultDelegation)
-        setTimeout(updateNfts, 500,); // To do with Async function ?
-        return result;
+      }).then((response) => {
+        //resultDelegation = true
+        //closeModalDelegation(resultDelegation)
+        //setTimeout(updateNfts, 500,); // To do with Async function ?
+        //return result;
+        console.log(`Result: ${response}`)
+        resultTransaction = true
+        infoTransaction = response.payload.tx //tx
+        closeModalDelegation(resultTransaction, infoTransaction)
+        return response;
 
       }).catch((e) => {
         console.log(`Error: ${e}`)
+        resultTransaction = false
+        closeModalDelegation(resultTransaction)
       })
     }
   }
+
+
 
 
 
