@@ -27,6 +27,12 @@ export const NftBuyConfModalAM = ({ asset }: any) => {
   const [timeLeft, setTimeLeft] = useState(timeCountDown)
   const [isCountdownActive, setIsCountdownActive] = useState(false)
 
+  const [resultTransaction, setResulTransaction] = useState(false)
+  const [infoTransaction, setInfoTransaction] = useState('')
+
+  const [modalResulTranSuccess, setModalResulTranSuccess] = useState(false);
+  const [modalResulTransError, setModalResulTransOpenError] = useState(false);
+
 
   useEffect(() => {
     if (isCountdownActive && timeLeft > 0) {
@@ -79,11 +85,19 @@ export const NftBuyConfModalAM = ({ asset }: any) => {
             }
           }
         ]
-      }).then((result) => {
-        setTimeout(updateNftsAM, 250,);
-        return result;
+      }).then((response) => {
+        //setTimeout(updateNftsAM, 250,);
+        //return result;
+        console.log(`Result: ${response}`)
+        let resultTrans = true
+        let infoTrans = response.payload.tx //tx
+        closeModalTransfer(resultTrans, infoTrans)
+        return response
       }).catch((e) => {
+        //console.log(`Error: ${e}`)
         console.log(`Error: ${e}`)
+        let resultTrans = false
+        closeModalTransfer(resultTrans, e)
       })
     }
   }
@@ -93,6 +107,27 @@ export const NftBuyConfModalAM = ({ asset }: any) => {
     setIsCountdownActive(true);
     setTimeLeft(timeCountDown)
     onOpen()
+  }
+
+
+  const closeModalTransfer = (resTrans: boolean, infoTrans: any) => {
+    if (resTrans) {
+      onClose()
+      setModalResulTranSuccess(true)
+      setInfoTransaction(infoTrans)
+    } else {
+      onClose()
+      setModalResulTransOpenError(true)
+      //setInfoTransaction(infoTrans)
+    }
+  }
+
+  const closePopups = () => {
+    setTimeout(updateNftsAM, 250,);
+    setResulTransaction(false)
+    setInfoTransaction('')
+    setModalResulTranSuccess(false)
+    setModalResulTransOpenError(false)
   }
 
 
@@ -148,6 +183,37 @@ export const NftBuyConfModalAM = ({ asset }: any) => {
           </ModalContent>
         </Modal>
       </Box>
+
+      <Box>
+        <Modal isOpen={modalResulTranSuccess} onClose={closePopups}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transaction result</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Box p='1'>
+                <Text fontSize='small'>Transaction {infoTransaction} was successful !!!</Text>
+              </Box>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+
+      <Box>
+        <Modal isOpen={modalResulTransError} onClose={closePopups}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Transaction result</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Box p='1'>
+                <Text fontSize='small'>Error processing the transaction. Please try again !!!</Text>
+              </Box>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </Box>
+
     </>
   )
 }
