@@ -8,8 +8,8 @@ import NftCard from '../nfts/nftSimpleAssets/NftCardSimpleAssets'
 import Post from './Post'
 import BlogLayout from '../dashboard/BlogLayout'
 import NftCardSimpleMarket from '../nfts/nftSimpleMarket/NftCardSimpleMarket'
-import NftCardAtomicAssets from '../nfts/nftAtomicAssets/NftCardAtomicAssets'
-import NftCardAtomicMarket from '../nfts/nftAtomicMarket/NftCardAtomicMarket'
+//import NftCardAtomicAssets from '../nfts/nftAtomicAssets/NftCardAtomicAssets'
+//import NftCardAtomicMarket from '../nfts/nftAtomicMarket/NftCardAtomicMarket'
 
 const AppRoutes = () => {
   const { session } = useAnchor()
@@ -24,8 +24,8 @@ const AppRoutes = () => {
         <Route path='/' element={<DashboardLayout><Dashboard /></DashboardLayout>} />
         <Route path='/simple-asset' element={<DashboardLayout><NftCard /></DashboardLayout>} />
         <Route path='/simple-market' element={<DashboardLayout><NftCardSimpleMarket /></DashboardLayout>} />
-        <Route path='/atomic-asset' element={<DashboardLayout><NftCardAtomicAssets /></DashboardLayout>} />
-        <Route path='/atomic-market' element={<DashboardLayout><NftCardAtomicMarket /></DashboardLayout>} />
+        {/* <Route path='/atomic-asset' element={<DashboardLayout><NftCardAtomicAssets /></DashboardLayout>} />
+        <Route path='/atomic-market' element={<DashboardLayout><NftCardAtomicMarket /></DashboardLayout>} /> */}
         <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
       </Routes>
     </>

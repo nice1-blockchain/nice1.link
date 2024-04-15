@@ -60,7 +60,7 @@ const Menu = () => {
           title="Simple Market"
         />
       </Link>
-      <Link to='/atomic-asset'>
+      {/* <Link to='/atomic-asset'>
         <SVGIconButton
           variant='link'
           aria-label='Atomic Asset'
@@ -75,7 +75,7 @@ const Menu = () => {
           icon={<NFT />}
           title="Atomic Market"
         />
-      </Link>
+      </Link> */}
       <SVGIconButton
         variant='link'
         aria-label='Logout'
