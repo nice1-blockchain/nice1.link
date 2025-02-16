@@ -9,6 +9,10 @@ import Routes from './routes'
 import reportWebVitals from './reportWebVitals'
 import * as serviceWorker from './serviceWorker'
 import theme from './theme'
+import { NftSimpleAssetsProvider } from './hooks/NftSimpleAssets'
+import { NftSimpleMarketProvider } from './hooks/NftSimpleMarket'
+import { NftAtomicAssetsProvider } from './hooks/NftAtomicAssets'
+import { NftAtomicMarketProvider } from './hooks/NftAtomicMarket'
 
 const rootElement = document.getElementById('root')
 
@@ -19,20 +23,28 @@ if (!rootElement) {
 const root = createRoot(rootElement)
 
 root.render(
-  <React.StrictMode>
-    <ColorModeScript />
+  //  <React.StrictMode>
+  //  <ColorModeScript />
     <ChakraProvider theme={theme}>
       <AnchorProvider sessionKey='nice1-l1nk'>
         <Nice1Provider>
           <BlogProvider>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
-              <Routes />
-            </BrowserRouter>
+            <NftSimpleAssetsProvider>
+              <NftSimpleMarketProvider>
+                <NftAtomicAssetsProvider>
+                  <NftAtomicMarketProvider>
+                    <BrowserRouter basename={process.env.PUBLIC_URL}>
+                      <Routes />
+                    </BrowserRouter>
+                  </NftAtomicMarketProvider>
+                </NftAtomicAssetsProvider>
+              </NftSimpleMarketProvider>
+            </NftSimpleAssetsProvider>
           </BlogProvider>
         </Nice1Provider>
       </AnchorProvider>
     </ChakraProvider>
-  </React.StrictMode>
+  //</React.StrictMode>
 )
 
 // If you want your app to work offline and load faster, you can change

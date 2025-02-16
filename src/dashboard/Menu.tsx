@@ -41,18 +41,45 @@ const Menu = () => {
           variant='link'
           aria-label='User profile'
           icon={<User />}
+          title="User profile"
         />
       </Link>
-      <Link to='/nfts'>
+      <Link to='/simple-asset'>
         <SVGIconButton
           variant='link'
-          aria-label='Nft collection'
+          aria-label='Simple Asset'
           icon={<NFT />}
+          title="Simple Asset"
         />
       </Link>
+      <Link to='/simple-market'>
+        <SVGIconButton
+          variant='link'
+          aria-label='Simple Market'
+          icon={<NFT />}
+          title="Simple Market"
+        />
+      </Link>
+      {/* <Link to='/atomic-asset'>
+        <SVGIconButton
+          variant='link'
+          aria-label='Atomic Asset'
+          icon={<NFT />}
+          title="Atomic Asset"
+        />
+      </Link>
+      <Link to='/atomic-market'>
+        <SVGIconButton
+          variant='link'
+          aria-label='Atomic Market'
+          icon={<NFT />}
+          title="Atomic Market"
+        />
+      </Link> */}
       <SVGIconButton
         variant='link'
         aria-label='Logout'
+        title="Logout"
         icon={<Shutdown />}
         onClick={logout}
       />
