@@ -2,6 +2,7 @@ import { IconButton, VStack } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { AddIcon } from '@chakra-ui/icons'
 
 import {
   N1Link,
@@ -36,12 +37,21 @@ const Menu = () => {
           icon={<N1Link />}
         />
       </Link>
+      
       <Link to='/'>
         <SVGIconButton
           variant='link'
           aria-label='User profile'
           icon={<User />}
           title="User profile"
+        />
+      </Link>
+      <Link to='/creator'>
+        <SVGIconButton
+          variant='link'
+          aria-label='Creator'
+          icon={<AddIcon />}
+          title="Creator"
         />
       </Link>
       <Link to='/simple-asset'>

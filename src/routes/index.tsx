@@ -8,6 +8,9 @@ import NftCard from '../nfts/nftSimpleAssets/NftCardSimpleAssets'
 import Post from './Post'
 import BlogLayout from '../dashboard/BlogLayout'
 import NftCardSimpleMarket from '../nfts/nftSimpleMarket/NftCardSimpleMarket'
+import CreatorShell from "../pages/creator/CreatorShell";
+import CreatorHome  from "../pages/creator/CreatorHome";
+import CreatorPage  from "../pages/creator/CreatorPage";
 //import NftCardAtomicAssets from '../nfts/nftAtomicAssets/NftCardAtomicAssets'
 //import NftCardAtomicMarket from '../nfts/nftAtomicMarket/NftCardAtomicMarket'
 
@@ -27,6 +30,10 @@ const AppRoutes = () => {
         {/* <Route path='/atomic-asset' element={<DashboardLayout><NftCardAtomicAssets /></DashboardLayout>} />
         <Route path='/atomic-market' element={<DashboardLayout><NftCardAtomicMarket /></DashboardLayout>} /> */}
         <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
+        <Route path="/creator" element={<CreatorShell />}>
+          <Route index element={<CreatorHome />} />
+          <Route path="create" element={<CreatorPage />} />
+        </Route>
       </Routes>
     </>
 
