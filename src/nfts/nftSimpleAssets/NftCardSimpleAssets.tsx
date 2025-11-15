@@ -25,6 +25,7 @@ const NftCard = () => {
   const cleanFieldName = (cad) => {
     try {
       const cadena = cad
+      console.log(cadena);
       const objectIdata = JSON.parse(cadena);
       const name = objectIdata.name;
       return name

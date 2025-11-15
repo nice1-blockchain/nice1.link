@@ -13,10 +13,17 @@ import {
   HStack,
   Link,
   IconButton,
+  useToast,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
 } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useAnchor } from "@nice1/react-tools";
 import { asString } from "../../utils/asstring";
+import { useCreatorContract } from "../../hooks/useCreatorContract";
 
 /* ----------------------------- Helpers de formato ---------------------------- */
 /**
@@ -31,7 +38,7 @@ const toPrimeraMayus = (s: string): string => {
   return compactado ? compactado.charAt(0).toUpperCase() + compactado.slice(1) : "";
 };
 
-/** Para “Custom”: una sola palabra capitalizada */
+/** Para "Custom": una sola palabra capitalizada */
 const toCapitalizedWord = (s: string): string => {
   const sinDiacriticos = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const soloAlfaNumEsp = sinDiacriticos.replace(/[^A-Za-z0-9\s]+/g, " ");
@@ -48,12 +55,19 @@ const useIdGen = () => {
 /* --------------------------- Lista Field | Valor UI -------------------------- */
 type KV = { id: string; key: string; value: string };
 
-const KeyValueList: React.FC<{
+interface KeyValueListProps {
   items: KV[];
   onChange: (items: KV[]) => void;
   placeholderKey?: string;
   placeholderValue?: string;
-}> = ({ items, onChange, placeholderKey = "Field", placeholderValue = "Valor" }) => {
+}
+
+const KeyValueList = ({ 
+  items, 
+  onChange, 
+  placeholderKey = "Field", 
+  placeholderValue = "Valor" 
+}: KeyValueListProps) => {
   const border = useColorModeValue("gray.200", "whiteAlpha.200");
   const newId = useIdGen();
 
@@ -71,12 +85,12 @@ const KeyValueList: React.FC<{
           <Input
             value={row.key}
             placeholder={placeholderKey}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => edit(row.id, { key: e.target.value })}
+            onChange={(e) => edit(row.id, { key: e.target.value })}
           />
           <Input
             value={row.value}
             placeholder={placeholderValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => edit(row.id, { value: e.target.value })}
+            onChange={(e) => edit(row.id, { value: e.target.value })}
           />
           <IconButton
             aria-label="Eliminar"
@@ -114,11 +128,13 @@ const kvToObject = (list: KV[]) =>
 const CreatorPage: React.FC = () => {
   const border = useColorModeValue("gray.200", "whiteAlpha.200");
   const bg = useColorModeValue("white", "gray.800");
+  const toast = useToast();
 
   const { account } = useAnchor();
-  console.log(account);
-  const author = asString(account?.account_name); 
-  console.log(author);
+  const author = asString(account?.account_name);
+  
+  // Hook del contrato
+  const { createAsset, loading, error, clearError } = useCreatorContract();
 
   const [assetType, setAssetType] = useState<AssetType>("License");
   const [customTypeRaw, setCustomTypeRaw] = useState<string>("");
@@ -134,7 +150,7 @@ const CreatorPage: React.FC = () => {
   const [imageMode, setImageMode] = useState<ImageMode>("ipfs");
   const [imageValue, setImageValue] = useState<string>("");
 
-  // Normalización de imagen (variable intermedia para ayudar al tipado de TS)
+  // Normalización de imagen
   const ipfsValue = useMemo<string>(() => {
     if (!imageValue) return "";
     return imageValue.startsWith("ipfs://") ? imageValue : `ipfs://${imageValue}`;
@@ -147,14 +163,68 @@ const CreatorPage: React.FC = () => {
   const [idataExtras, setIdataExtras] = useState<KV[]>([]);
   const [mdataExtras, setMdataExtras] = useState<KV[]>([]);
 
-  const onCreate = () => {
-    if (!author) return;
+  // Validaciones
+  const isFormValid = useMemo(() => {
+    if (!author) return false;
+    if (!name.trim()) return false;
+    if (!imageNormalized.trim()) return false;
+    if (assetType === "Custom" && !customType.trim()) return false;
+    return true;
+  }, [author, name, imageNormalized, assetType, customType]);
+
+  const limpiarFormulario = () => {
+    setAssetType("License");
+    setCustomTypeRaw("");
+    setNameRaw("");
+    setImageMode("ipfs");
+    setImageValue("");
+    setIdataExtras([]);
+    setMdataExtras([]);
+    clearError();
+  };
+
+  const onCreate = async () => {
+    if (!author || !isFormValid) return;
+
     const category = assetType === "Custom" && customType ? customType : assetType;
     const idata = { name, ...kvToObject(idataExtras) };
     const mdata = { img: imageNormalized, ...kvToObject(mdataExtras) };
-    const payload = { author, owner: author, category, idata, mdata, requireclaim: false };
-    console.log("create payload", payload);
-    // TODO: contrato.actions.create(payload, { authorization: ... })
+
+    const payload = {
+      author,
+      owner: author,
+      category,
+      idata,
+      mdata,
+      requireclaim: false,
+    };
+
+    console.log("📦 Payload completo:", payload);
+
+    const result = await createAsset(payload);
+
+    if (result.success) {
+      toast({
+        title: "¡Activo creado exitosamente!",
+        description: `Se ha creado "${name}" (${category})`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+
+      // Limpiar formulario después de éxito
+      limpiarFormulario();
+    } else {
+      toast({
+        title: "Error al crear activo",
+        description: result.error || "Ocurrió un error desconocido",
+        status: "error",
+        duration: 8000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
   };
 
   return (
@@ -163,6 +233,36 @@ const CreatorPage: React.FC = () => {
         <Heading size="md" mb={4}>
           Create
         </Heading>
+
+        {/* Alert de error persistente */}
+        {error && (
+          <Alert status="error" mb={4} rounded="md">
+            <AlertIcon />
+            <Box flex="1">
+              <AlertTitle>Error en la transacción</AlertTitle>
+              <AlertDescription display="block" fontSize="sm">
+                {error}
+              </AlertDescription>
+            </Box>
+            <CloseButton
+              alignSelf="flex-start"
+              position="relative"
+              right={-1}
+              top={-1}
+              onClick={clearError}
+            />
+          </Alert>
+        )}
+
+        {/* Alert si no hay wallet conectado */}
+        {!author && (
+          <Alert status="warning" mb={4} rounded="md">
+            <AlertIcon />
+            <AlertDescription>
+              Conecta tu wallet para poder crear activos.
+            </AlertDescription>
+          </Alert>
+        )}
 
         <Stack spacing={6} maxW="820px">
           {/* Tipo de activo */}
@@ -199,7 +299,7 @@ const CreatorPage: React.FC = () => {
           {/* Nombre */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Nombre
+              Nombre <Text as="span" color="red.500">*</Text>
             </Text>
             <Input
               placeholder="Ingrese el nombre del Juego, Skin o Asset que quiere crear"
@@ -214,7 +314,7 @@ const CreatorPage: React.FC = () => {
           {/* Imagen */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Imagen representativa del "Activo"
+              Imagen representativa del "Activo" <Text as="span" color="red.500">*</Text>
             </Text>
             <RadioGroup
               value={imageMode}
@@ -280,32 +380,25 @@ const CreatorPage: React.FC = () => {
 
           {/* Botonera */}
           <HStack spacing={3} flexWrap="wrap">
-            <Button colorScheme="teal"  onClick={onCreate} isDisabled={!author}>
+            <Button
+              colorScheme="teal"
+              onClick={onCreate}
+              isDisabled={!isFormValid}
+              isLoading={loading}
+              loadingText="Creando..."
+            >
               Create {assetType === "Custom" && customType ? customType : assetType}
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setAssetType("License");
-                setCustomTypeRaw("");
-                setNameRaw("");
-                setImageMode("ipfs");
-                setImageValue("");
-                setIdataExtras([]);
-                setMdataExtras([]);
-              }}
-            >
+            <Button variant="outline" onClick={limpiarFormulario} isDisabled={loading}>
               Limpiar
             </Button>
           </HStack>
 
+          {/* Info técnica */}
           <Text fontSize="xs" opacity={0.7}>
-            * Próximo paso: conectar wallet/contrato. Usaremos
-            <code> idata.name = "{name}" </code> y
+            <code>idata.name = "{name}"</code> |
             <code> mdata.img = "{imageNormalized}"</code>
-            {assetType === "Custom" && customType
-              ? `, tipo Custom = "${customType}".`
-              : "."}
+            {assetType === "Custom" && customType && ` | tipo Custom = "${customType}"`}
           </Text>
         </Stack>
       </Box>
