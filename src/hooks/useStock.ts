@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
-const CONTRACT_NAME = 'niceXWax'; // Cambiar por el nombre real del contrato
+const CONTRACT_NAME = 'simpleassets'; // Cambiar por el nombre real del contrato
 
 export interface RawAsset {
   id: number;
@@ -127,10 +127,10 @@ export const useStock = () => {
       const grouped = groupAssets(rows as RawAsset[]);
       setGroupedAssets(grouped);
     } catch (err: any) {
-      console.error('Error cargando assets:', err);
-      setError(err?.message || 'Error desconocido al cargar assets');
+        console.error('Error cargando assets:', err);
+        setError(err?.message || 'Error desconocido al cargar assets');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   }, [session, groupAssets]);
 

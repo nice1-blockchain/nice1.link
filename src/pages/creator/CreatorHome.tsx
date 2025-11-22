@@ -19,6 +19,12 @@ const CreatorHome: React.FC = () => {
             <Button colorScheme="teal" onClick={() => nav("create")}>Ir a Create</Button>
           </Box>
 
+          <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1">
+            <Heading size="sm" mb={2}>Stock</Heading>
+            <Text fontSize="sm" mb={3}>Ver y duplicar tus assets creados.</Text>
+            <Button colorScheme="blue" onClick={() => nav("stock")}>Ir a Stock</Button>
+          </Box>
+
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" opacity={0.8}>
             <Heading size="sm" mb={2}>Modify</Heading>
             <Text fontSize="sm" mb={3}>Editar un activo existente (próximamente).</Text>

@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
 // Nombre del contrato (ajusta según tu configuración)
-const CONTRACT_NAME = 'simpleasset'; // en jungle4
+const CONTRACT_NAME = 'simpleassets'; // en jungle4
 
 export interface CreateAssetParams {
   author: string;
@@ -52,7 +52,7 @@ export const useCreatorContract = () => {
           ],
           data: {
             author: params.author,
-            category: params.category,
+            category: params.category.toLowerCase(),
             owner: params.owner,
             idata: JSON.stringify(params.idata), // El contrato espera string JSON
             mdata: JSON.stringify(params.mdata), // El contrato espera string JSON

@@ -11,6 +11,7 @@ import NftCardSimpleMarket from '../nfts/nftSimpleMarket/NftCardSimpleMarket'
 import CreatorShell from "../pages/creator/CreatorShell";
 import CreatorHome  from "../pages/creator/CreatorHome";
 import CreatorPage  from "../pages/creator/CreatorPage";
+import StockPage    from "../pages/creator/StockPage";
 //import NftCardAtomicAssets from '../nfts/nftAtomicAssets/NftCardAtomicAssets'
 //import NftCardAtomicMarket from '../nfts/nftAtomicMarket/NftCardAtomicMarket'
 
@@ -33,6 +34,7 @@ const AppRoutes = () => {
         <Route path="/creator" element={<CreatorShell />}>
           <Route index element={<CreatorHome />} />
           <Route path="create" element={<CreatorPage />} />
+          <Route path="stock" element={<StockPage />} />
         </Route>
       </Routes>
     </>

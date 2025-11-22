@@ -215,6 +215,7 @@ const CreatorPage: React.FC = () => {
 
       // Limpiar formulario después de éxito
       limpiarFormulario();
+      setTimeout(() => window.location.reload(), 1500);
     } else {
       toast({
         title: "Error al crear activo",
