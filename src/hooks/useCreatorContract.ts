@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
 // Nombre del contrato (ajusta según tu configuración)
-const CONTRACT_NAME = 'niceXWax'; // O el nombre real de tu contrato
+const CONTRACT_NAME = 'simpleasset'; // en jungle4
 
 export interface CreateAssetParams {
   author: string;

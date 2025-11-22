@@ -35,10 +35,10 @@ const StockPage: React.FC = () => {
 
   const categories = [
     { name: 'Todas', value: null },
-    { name: 'License', value: 'License' },
-    { name: 'Skin', value: 'Skin' },
-    { name: 'Asset', value: 'Asset' },
-    { name: 'Custom', value: 'Custom' },
+    { name: 'License', value: 'license' },
+    { name: 'Skin', value: 'skin' },
+    { name: 'Asset', value: 'asset' },
+    { name: 'Custom', value: 'custom' },
   ];
 
   const handleAssetClick = (asset: GroupedAsset) => {

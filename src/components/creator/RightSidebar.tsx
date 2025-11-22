@@ -83,10 +83,10 @@ const RightSidebar: React.FC = () => {
   const { groupedAssets, loading, filterByCategory } = useStock();
 
   // Filtrar por categoría
-  const licenses = filterByCategory("License");
-  const skins = filterByCategory("Skin");
-  const assets = filterByCategory("Asset");
-  const others = filterByCategory("Custom");
+  const licenses = filterByCategory("license");
+  const skins = filterByCategory("skin");
+  const assets = filterByCategory("asset");
+  const others = filterByCategory("custom");
 
   // Navegar a stock al hacer click
   const handleAssetClick = () => {

@@ -38,7 +38,7 @@ const toPrimeraMayus = (s: string): string => {
   return compactado ? compactado.charAt(0).toUpperCase() + compactado.slice(1) : "";
 };
 
-/** Para "Custom": una sola palabra capitalizada */
+/** Para "custom": una sola palabra capitalizada */
 const toCapitalizedWord = (s: string): string => {
   const sinDiacriticos = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const soloAlfaNumEsp = sinDiacriticos.replace(/[^A-Za-z0-9\s]+/g, " ");
@@ -110,7 +110,7 @@ const KeyValueList = ({
 };
 
 /* --------------------------------- Create UI -------------------------------- */
-type AssetType = "License" | "Skin" | "Asset" | "Custom";
+type AssetType = "license" | "skin" | "asset" | "custom";
 type ImageMode = "ipfs" | "url";
 
 // TODO: sustituir por URLs reales de documentación
@@ -136,10 +136,10 @@ const CreatorPage: React.FC = () => {
   // Hook del contrato
   const { createAsset, loading, error, clearError } = useCreatorContract();
 
-  const [assetType, setAssetType] = useState<AssetType>("License");
+  const [assetType, setAssetType] = useState<AssetType>("license");
   const [customTypeRaw, setCustomTypeRaw] = useState<string>("");
   const customType = useMemo<string>(
-    () => (assetType === "Custom" ? toCapitalizedWord(customTypeRaw) : ""),
+    () => (assetType === "custom" ? toCapitalizedWord(customTypeRaw) : ""),
     [assetType, customTypeRaw]
   );
 
@@ -168,12 +168,12 @@ const CreatorPage: React.FC = () => {
     if (!author) return false;
     if (!name.trim()) return false;
     if (!imageNormalized.trim()) return false;
-    if (assetType === "Custom" && !customType.trim()) return false;
+    if (assetType === "custom" && !customType.trim()) return false;
     return true;
   }, [author, name, imageNormalized, assetType, customType]);
 
   const limpiarFormulario = () => {
-    setAssetType("License");
+    setAssetType("license");
     setCustomTypeRaw("");
     setNameRaw("");
     setImageMode("ipfs");
@@ -186,7 +186,7 @@ const CreatorPage: React.FC = () => {
   const onCreate = async () => {
     if (!author || !isFormValid) return;
 
-    const category = assetType === "Custom" && customType ? customType : assetType;
+    const category = assetType === "custom" && customType ? customType : assetType;
     const idata = { name, ...kvToObject(idataExtras) };
     const mdata = { img: imageNormalized, ...kvToObject(mdataExtras) };
 
@@ -278,14 +278,14 @@ const CreatorPage: React.FC = () => {
                 <Radio value="License">License</Radio>
                 <Radio value="Skin">Skin</Radio>
                 <Radio value="Asset">Asset</Radio>
-                <Radio value="Custom">Custom</Radio>
+                <Radio value="Custom">custom</Radio>
               </HStack>
             </RadioGroup>
 
-            {assetType === "Custom" && (
+            {assetType === "custom" && (
               <Box mt={3}>
                 <Input
-                  placeholder='Defina tipo Custom (1 palabra, ej. "Tag")'
+                  placeholder='Defina tipo custom (1 palabra, ej. "Tag")'
                   value={customTypeRaw}
                   onChange={(e) => setCustomTypeRaw(e.target.value)}
                 />
@@ -387,7 +387,7 @@ const CreatorPage: React.FC = () => {
               isLoading={loading}
               loadingText="Creando..."
             >
-              Create {assetType === "Custom" && customType ? customType : assetType}
+              Create {assetType === "custom" && customType ? customType : assetType}
             </Button>
             <Button variant="outline" onClick={limpiarFormulario} isDisabled={loading}>
               Limpiar
@@ -398,7 +398,7 @@ const CreatorPage: React.FC = () => {
           <Text fontSize="xs" opacity={0.7}>
             <code>idata.name = "{name}"</code> |
             <code> mdata.img = "{imageNormalized}"</code>
-            {assetType === "Custom" && customType && ` | tipo Custom = "${customType}"`}
+            {assetType === "custom" && customType && ` | tipo custom = "${customType}"`}
           </Text>
         </Stack>
       </Box>
