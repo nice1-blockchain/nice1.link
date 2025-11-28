@@ -51,6 +51,13 @@ export const NftSimpleMarketProvider = ({ children }: { children: ReactNode }) =
         return
       }
 
+      const JUNGLE4_CHAIN_ID = '73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d'
+      if (session.chainId.toString() === JUNGLE4_CHAIN_ID) {
+        setNftsSM([])
+        setNftsSMInit(true)
+        return
+      }
+
       const { rows } = await session.client.v1.chain.get_table_rows({
         json: true,
         code: 'simplemarket',
