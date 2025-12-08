@@ -210,7 +210,7 @@ const ModifyPage: React.FC = () => {
           {selectedAsset && (
             <Box borderWidth="1px" borderColor={border} rounded="md" p={4}>
               <Text fontWeight="bold" mb={3}>
-                Asset Seleccionado:
+                Asset Selected:
               </Text>
               <HStack spacing={4} align="start">
                 <Image
@@ -241,7 +241,7 @@ const ModifyPage: React.FC = () => {
               {/* Mostrar mdata actual */}
               <Box mt={4} p={3} bg={mdataBg} rounded="md" fontSize="xs">
                 <Text fontWeight="bold" mb={1}>
-                  mdata actual:
+                  mdata:
                 </Text>
                 <Text fontFamily="mono">{JSON.stringify(selectedAsset.mdata, null, 2)}</Text>
               </Box>
@@ -283,7 +283,7 @@ const ModifyPage: React.FC = () => {
                   </HStack>
                 ))}
                 <Button size="sm" onClick={addField} alignSelf="flex-start">
-                  + Añadir campo
+                  + Add filed
                 </Button>
               </Stack>
             </Box>
