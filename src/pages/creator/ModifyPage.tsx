@@ -161,17 +161,17 @@ const ModifyPage: React.FC = () => {
     <Box flex="1" p={{ base: 0, md: 2 }}>
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
-          Modify - Editar Asset
+          Modify - Edit  Asset
         </Heading>
 
         <Stack spacing={6} maxW="820px">
           {/* Seleccionar Asset */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Selecciona el asset a modificar:
+              Select the asset to modify:
             </Text>
             <Select
-              placeholder="-- Selecciona un asset --"
+              placeholder="-- Select an asset --"
               value={selectedAssetId}
               onChange={(e) => setSelectedAssetId(e.target.value)}
               isDisabled={loadingAssets}
@@ -241,8 +241,7 @@ const ModifyPage: React.FC = () => {
               </Text>
               <Alert status="info" mb={3} fontSize="sm">
                 <AlertIcon />
-                Solo puedes modificar los campos <strong>mutables (mdata)</strong>. Los campos
-                inmutables (idata) no pueden cambiarse.
+                You can only modify the <strong>mutable fields (mdata)</strong>. The immutable fields (idata) cannot be changed.
               </Alert>
 
               <Stack spacing={3}>
@@ -259,7 +258,7 @@ const ModifyPage: React.FC = () => {
                       onChange={(e) => editField(field.id, { value: e.target.value })}
                     />
                     <IconButton
-                      aria-label="Eliminar"
+                      aria-label="Delete"
                       icon={<CloseIcon boxSize="2" />}
                       variant="ghost"
                       borderWidth="1px"
@@ -281,7 +280,7 @@ const ModifyPage: React.FC = () => {
               colorScheme="teal"
               onClick={handleModify}
               isLoading={modifying}
-              loadingText="Modificando..."
+              loadingText="Modifying..."
               isDisabled={!selectedAsset}
             >
               Modificar Asset
@@ -300,7 +299,7 @@ const ModifyPage: React.FC = () => {
 
           {!selectedAsset && (
             <Text fontSize="sm" color="gray.500" fontStyle="italic">
-              Selecciona un asset para empezar a editar sus campos mutables.
+              Select an asset to begin editing its mutable fields.
             </Text>
           )}
         </Stack>

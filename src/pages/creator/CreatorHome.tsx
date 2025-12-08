@@ -10,25 +10,25 @@ const CreatorHome: React.FC = () => {
   return (
     <Box flex="1" p={{ base: 0, md: 2 }}>
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6} minH="200px">
-        <Heading size="md" mb={4}>Acciones</Heading>
+        <Heading size="md" mb={4}>Actions</Heading>
 
         <Stack direction={{ base: "column", md: "row" }} spacing={4}>
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1">
             <Heading size="sm" mb={2}>Create</Heading>
-            <Text fontSize="sm" mb={3}>Crea una nueva License, Skin, Asset o Custom.</Text>
-            <Button colorScheme="teal" onClick={() => nav("create")}>Ir a Create</Button>
+            <Text fontSize="sm" mb={3}>Create a new License, Skin, Asset, or Custom.</Text>
+            <Button colorScheme="teal" onClick={() => nav("create")}>Go to Create</Button>
           </Box>
 
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1">
             <Heading size="sm" mb={2}>Stock</Heading>
-            <Text fontSize="sm" mb={3}>Ver y duplicar tus assets creados.</Text>
-            <Button colorScheme="blue" onClick={() => nav("stock")}>Ir a Stock</Button>
+            <Text fontSize="sm" mb={3}>View and duplicate your created assets.</Text>
+            <Button colorScheme="blue" onClick={() => nav("stock")}>Go to Stock</Button>
           </Box>
 
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" opacity={0.8}>
             <Heading size="sm" mb={2}>Modify</Heading>
-            <Text fontSize="sm" mb={3}>Editar un activo existente (próximamente).</Text>
-            <Button colorScheme="purple" onClick={() => nav("modify")}>Ir a Modify</Button>
+            <Text fontSize="sm" mb={3}>Edit an existing asset (coming soon).</Text>
+            <Button colorScheme="purple" onClick={() => nav("modify")}>Go to Modify</Button>
           </Box>
         </Stack>
       </Box>

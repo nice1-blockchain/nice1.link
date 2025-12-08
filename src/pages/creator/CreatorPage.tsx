@@ -269,7 +269,7 @@ const CreatorPage: React.FC = () => {
           {/* Tipo de activo */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Seleccione 1 "Activo" a crear:
+              Select 1 "Asset" to create:
             </Text>
             <RadioGroup
               value={assetType}
@@ -291,7 +291,7 @@ const CreatorPage: React.FC = () => {
                   onChange={(e) => setCustomTypeRaw(e.target.value)}
                 />
                 <Text fontSize="xs" opacity={0.7} mt={1}>
-                  Se aplicará automáticamente: <b>{customType || "—"}</b>
+                  It will be applied automatically: <b>{customType || "—"}</b>
                 </Text>
               </Box>
             )}
@@ -300,22 +300,22 @@ const CreatorPage: React.FC = () => {
           {/* Nombre */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Nombre <Text as="span" color="red.500">*</Text>
+              Name <Text as="span" color="red.500">*</Text>
             </Text>
             <Input
-              placeholder="Ingrese el nombre del Juego, Skin o Asset que quiere crear"
+              placeholder="Enter the name of the Game, Skin, or Asset you want to create"
               value={nameRaw}
               onChange={(e) => setNameRaw(e.target.value)}
             />
             <Text fontSize="sm" mt={2}>
-              Formato aplicado automáticamente: <b>{name || "—"}</b>
+              Format applied automatically: <b>{name || "—"}</b>
             </Text>
           </Box>
 
           {/* Imagen */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Imagen representativa del "Activo" <Text as="span" color="red.500">*</Text>
+              Representative image of the "Asset" <Text as="span" color="red.500">*</Text>
             </Text>
             <RadioGroup
               value={imageMode}
@@ -336,7 +336,7 @@ const CreatorPage: React.FC = () => {
               onChange={(e) => setImageValue(e.target.value)}
             />
             <Text fontSize="xs" opacity={0.7} mt={1}>
-              Guardaremos en <code>mdata.img</code>:{" "}
+              We will save in <code>mdata.img</code>:{" "}
               <b>{imageNormalized || "—"}</b>
             </Text>
           </Box>
@@ -344,12 +344,12 @@ const CreatorPage: React.FC = () => {
           {/* Extras inmutables */}
           <Box>
             <Text fontWeight="semibold">
-              ¿Necesita añadir un valor extra inmutable?
+              Do you need to add an extra immutable value?
             </Text>
             <Text fontSize="sm" mb={2}>
               <em>* </em>
               <Link href={INMUTABLE_DOC_URL} isExternal color="teal.500">
-                Leer más sobre datos extras inmutables
+                Read more about extra immutable data
               </Link>
             </Text>
             <KeyValueList
@@ -363,12 +363,12 @@ const CreatorPage: React.FC = () => {
           {/* Extras mutables */}
           <Box>
             <Text fontWeight="semibold">
-              ¿Necesita añadir un valor extra mutable?
+              Do you need to add an extra mutable value?
             </Text>
             <Text fontSize="sm" mb={2}>
               <em>* </em>
               <Link href={MUTABLE_DOC_URL} isExternal color="teal.500">
-                Leer más sobre datos extras mutables
+                Read more about extra mutable data
               </Link>
             </Text>
             <KeyValueList
@@ -386,16 +386,16 @@ const CreatorPage: React.FC = () => {
               onClick={onCreate}
               isDisabled={!isFormValid}
               isLoading={loading}
-              loadingText="Creando..."
+              loadingText="Creating..."
             >
               Create {assetType === "custom" && customType ? customType : assetType}
             </Button>
             <Button variant="outline" onClick={limpiarFormulario} isDisabled={loading}>
-              Limpiar
+              Clear
             </Button>
           </HStack>
 
-          {/* Info técnica */}
+          {/* Technical info */}
           <Text fontSize="xs" opacity={0.7}>
             <code>idata.name = "{name}"</code> |
             <code> mdata.img = "{imageNormalized}"</code>

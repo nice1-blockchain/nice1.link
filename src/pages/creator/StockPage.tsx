@@ -67,7 +67,7 @@ const StockPage: React.FC = () => {
           <Center minH="400px">
             <VStack spacing={4}>
               <Spinner size="xl" color="teal.500" thickness="4px" />
-              <Text>Cargando tus assets...</Text>
+              <Text>Loadging your assets...</Text>
             </VStack>
           </Center>
         </Box>
@@ -79,7 +79,7 @@ const StockPage: React.FC = () => {
     <Box flex="1" p={{ base: 0, md: 2 }}>
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
-          Stock / Inventario
+          Stock
         </Heading>
 
         {error && (
@@ -93,7 +93,7 @@ const StockPage: React.FC = () => {
           <Alert status="info" rounded="md">
             <AlertIcon />
             <AlertDescription>
-              No tienes assets creados aún. Ve a la sección Create para crear tu primer asset.
+              You don't have any assets created yet. Go to the Create section to create your first asset.
             </AlertDescription>
           </Alert>
         )}
@@ -132,7 +132,7 @@ const StockPage: React.FC = () => {
                     {filtered.length === 0 ? (
                       <Center minH="200px">
                         <Text color="gray.500">
-                          No hay assets en esta categoría
+                          There are no assets in this category
                         </Text>
                       </Center>
                     ) : (
