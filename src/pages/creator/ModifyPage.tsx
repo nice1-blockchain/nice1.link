@@ -1,5 +1,5 @@
 // src/pages/creator/ModifyPage.tsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -19,6 +19,7 @@ import {
   AlertIcon,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
+import { useSearchParams } from 'react-router-dom';
 import { useStock } from '../../hooks/useStock';
 import { useModify } from '../../hooks/useModify';
 
@@ -48,12 +49,27 @@ const ModifyPage: React.FC = () => {
   const mdataBg = useColorModeValue('gray.50', 'gray.700');
   const toast = useToast();
 
+  const [searchParams] = useSearchParams();
   const { groupedAssets, loading: loadingAssets } = useStock();
   const { modifyAsset, loading: modifying } = useModify();
 
   const [selectedAssetId, setSelectedAssetId] = useState<string>('');
   const [mdataFields, setMdataFields] = useState<KV[]>([]);
   const newId = useIdGen();
+
+  // Leer el ID de la URL al cargar (cuando los assets estén listos)
+  useEffect(() => {
+    const idFromUrl = searchParams.get('id');
+    if (idFromUrl && groupedAssets.length > 0 && !selectedAssetId) {
+      // Verificar que el ID existe en los assets
+      const exists = groupedAssets.some((asset) =>
+        asset.ids.some((id) => id.toString() === idFromUrl)
+      );
+      if (exists) {
+        setSelectedAssetId(idFromUrl);
+      }
+    }
+  }, [searchParams, groupedAssets, selectedAssetId]);
 
   // Asset seleccionado
   const selectedAsset = useMemo(() => {
@@ -69,14 +85,13 @@ const ModifyPage: React.FC = () => {
   }, [selectedAssetId]);
 
   // Cargar mdata actual cuando se selecciona un asset
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedAsset && selectedAsset.mdata) {
-      const entries = Object.entries(selectedAsset.mdata)
-        .map(([key, value]) => ({
-          id: newId(),
-          key,
-          value: String(value),
-        }));
+      const entries = Object.entries(selectedAsset.mdata).map(([key, value]) => ({
+        id: newId(),
+        key,
+        value: String(value),
+      }));
       setMdataFields(entries);
     } else {
       setMdataFields([]);
@@ -161,7 +176,7 @@ const ModifyPage: React.FC = () => {
     <Box flex="1" p={{ base: 0, md: 2 }}>
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
-          Modify - Edit  Asset
+          Modify - Edit Asset
         </Heading>
 
         <Stack spacing={6} maxW="820px">
