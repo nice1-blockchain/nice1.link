@@ -283,7 +283,7 @@ const ModifyPage: React.FC = () => {
               loadingText="Modifying..."
               isDisabled={!selectedAsset}
             >
-              Modificar Asset
+              Modify Asset
             </Button>
             <Button
               variant="outline"
@@ -293,7 +293,7 @@ const ModifyPage: React.FC = () => {
               }}
               isDisabled={modifying}
             >
-              Limpiar
+              Clean
             </Button>
           </HStack>
 
