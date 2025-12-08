@@ -96,7 +96,9 @@ const RightSidebar: React.FC = () => {
   if (loading) {
     return (
       <Box
-        w={{ base: "100%", lg: "320px" }}
+        w={{ base: "100%", lg: "280px" }}
+        minW={{ lg: "280px" }}
+        flexShrink={0}
         p={4}
         borderLeftWidth={{ base: 0, lg: "1px" }}
         borderColor={border}

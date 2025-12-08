@@ -1,6 +1,6 @@
 // src/pages/creator/CreatorShell.tsx
 import React from "react";
-import { Flex, useBreakpointValue } from "@chakra-ui/react";
+import { Flex, useBreakpointValue, Box } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import DashboardLayout from "../../dashboard/DashboardLayout";
 import RightSidebar from "../../components/creator/RightSidebar";
@@ -20,9 +20,12 @@ const CreatorShell: React.FC = () => {
         align="stretch"
         direction={flexDirection}
       >
-        {/* Aquí se pintan las subrutas (Main / Create) */}
-        <Outlet />
-        {/* Sidebar derecho común */}
+        {/* Contenido principal - ocupa el espacio disponible */}
+        <Box flex="1" minW={0}>
+          <Outlet />
+        </Box>
+        
+        {/* Sidebar derecho - ancho fijo, siempre visible */}
         <RightSidebar />
       </Flex>
     </DashboardLayout>

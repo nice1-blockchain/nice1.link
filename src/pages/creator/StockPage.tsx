@@ -18,12 +18,15 @@ import {
   useColorModeValue,
   Badge,
   VStack,
+  useToast,
 } from '@chakra-ui/react';
 import { useStock } from '../../hooks/useStock';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
 import { GroupedAsset } from '../../hooks/useStock';
 import ActionsHeader from "./ActionsHeader";
+import { useNavigate } from 'react-router-dom';
+import { useBurn } from '../../hooks/useBurn';
 
 const StockPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
@@ -59,6 +62,31 @@ const StockPage: React.FC = () => {
     const totalAssets = filtered.reduce((sum, asset) => sum + asset.copyCount, 0);
     const uniqueAssets = filtered.length;
     return { totalAssets, uniqueAssets };
+  };
+
+  const nav = useNavigate();
+  const { burnAsset } = useBurn();
+  const toast = useToast();
+
+  const handleModify = (asset: GroupedAsset) => {
+    nav(`/creator/modify?id=${asset.ids[0]}`);
+  };
+
+  const handleDuplicate = (asset: GroupedAsset) => {
+    setSelectedAsset(asset);
+    setIsDuplicateModalOpen(true);
+  };
+
+  const handleBurn = async (asset: GroupedAsset) => {
+    if (window.confirm(`¿Seguro que quieres QUEMAR "${asset.name}"? Esta acción es irreversible.`)) {
+      const result = await burnAsset([asset.ids[0]]);
+      if (result.success) {
+        toast({ title: 'Asset quemado', status: 'success', duration: 3000 });
+        setTimeout(() => reload(), 1000);
+      } else {
+        toast({ title: 'Error', description: result.error, status: 'error', duration: 5000 });
+      }
+    }
   };
 
   if (loading) {
@@ -143,7 +171,10 @@ const StockPage: React.FC = () => {
                           <AssetCard
                             key={`${asset.name}-${asset.category}-${index}`}
                             asset={asset}
-                            onClick={() => handleAssetClick(asset)}
+                            onClick={() => handleDuplicate(asset)}
+                            onModify={handleModify}
+                            onDuplicate={handleDuplicate}
+                            onBurn={handleBurn}
                           />
                         ))}
                       </SimpleGrid>
