@@ -25,11 +25,11 @@ const CreatorHome: React.FC = () => {
             <Button colorScheme="blue" onClick={() => nav("stock")}>Go to Stock</Button>
           </Box>
 
-          <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" opacity={0.8}>
+          {/* <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" opacity={0.8}>
             <Heading size="sm" mb={2}>Modify</Heading>
             <Text fontSize="sm" mb={3}>Edit an existing asset (coming soon).</Text>
             <Button colorScheme="purple" onClick={() => nav("modify")}>Go to Modify</Button>
-          </Box>
+          </Box> */}
         </Stack>
       </Box>
     </Box>

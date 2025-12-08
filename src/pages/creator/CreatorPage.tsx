@@ -24,6 +24,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useAnchor } from "@nice1/react-tools";
 import { asString } from "../../utils/asstring";
 import { useCreatorContract } from "../../hooks/useCreatorContract";
+import ActionsHeader from "./ActionsHeader";
 
 /* ----------------------------- Helpers de formato ---------------------------- */
 /**
@@ -230,6 +231,7 @@ const CreatorPage: React.FC = () => {
 
   return (
     <Box flex="1" p={{ base: 0, md: 2 }}>
+      <ActionsHeader />
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
           Create

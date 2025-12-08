@@ -23,6 +23,7 @@ import { useStock } from '../../hooks/useStock';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
 import { GroupedAsset } from '../../hooks/useStock';
+import ActionsHeader from "./ActionsHeader";
 
 const StockPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
@@ -77,6 +78,7 @@ const StockPage: React.FC = () => {
 
   return (
     <Box flex="1" p={{ base: 0, md: 2 }}>
+      <ActionsHeader />
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
           Stock
