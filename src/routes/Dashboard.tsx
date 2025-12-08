@@ -26,23 +26,19 @@ export default function Dashboard() {
         </a>
       </Box>
 
-      {/* Grid con ProfileCard, Balance, etc. */}
-      <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)'>
-        <GridItem colSpan={{xs: 4, lg: 1}} rowSpan={1}>
-          <Grid gap={2} templateColumns='repeat(2, 1fr)'>
-            <GridItem colSpan={{xs: 2, md: 1, lg: 2}} maxW='100%'>
-              <ProfileCard />
-            </GridItem>
-            <GridItem colSpan={{xs: 2, md: 1, lg: 2}} display='flex' maxW='100%'>
-              <BalanceCard />
-            </GridItem>
-            <GridItem colSpan={{ xs: 2, md: 1, lg: 2 }} display='flex' maxW='100%'>
-              <ProfileResourcesCard />
-            </GridItem>
-          </Grid>
+      {/* Tres tarjetas en fila horizontal */}
+      <Grid gap={2} templateColumns='repeat(3, 1fr)' mb={2}>
+        <GridItem>
+          <ProfileCard />
         </GridItem>
-        {/* Aquí puedes poner otro contenido en las 3 columnas restantes si quieres */}
+        <GridItem>
+          <BalanceCard />
+        </GridItem>
+        <GridItem>
+          <ProfileResourcesCard />
+        </GridItem>
       </Grid>
+      
       <Grid gap={2} templateRows='repeat(1, 1fr)' templateColumns='repeat(4, 1fr)' mt={2}>
         {
           posts.map((post, k) => (

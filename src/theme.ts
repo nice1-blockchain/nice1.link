@@ -42,11 +42,15 @@ const theme = extendTheme({
             bg: 'red.900',
           },
         },
-        readmore: (props: StyleFunctionProps) => ({
-          ...oTheme.components.Button.variants.outline(props),
-          borderColor: '#E01F1F',
-          fontWeight: 'bold',
-        }),
+        readmore: (props: StyleFunctionProps) => {
+          const outlineVariant = oTheme.components.Button.variants?.outline;
+          const baseStyles = typeof outlineVariant === 'function' ? outlineVariant(props) : {};
+          return {
+            ...baseStyles,
+            borderColor: '#E01F1F',
+            fontWeight: 'bold',
+          };
+        },
       },
     },
     Modal: {
