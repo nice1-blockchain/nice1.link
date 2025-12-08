@@ -23,7 +23,7 @@ const DashboardLayout = ({children} : {children: ReactNode}) => (
     >
       <Menu />
     </GridItem>
-    <GridItem area='content' p={5} minH='calc(100vh - 6em)' w='calc(100vw - 4.4em - var(--chakra-space-5))'>
+    <GridItem area='content' p={5} minH='calc(100vh - 6em)' overflow='auto'>
       {children}
     </GridItem>
     <GridItem area='footer' p={5} justifySelf='center' maxH='6em'>

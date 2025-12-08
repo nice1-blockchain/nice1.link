@@ -84,7 +84,7 @@ const NftCard = () => {
         </Box>
       </HStack>
 
-      <Grid ml={-5} mt={2} gap={2} templateColumns='repeat(6, 1fr)' templateRows='repeat(1, 1fr)'>
+      <Grid ml={-5} mt={2} gap={2} templateColumns={{ base: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)', md: 'repeat(4, 1fr)', lg: 'repeat(5, 1fr)' }}>
           {
           nftsSA.map((nft, k) => (
             <GridItem key={k} className="custom-grid-item" bg='bgs.widgets' colSpan={1} rowSpan={1} mt={1} ml={1} mr={1} p={1}>
