@@ -1,5 +1,5 @@
 // src/components/creator/RightSidebar.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Stack,
@@ -11,9 +11,10 @@ import {
   useColorModeValue,
   Badge,
   Tooltip,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useStock } from "../../hooks/useStock";
-import { useNavigate } from "react-router-dom";
+import { useStock, GroupedAsset } from "../../hooks/useStock";
+import DuplicateModal from "./DuplicateModal";
 
 const PanelTitle: React.FC<React.PropsWithChildren<{ count?: number }>> = ({
   children,
@@ -79,8 +80,11 @@ const CardItem: React.FC<CardItemProps> = ({
 
 const RightSidebar: React.FC = () => {
   const border = useColorModeValue("gray.200", "whiteAlpha.200");
-  const navigate = useNavigate();
-  const { groupedAssets, loading, filterByCategory } = useStock();
+  const { groupedAssets, loading, filterByCategory, reload } = useStock();
+  
+  // Estado para el modal de duplicar
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
 
   // Filtrar por categoría
   const licenses = filterByCategory("license");
@@ -88,9 +92,17 @@ const RightSidebar: React.FC = () => {
   const assets = filterByCategory("asset");
   const others = filterByCategory("custom");
 
-  // Navegar a stock al hacer click
-  const handleAssetClick = () => {
-    navigate("/creator/stock");
+  // Abrir modal de duplicar con el asset seleccionado
+  const handleAssetClick = (asset: GroupedAsset) => {
+    setSelectedAsset(asset);
+    onOpen();
+  };
+
+  // Callback cuando se duplica exitosamente
+  const handleDuplicateSuccess = () => {
+    reload();
+    onClose();
+    setSelectedAsset(null);
   };
 
   if (loading) {
@@ -111,152 +123,167 @@ const RightSidebar: React.FC = () => {
   }
 
   return (
-    <Box
-      w={{ base: "100%", lg: "320px" }}
-      p={4}
-      borderLeftWidth={{ base: 0, lg: "1px" }}
-      borderColor={border}
-    >
-      <Stack spacing={6} maxH="calc(100vh - 8rem)" overflowY="auto">
-        {/* Licenses */}
-        <Box>
-          <PanelTitle count={licenses.length}>Licenses</PanelTitle>
-          {licenses.length === 0 ? (
-            <Text fontSize="sm" color="gray.500" fontStyle="italic">
-              Sin licenses
-            </Text>
-          ) : (
-            <Stack spacing={2}>
-              {licenses.slice(0, 5).map((asset) => (
-                <CardItem
-                  key={asset.name + asset.category}
-                  title={asset.name}
-                  subtitle={asset.author !== asset.name ? asset.author : undefined}
-                  copyCount={asset.copyCount}
-                  onClick={handleAssetClick}
-                />
-              ))}
-              {licenses.length > 5 && (
-                <Text
-                  fontSize="xs"
-                  color="teal.500"
-                  cursor="pointer"
-                  onClick={handleAssetClick}
-                  _hover={{ textDecoration: "underline" }}
-                >
-                  + {licenses.length - 5} más
-                </Text>
-              )}
-            </Stack>
-          )}
-        </Box>
+    <>
+      <Box
+        w={{ base: "100%", lg: "320px" }}
+        p={4}
+        borderLeftWidth={{ base: 0, lg: "1px" }}
+        borderColor={border}
+      >
+        <Stack spacing={6} maxH="calc(100vh - 8rem)" overflowY="auto">
+          {/* Licenses */}
+          <Box>
+            <PanelTitle count={licenses.length}>Licenses</PanelTitle>
+            {licenses.length === 0 ? (
+              <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                Sin licenses
+              </Text>
+            ) : (
+              <Stack spacing={2}>
+                {licenses.slice(0, 5).map((asset) => (
+                  <CardItem
+                    key={asset.name + asset.category}
+                    title={asset.name}
+                    subtitle={asset.author !== asset.name ? asset.author : undefined}
+                    copyCount={asset.copyCount}
+                    onClick={() => handleAssetClick(asset)}
+                  />
+                ))}
+                {licenses.length > 5 && (
+                  <Text
+                    fontSize="xs"
+                    color="teal.500"
+                    cursor="pointer"
+                    onClick={() => handleAssetClick(licenses[5])}
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    + {licenses.length - 5} más
+                  </Text>
+                )}
+              </Stack>
+            )}
+          </Box>
 
-        <Divider />
+          <Divider />
 
-        {/* Skins */}
-        <Box>
-          <PanelTitle count={skins.length}>Skins</PanelTitle>
-          {skins.length === 0 ? (
-            <Text fontSize="sm" color="gray.500" fontStyle="italic">
-              Sin skins
-            </Text>
-          ) : (
-            <Stack spacing={2}>
-              {skins.slice(0, 5).map((asset) => (
-                <CardItem
-                  key={asset.name + asset.category}
-                  title={asset.name}
-                  subtitle={asset.author !== asset.name ? asset.author : undefined}
-                  copyCount={asset.copyCount}
-                  onClick={handleAssetClick}
-                />
-              ))}
-              {skins.length > 5 && (
-                <Text
-                  fontSize="xs"
-                  color="teal.500"
-                  cursor="pointer"
-                  onClick={handleAssetClick}
-                  _hover={{ textDecoration: "underline" }}
-                >
-                  + {skins.length - 5} más
-                </Text>
-              )}
-            </Stack>
-          )}
-        </Box>
+          {/* Skins */}
+          <Box>
+            <PanelTitle count={skins.length}>Skins</PanelTitle>
+            {skins.length === 0 ? (
+              <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                Sin skins
+              </Text>
+            ) : (
+              <Stack spacing={2}>
+                {skins.slice(0, 5).map((asset) => (
+                  <CardItem
+                    key={asset.name + asset.category}
+                    title={asset.name}
+                    subtitle={asset.author !== asset.name ? asset.author : undefined}
+                    copyCount={asset.copyCount}
+                    onClick={() => handleAssetClick(asset)}
+                  />
+                ))}
+                {skins.length > 5 && (
+                  <Text
+                    fontSize="xs"
+                    color="teal.500"
+                    cursor="pointer"
+                    onClick={() => handleAssetClick(skins[5])}
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    + {skins.length - 5} más
+                  </Text>
+                )}
+              </Stack>
+            )}
+          </Box>
 
-        <Divider />
+          <Divider />
 
-        {/* Assets */}
-        <Box>
-          <PanelTitle count={assets.length}>Assets</PanelTitle>
-          {assets.length === 0 ? (
-            <Text fontSize="sm" color="gray.500" fontStyle="italic">
-              Sin assets
-            </Text>
-          ) : (
-            <Stack spacing={2}>
-              {assets.slice(0, 5).map((asset) => (
-                <CardItem
-                  key={asset.name + asset.category}
-                  title={asset.name}
-                  subtitle={asset.author !== asset.name ? asset.author : undefined}
-                  copyCount={asset.copyCount}
-                  onClick={handleAssetClick}
-                />
-              ))}
-              {assets.length > 5 && (
-                <Text
-                  fontSize="xs"
-                  color="teal.500"
-                  cursor="pointer"
-                  onClick={handleAssetClick}
-                  _hover={{ textDecoration: "underline" }}
-                >
-                  + {assets.length - 5} más
-                </Text>
-              )}
-            </Stack>
-          )}
-        </Box>
+          {/* Assets */}
+          <Box>
+            <PanelTitle count={assets.length}>Assets</PanelTitle>
+            {assets.length === 0 ? (
+              <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                Sin assets
+              </Text>
+            ) : (
+              <Stack spacing={2}>
+                {assets.slice(0, 5).map((asset) => (
+                  <CardItem
+                    key={asset.name + asset.category}
+                    title={asset.name}
+                    subtitle={asset.author !== asset.name ? asset.author : undefined}
+                    copyCount={asset.copyCount}
+                    onClick={() => handleAssetClick(asset)}
+                  />
+                ))}
+                {assets.length > 5 && (
+                  <Text
+                    fontSize="xs"
+                    color="teal.500"
+                    cursor="pointer"
+                    onClick={() => handleAssetClick(assets[5])}
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    + {assets.length - 5} más
+                  </Text>
+                )}
+              </Stack>
+            )}
+          </Box>
 
-        <Divider />
+          <Divider />
 
-        {/* Others (Custom) */}
-        <Box>
-          <PanelTitle count={others.length}>Others</PanelTitle>
-          {others.length === 0 ? (
-            <Text fontSize="sm" color="gray.500" fontStyle="italic">
-              Sin otros
-            </Text>
-          ) : (
-            <Stack spacing={2}>
-              {others.slice(0, 5).map((asset) => (
-                <CardItem
-                  key={asset.name + asset.category}
-                  title={asset.name}
-                  subtitle={asset.author !== asset.name ? asset.author : undefined}
-                  copyCount={asset.copyCount}
-                  onClick={handleAssetClick}
-                />
-              ))}
-              {others.length > 5 && (
-                <Text
-                  fontSize="xs"
-                  color="teal.500"
-                  cursor="pointer"
-                  onClick={handleAssetClick}
-                  _hover={{ textDecoration: "underline" }}
-                >
-                  + {others.length - 5} más
-                </Text>
-              )}
-            </Stack>
-          )}
-        </Box>
-      </Stack>
-    </Box>
+          {/* Others (Custom) */}
+          <Box>
+            <PanelTitle count={others.length}>Others</PanelTitle>
+            {others.length === 0 ? (
+              <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                Sin otros
+              </Text>
+            ) : (
+              <Stack spacing={2}>
+                {others.slice(0, 5).map((asset) => (
+                  <CardItem
+                    key={asset.name + asset.category}
+                    title={asset.name}
+                    subtitle={asset.author !== asset.name ? asset.author : undefined}
+                    copyCount={asset.copyCount}
+                    onClick={() => handleAssetClick(asset)}
+                  />
+                ))}
+                {others.length > 5 && (
+                  <Text
+                    fontSize="xs"
+                    color="teal.500"
+                    cursor="pointer"
+                    onClick={() => handleAssetClick(others[5])}
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    + {others.length - 5} más
+                  </Text>
+                )}
+              </Stack>
+            )}
+          </Box>
+        </Stack>
+      </Box>
+
+      {/* Modal de Duplicación */}
+      {selectedAsset && (
+        <DuplicateModal
+          isOpen={isOpen}
+          onClose={() => {
+            onClose();
+            setSelectedAsset(null);
+          }}
+          asset={selectedAsset}
+          onSuccess={handleDuplicateSuccess}
+        />
+      )}
+    </>
   );
 };
 
