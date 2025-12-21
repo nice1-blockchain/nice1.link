@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useCallback, useEffect, useState, ReactNode } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
-const CONTRACT_NAME = 'simpleassets';
+const CONTRACT_NAME = 'nice2simplea';
 
 export interface RawAsset {
   id: number;

@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
 // Nombre del contrato (ajusta según tu configuración)
-const CONTRACT_NAME = 'simpleassets'; // en jungle4
+const CONTRACT_NAME = 'nice2simplea'; // en jungle4
 
 export interface CreateAssetParams {
   author: string;

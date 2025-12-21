@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 import { GroupedAsset } from './useStock';
 
-const CONTRACT_NAME = 'simpleassets'; // ⚠️ IMPORTANTE: Cambiar si usas otro contrato
+const CONTRACT_NAME = 'nice2simplea'; // ⚠️ IMPORTANTE: Cambiar si usas otro contrato
 
 export interface ModifyAssetParams {
   assetid: number;

@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
-const CONTRACT_NAME = 'simpleassets'; // Cambiar por el nombre real del contrato
+const CONTRACT_NAME = 'nice2simplea'; // Cambiar por el nombre real del contrato
 
 export interface RawAsset {
   id: number;
