@@ -11,9 +11,23 @@ import {
   useColorModeValue,
   useDisclosure,
   Tooltip,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  VStack,
+  HStack,
+  Image,
 } from "@chakra-ui/react";
+import { EditIcon, CopyIcon, DeleteIcon, CloseIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 import { useStockContext, GroupedAsset } from "../../contexts/StockContext";
 import DuplicateModal from "./DuplicateModal";
+import { useBurn } from "../../hooks/useBurn";
+import { useToast } from "@chakra-ui/react";
 
 /* ---------- Título de sección ---------- */
 const PanelTitle: React.FC<{ children: React.ReactNode; count?: number }> = ({
@@ -51,7 +65,7 @@ const CardItem: React.FC<CardItemProps> = ({
   const hoverBg = useColorModeValue("gray.100", "whiteAlpha.200");
 
   return (
-    <Tooltip label="Click para duplicar" placement="left" hasArrow>
+    <Tooltip label="Click para ver opciones" placement="left" hasArrow>
       <Box
         p={2}
         bg={bg}
@@ -79,14 +93,163 @@ const CardItem: React.FC<CardItemProps> = ({
   );
 };
 
+/* ---------- Modal de Acciones ---------- */
+interface ActionModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  asset: GroupedAsset;
+  onDuplicate: () => void;
+  onModify: () => void;
+  onBurn: () => void;
+}
+
+const ActionModal: React.FC<ActionModalProps> = ({
+  isOpen,
+  onClose,
+  asset,
+  onDuplicate,
+  onModify,
+  onBurn,
+}) => {
+  const getImageUrl = () => {
+    if (asset.mdata?.img) {
+      const img = asset.mdata.img;
+      if (img.startsWith("ipfs://")) {
+        return `https://ipfs.io/ipfs/${img.replace("ipfs://", "")}`;
+      }
+      if (img.startsWith("Qm") || img.startsWith("bafy")) {
+        return `https://ipfs.io/ipfs/${img}`;
+      }
+      return img;
+    }
+    // Fallback al campo image del asset
+    if (asset.image) {
+      if (asset.image.startsWith("ipfs://")) {
+        return `https://ipfs.io/ipfs/${asset.image.replace("ipfs://", "")}`;
+      }
+      return asset.image;
+    }
+    return null;
+  };
+
+  const imageUrl = getImageUrl();
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="sm" isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader fontSize="md">{asset.name}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+          <VStack spacing={4} align="stretch">
+            {/* Preview del asset */}
+            <HStack spacing={3}>
+              {imageUrl && (
+                <Image
+                  src={imageUrl}
+                  alt={asset.name}
+                  boxSize="60px"
+                  objectFit="cover"
+                  rounded="md"
+                  fallbackSrc="https://via.placeholder.com/60?text=?"
+                />
+              )}
+              <VStack align="start" spacing={0} flex={1}>
+                <Badge colorScheme="purple" fontSize="xs">
+                  {asset.category}
+                </Badge>
+                <Text fontSize="xs" color="gray.500">
+                  {asset.copyCount} {asset.copyCount === 1 ? "copia" : "copias"}
+                </Text>
+                <Text fontSize="xs" color="gray.500" noOfLines={1}>
+                  by {asset.author}
+                </Text>
+              </VStack>
+            </HStack>
+
+            <Divider />
+
+            {/* Botones de acción */}
+            <VStack spacing={2}>
+              <Button
+                size="sm"
+                width="100%"
+                leftIcon={<CopyIcon />}
+                colorScheme="teal"
+                onClick={() => {
+                  onClose();
+                  onDuplicate();
+                }}
+              >
+                Duplicate
+              </Button>
+              <Button
+                size="sm"
+                width="100%"
+                leftIcon={<EditIcon />}
+                colorScheme="blue"
+                variant="outline"
+                onClick={() => {
+                  onClose();
+                  onModify();
+                }}
+              >
+                Modify
+              </Button>
+              <Button
+                size="sm"
+                width="100%"
+                leftIcon={<DeleteIcon />}
+                colorScheme="red"
+                variant="outline"
+                onClick={() => {
+                  onClose();
+                  onBurn();
+                }}
+              >
+                Delete
+              </Button>
+              <Button
+                size="sm"
+                width="100%"
+                leftIcon={<CloseIcon boxSize={3} />}
+                variant="ghost"
+                onClick={onClose}
+              >
+                Close
+              </Button>
+            </VStack>
+          </VStack>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+/* ---------- RightSidebar ---------- */
 const RightSidebar: React.FC = () => {
   const border = useColorModeValue("gray.200", "whiteAlpha.200");
-  
-  // Usar el contexto compartido en lugar de un hook local
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { burnAsset } = useBurn();
+
+  // Usar el contexto compartido
   const { groupedAssets, loading, filterByCategory, reload } = useStockContext();
 
+  // Estado para el modal de acciones
+  const {
+    isOpen: isActionModalOpen,
+    onOpen: onActionModalOpen,
+    onClose: onActionModalClose,
+  } = useDisclosure();
+
   // Estado para el modal de duplicar
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isDuplicateModalOpen,
+    onOpen: onDuplicateModalOpen,
+    onClose: onDuplicateModalClose,
+  } = useDisclosure();
+
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
 
   // Filtrar por categoría
@@ -95,16 +258,56 @@ const RightSidebar: React.FC = () => {
   const assets = filterByCategory("asset");
   const others = filterByCategory("custom");
 
-  // Abrir modal de duplicar con el asset seleccionado
+  // Abrir modal de acciones con el asset seleccionado
   const handleAssetClick = (asset: GroupedAsset) => {
     setSelectedAsset(asset);
-    onOpen();
+    onActionModalOpen();
+  };
+
+  // Handlers para cada acción
+  const handleDuplicate = () => {
+    if (selectedAsset) {
+      onDuplicateModalOpen();
+    }
+  };
+
+  const handleModify = () => {
+    if (selectedAsset) {
+      navigate(`/creator/modify?id=${selectedAsset.ids[0]}`);
+    }
+  };
+
+  const handleBurn = async () => {
+    if (!selectedAsset) return;
+
+    if (window.confirm(`¿Seguro que quieres QUEMAR "${selectedAsset.name}"?`)) {
+      const result = await burnAsset([selectedAsset.ids[0]]);
+      if (result.success) {
+        toast({
+          title: "Asset quemado",
+          description: `"${selectedAsset.name}" ha sido eliminado.`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        await reload();
+        setSelectedAsset(null);
+      } else {
+        toast({
+          title: "Error al quemar",
+          description: result.error || "Error desconocido",
+          status: "error",
+          duration: 7000,
+          isClosable: true,
+        });
+      }
+    }
   };
 
   // Callback cuando se duplica exitosamente
   const handleDuplicateSuccess = async () => {
-    await reload(); // Recargar el stock compartido
-    onClose();
+    await reload();
+    onDuplicateModalClose();
     setSelectedAsset(null);
   };
 
@@ -274,12 +477,27 @@ const RightSidebar: React.FC = () => {
         </Stack>
       </Box>
 
+      {/* Modal de acciones */}
+      {selectedAsset && (
+        <ActionModal
+          isOpen={isActionModalOpen}
+          onClose={() => {
+            onActionModalClose();
+            // No limpiamos selectedAsset aquí para mantenerlo disponible para duplicar
+          }}
+          asset={selectedAsset}
+          onDuplicate={handleDuplicate}
+          onModify={handleModify}
+          onBurn={handleBurn}
+        />
+      )}
+
       {/* Modal de duplicar */}
       {selectedAsset && (
         <DuplicateModal
-          isOpen={isOpen}
+          isOpen={isDuplicateModalOpen}
           onClose={() => {
-            onClose();
+            onDuplicateModalClose();
             setSelectedAsset(null);
           }}
           asset={selectedAsset}

@@ -243,10 +243,10 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
               mr={3}
               onClick={handleDuplicateClick}
               isLoading={loading}
-              loadingText={`Creando ${copies} ${copies === 1 ? 'unit' : 'units'}...`}
+              loadingText={`Creating ${copies} ${copies === 1 ? 'unit' : 'units'}...`}
               isDisabled={copies < 1 || copies > 100}
             >
-              Duplicar ({copies})
+              Duplicate ({copies})
             </Button>
             <Button variant="ghost" onClick={handleClose} isDisabled={loading}>
               Cancelar

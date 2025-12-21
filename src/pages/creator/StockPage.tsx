@@ -37,7 +37,7 @@ const StockPage: React.FC = () => {
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 
   const categories = [
-    { name: 'Todas', value: null },
+    { name: 'All', value: null },
     { name: 'License', value: 'license' },
     { name: 'Skin', value: 'skin' },
     { name: 'Asset', value: 'asset' },

@@ -1,5 +1,5 @@
 // src/components/creator/AssetCard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Image,
@@ -9,19 +9,15 @@ import {
   HStack,
   useColorModeValue,
   Tooltip,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
+  Button,
+  Collapse,
 } from '@chakra-ui/react';
-import { EditIcon, CopyIcon, DeleteIcon } from '@chakra-ui/icons';
-import { FiMoreVertical } from 'react-icons/fi';
+import { EditIcon, CopyIcon, DeleteIcon, CloseIcon } from '@chakra-ui/icons';
 import { GroupedAsset } from '../../hooks/useStock';
 
 interface AssetCardProps {
   asset: GroupedAsset;
-  onClick: () => void;
+  onClick?: () => void; // Ya no se usa directamente
   onModify?: (asset: GroupedAsset) => void;
   onDuplicate?: (asset: GroupedAsset) => void;
   onBurn?: (asset: GroupedAsset) => void;
@@ -29,7 +25,6 @@ interface AssetCardProps {
 
 const AssetCard: React.FC<AssetCardProps> = ({ 
   asset, 
-  onClick, 
   onModify, 
   onDuplicate, 
   onBurn 
@@ -37,6 +32,10 @@ const AssetCard: React.FC<AssetCardProps> = ({
   const border = useColorModeValue('gray.200', 'whiteAlpha.300');
   const bg = useColorModeValue('white', 'gray.700');
   const hoverBg = useColorModeValue('gray.50', 'gray.600');
+  const menuBg = useColorModeValue('gray.100', 'gray.600');
+
+  // Estado para mostrar/ocultar el menú de acciones
+  const [showActions, setShowActions] = useState(false);
 
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
@@ -57,8 +56,13 @@ const AssetCard: React.FC<AssetCardProps> = ({
     return img;
   };
 
+  const handleCardClick = () => {
+    setShowActions(!showActions);
+  };
+
   const handleAction = (e: React.MouseEvent, action: () => void) => {
     e.stopPropagation();
+    setShowActions(false);
     action();
   };
 
@@ -71,7 +75,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
       bg={bg}
       transition="all 0.2s"
       cursor="pointer"
-      onClick={onClick}
+      onClick={handleCardClick}
       _hover={{ bg: hoverBg, transform: 'translateY(-2px)', boxShadow: 'lg' }}
     >
       {/* Imagen */}
@@ -106,7 +110,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
         )}
       </Box>
 
-      {/* Info + Acciones */}
+      {/* Info */}
       <VStack align="stretch" p={4} spacing={2}>
         <HStack justify="space-between">
           <Tooltip label={asset.name}>
@@ -114,35 +118,66 @@ const AssetCard: React.FC<AssetCardProps> = ({
               {asset.name}
             </Text>
           </Tooltip>
-
-          {/* Menú de acciones */}
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={<FiMoreVertical />}
-              variant="ghost"
-              size="sm"
-              onClick={(e) => e.stopPropagation()}
-              aria-label="Acciones"
-            />
-            <MenuList onClick={(e) => e.stopPropagation()}>
-              <MenuItem icon={<EditIcon />} onClick={(e) => handleAction(e, () => onModify?.(asset))}>
-                Modificar
-              </MenuItem>
-              <MenuItem icon={<CopyIcon />} onClick={(e) => handleAction(e, () => onDuplicate?.(asset))}>
-                Duplicar
-              </MenuItem>
-              <MenuItem icon={<DeleteIcon />} color="red.400" onClick={(e) => handleAction(e, () => onBurn?.(asset))}>
-                Borrar (Burn)
-              </MenuItem>
-            </MenuList>
-          </Menu>
         </HStack>
 
         <HStack justify="space-between" fontSize="xs" color="gray.500">
           <Text>Units: {asset.ids.length}</Text>
           <Text noOfLines={1}>by {asset.author}</Text>
         </HStack>
+
+        {/* Menú de acciones colapsable */}
+        <Collapse in={showActions} animateOpacity>
+          <VStack 
+            spacing={2} 
+            pt={3} 
+            mt={2} 
+            borderTopWidth="1px" 
+            borderColor={border}
+          >
+            <Button
+              size="sm"
+              width="100%"
+              leftIcon={<CopyIcon />}
+              colorScheme="teal"
+              variant="solid"
+              onClick={(e) => handleAction(e, () => onDuplicate?.(asset))}
+            >
+              Duplicate
+            </Button>
+            <Button
+              size="sm"
+              width="100%"
+              leftIcon={<EditIcon />}
+              colorScheme="blue"
+              variant="outline"
+              onClick={(e) => handleAction(e, () => onModify?.(asset))}
+            >
+              Modify
+            </Button>
+            <Button
+              size="sm"
+              width="100%"
+              leftIcon={<DeleteIcon />}
+              colorScheme="red"
+              variant="outline"
+              onClick={(e) => handleAction(e, () => onBurn?.(asset))}
+            >
+              Delete
+            </Button>
+            <Button
+              size="sm"
+              width="100%"
+              leftIcon={<CloseIcon boxSize={3} />}
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowActions(false);
+              }}
+            >
+              Close
+            </Button>
+          </VStack>
+        </Collapse>
       </VStack>
     </Box>
   );
