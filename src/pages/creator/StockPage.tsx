@@ -23,8 +23,8 @@ import {
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
+import BurnModal from '../../components/creator/BurnModal';
 import { useNavigate } from 'react-router-dom';
-import { useBurn } from '../../hooks/useBurn';
 
 const StockPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
@@ -35,9 +35,10 @@ const StockPage: React.FC = () => {
   
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
+  const [isBurnModalOpen, setIsBurnModalOpen] = useState(false);
 
   const categories = [
-    { name: 'All', value: null },
+    { name: 'Todas', value: null },
     { name: 'License', value: 'license' },
     { name: 'Skin', value: 'skin' },
     { name: 'Asset', value: 'asset' },
@@ -56,6 +57,13 @@ const StockPage: React.FC = () => {
     setTimeout(async () => await reload(), 1000);
   };
 
+  const handleBurnSuccess = async () => {
+    setIsBurnModalOpen(false);
+    setSelectedAsset(null);
+    // Recargar assets después de quemar
+    setTimeout(async () => await reload(), 1000);
+  };
+
   const getCategoryStats = (category: string | null) => {
     const filtered = filterByCategory(category);
     const totalAssets = filtered.reduce((sum, asset) => sum + asset.copyCount, 0);
@@ -64,7 +72,6 @@ const StockPage: React.FC = () => {
   };
 
   const nav = useNavigate();
-  const { burnAsset } = useBurn();
   const toast = useToast();
 
   const handleModify = (asset: GroupedAsset) => {
@@ -76,16 +83,9 @@ const StockPage: React.FC = () => {
     setIsDuplicateModalOpen(true);
   };
 
-  const handleBurn = async (asset: GroupedAsset) => {
-    if (window.confirm(`¿Seguro que quieres QUEMAR "${asset.name}"? Esta acción es irreversible.`)) {
-      const result = await burnAsset([asset.ids[0]]);
-      if (result.success) {
-        toast({ title: 'Asset quemado', status: 'success', duration: 3000 });
-        setTimeout(async () => await reload(), 1000);
-      } else {
-        toast({ title: 'Error', description: result.error, status: 'error', duration: 5000 });
-      }
-    }
+  const handleBurn = (asset: GroupedAsset) => {
+    setSelectedAsset(asset);
+    setIsBurnModalOpen(true);
   };
 
   if (loading) {
@@ -195,6 +195,19 @@ const StockPage: React.FC = () => {
           }}
           asset={selectedAsset}
           onSuccess={handleDuplicateSuccess}
+        />
+      )}
+
+      {/* Modal de Quemar */}
+      {selectedAsset && (
+        <BurnModal
+          isOpen={isBurnModalOpen}
+          onClose={() => {
+            setIsBurnModalOpen(false);
+            setSelectedAsset(null);
+          }}
+          asset={selectedAsset}
+          onSuccess={handleBurnSuccess}
         />
       )}
     </Box>
