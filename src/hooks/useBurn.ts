@@ -41,7 +41,6 @@ export const useBurn = () => {
           data: {
             owner,
             assetids: assetIds,
-            memo: 'Burned via nice1.link',
           },
         };
 
