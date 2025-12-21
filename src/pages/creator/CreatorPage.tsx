@@ -24,7 +24,6 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useAnchor } from "@nice1/react-tools";
 import { asString } from "../../utils/asstring";
 import { useCreatorContract } from "../../hooks/useCreatorContract";
-import ActionsHeader from "./ActionsHeader";
 
 /* ----------------------------- Helpers de formato ---------------------------- */
 /**
@@ -138,11 +137,6 @@ const CreatorPage: React.FC = () => {
   const { createAsset, loading, error, clearError } = useCreatorContract();
 
   const [assetType, setAssetType] = useState<AssetType>("license");
-  const [customTypeRaw, setCustomTypeRaw] = useState<string>("");
-  const customType = useMemo<string>(
-    () => (assetType === "custom" ? toCapitalizedWord(customTypeRaw) : ""),
-    [assetType, customTypeRaw]
-  );
 
   // Nombre: siempre 1ª en mayúscula, resto en minúscula
   const [nameRaw, setNameRaw] = useState<string>("");
@@ -169,13 +163,11 @@ const CreatorPage: React.FC = () => {
     if (!author) return false;
     if (!name.trim()) return false;
     if (!imageNormalized.trim()) return false;
-    if (assetType === "custom" && !customType.trim()) return false;
     return true;
-  }, [author, name, imageNormalized, assetType, customType]);
+  }, [author, name, imageNormalized, assetType]);
 
   const limpiarFormulario = () => {
     setAssetType("license");
-    setCustomTypeRaw("");
     setNameRaw("");
     setImageMode("ipfs");
     setImageValue("");
@@ -187,7 +179,7 @@ const CreatorPage: React.FC = () => {
   const onCreate = async () => {
     if (!author || !isFormValid) return;
 
-    const category = assetType === "custom" && customType ? customType : assetType;
+    const category = assetType === "custom" ? "custom" : assetType;
     const idata = { name, ...kvToObject(idataExtras) };
     const mdata = { img: imageNormalized, ...kvToObject(mdataExtras) };
 
@@ -231,7 +223,6 @@ const CreatorPage: React.FC = () => {
 
   return (
     <Box flex="1" p={{ base: 0, md: 2 }}>
-      <ActionsHeader />
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
           Create
@@ -285,18 +276,6 @@ const CreatorPage: React.FC = () => {
               </HStack>
             </RadioGroup>
 
-            {assetType === "custom" && (
-              <Box mt={3}>
-                <Input
-                  placeholder='Defina tipo custom (1 palabra, ej. "Tag")'
-                  value={customTypeRaw}
-                  onChange={(e) => setCustomTypeRaw(e.target.value)}
-                />
-                <Text fontSize="xs" opacity={0.7} mt={1}>
-                  It will be applied automatically: <b>{customType || "—"}</b>
-                </Text>
-              </Box>
-            )}
           </Box>
 
           {/* Nombre */}
@@ -390,7 +369,7 @@ const CreatorPage: React.FC = () => {
               isLoading={loading}
               loadingText="Creating..."
             >
-              Create {assetType === "custom" && customType ? customType : assetType}
+              Create {assetType}
             </Button>
             <Button variant="outline" onClick={limpiarFormulario} isDisabled={loading}>
               Clear
@@ -401,7 +380,7 @@ const CreatorPage: React.FC = () => {
           <Text fontSize="xs" opacity={0.7}>
             <code>idata.name = "{name}"</code> |
             <code> mdata.img = "{imageNormalized}"</code>
-            {assetType === "custom" && customType && ` | tipo custom = "${customType}"`}
+            {assetType === "custom" && ` | tipo custom = "${assetType}"`}
           </Text>
         </Stack>
       </Box>
