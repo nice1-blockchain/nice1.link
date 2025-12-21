@@ -17,11 +17,13 @@ import {
   VStack,
   Alert,
   AlertIcon,
+  AlertDescription,
+  Progress,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useStock } from '../../hooks/useStock';
-import { useModify } from '../../hooks/useModify';
+import { useStock, GroupedAsset } from '../../hooks/useStock';
+import { useModifyBatch } from '../../hooks/useModifyBatch';
 
 interface KV {
   id: string;
@@ -29,13 +31,9 @@ interface KV {
   value: string;
 }
 
-const navigate = useNavigate();
-
-// Hook para generar IDs únicos
-const useIdGen = () => {
-  let counter = 0;
-  return () => `kv-${Date.now()}-${counter++}`;
-};
+// Generador de IDs únicos
+let idCounter = 0;
+const newId = () => `kv-${Date.now()}-${idCounter++}`;
 
 const kvToObject = (list: KV[]) =>
   list
@@ -46,59 +44,66 @@ const kvToObject = (list: KV[]) =>
     }, {});
 
 const ModifyPage: React.FC = () => {
+  const navigate = useNavigate();
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
   const bg = useColorModeValue('white', 'gray.800');
   const mdataBg = useColorModeValue('gray.50', 'gray.700');
   const toast = useToast();
 
   const [searchParams] = useSearchParams();
-  const { groupedAssets, loading: loadingAssets } = useStock();
-  const { modifyAsset, loading: modifying } = useModify();
+  const { groupedAssets, loading: loadingAssets, reload } = useStock();
+  const { modifyBatch, loading: modifying, progress, resetProgress, BATCH_SIZE } = useModifyBatch();
 
-  const [selectedAssetId, setSelectedAssetId] = useState<string>('');
+  // Selección por asset agrupado (nombre-categoría), NO por ID individual
+  const [selectedAssetKey, setSelectedAssetKey] = useState<string>('');
   const [mdataFields, setMdataFields] = useState<KV[]>([]);
-  const newId = useIdGen();
 
-  // Leer el ID de la URL al cargar (cuando los assets estén listos)
+  // Leer el ID de la URL y encontrar el asset agrupado correspondiente
   useEffect(() => {
     const idFromUrl = searchParams.get('id');
-    if (idFromUrl && groupedAssets.length > 0 && !selectedAssetId) {
-      // Verificar que el ID existe en los assets
-      const exists = groupedAssets.some((asset) =>
-        asset.ids.some((id) => id.toString() === idFromUrl)
+    if (idFromUrl && groupedAssets.length > 0 && !selectedAssetKey) {
+      // Buscar el asset que contiene este ID
+      const asset = groupedAssets.find((a) =>
+        a.ids.some((id) => id.toString() === idFromUrl)
       );
-      if (exists) {
-        setSelectedAssetId(idFromUrl);
+      if (asset) {
+        const key = `${asset.name}-${asset.category}`;
+        setSelectedAssetKey(key);
       }
     }
-  }, [searchParams, groupedAssets, selectedAssetId]);
+  }, [searchParams, groupedAssets, selectedAssetKey]);
 
-  // Asset seleccionado
-  const selectedAsset = useMemo(() => {
-    if (!selectedAssetId) return null;
-    return groupedAssets.find((asset) =>
-      asset.ids.some((id) => id.toString() === selectedAssetId)
-    );
-  }, [selectedAssetId, groupedAssets]);
+  // Asset seleccionado (agrupado)
+  const selectedAsset = useMemo((): GroupedAsset | null => {
+    if (!selectedAssetKey) return null;
+    return groupedAssets.find(
+      (asset) => `${asset.name}-${asset.category}` === selectedAssetKey
+    ) || null;
+  }, [selectedAssetKey, groupedAssets]);
 
-  // ID numérico del asset
-  const assetIdNum = useMemo(() => {
-    return selectedAssetId ? parseInt(selectedAssetId) : null;
-  }, [selectedAssetId]);
-
-  // Cargar mdata actual cuando se selecciona un asset
+  // Cargar mdata cuando se selecciona un asset (sin incluir 'img')
   useEffect(() => {
     if (selectedAsset && selectedAsset.mdata) {
-      const entries = Object.entries(selectedAsset.mdata).map(([key, value]) => ({
-        id: newId(),
-        key,
-        value: String(value),
-      }));
+      const entries = Object.entries(selectedAsset.mdata)
+        .filter(([key]) => key !== 'img') // img se mantiene automáticamente
+        .map(([key, value]) => ({
+          id: newId(),
+          key,
+          value: String(value),
+        }));
       setMdataFields(entries);
     } else {
       setMdataFields([]);
     }
   }, [selectedAsset]);
+
+  // Calcular info de transacciones
+  const transactionInfo = useMemo(() => {
+    if (!selectedAsset) return null;
+    const totalIds = selectedAsset.ids.length;
+    const totalBatches = Math.ceil(totalIds / BATCH_SIZE);
+    return { totalIds, totalBatches };
+  }, [selectedAsset, BATCH_SIZE]);
 
   const addField = () => {
     setMdataFields([...mdataFields, { id: newId(), key: '', value: '' }]);
@@ -114,7 +119,7 @@ const ModifyPage: React.FC = () => {
   };
 
   const handleModify = async () => {
-    if (!assetIdNum) {
+    if (!selectedAsset) {
       toast({
         title: 'Error',
         description: 'Selecciona un asset para modificar',
@@ -125,33 +130,33 @@ const ModifyPage: React.FC = () => {
       return;
     }
 
-    // Construir nuevo mdata
+    // Construir nuevo mdata (mantener img original)
     const newMdata = {
-      img: selectedAsset?.mdata?.img || '', // Mantener img original
+      img: selectedAsset.mdata?.img || '',
       ...kvToObject(mdataFields),
     };
 
-    console.log('📦 Nuevo mdata:', newMdata);
+    console.log('📦 Nuevo mdata a aplicar a todos los IDs:', newMdata);
+    console.log('🎯 IDs a modificar:', selectedAsset.ids);
 
-    const result = await modifyAsset({
-      assetid: assetIdNum,
-      mdata: newMdata,
-    });
+    const result = await modifyBatch(selectedAsset.ids, newMdata);
 
     if (result.success) {
       toast({
-        title: 'Asset successfully modified!',
-        description: `The asset was updated #${assetIdNum}`,
+        title: '¡Assets modificados exitosamente!',
+        description: `Se actualizaron ${result.totalModified} unidades en ${result.transactionIds.length} transacción(es)`,
         status: 'success',
         duration: 5000,
         isClosable: true,
         position: 'top-right',
       });
 
-      setTimeout(() => navigate('/creator/stock'), 1500);
+      // Recargar assets y volver a stock
+      await reload();
+      setTimeout(() => navigate('/creator/stock'), 2000);
     } else {
       toast({
-        title: 'Error al modificar asset',
+        title: 'Error al modificar assets',
         description: result.error || 'Error desconocido',
         status: 'error',
         duration: 8000,
@@ -161,44 +166,57 @@ const ModifyPage: React.FC = () => {
     }
   };
 
+  const handleCancel = () => {
+    setSelectedAssetKey('');
+    setMdataFields([]);
+    resetProgress();
+  };
+
   // Convertir IPFS a URL HTTP
   const getImageUrl = (img: string): string => {
     if (!img) return '/placeholder-image.png';
-
     if (img.startsWith('ipfs://')) {
       const cid = img.replace('ipfs://', '');
       return `https://ipfs.io/ipfs/${cid}`;
     }
-
     return img;
   };
+
+  // Progress percentage
+  const progressPercent = progress.totalActions > 0
+    ? (progress.completedActions / progress.totalActions) * 100
+    : 0;
 
   return (
     <Box flex="1" p={{ base: 0, md: 2 }}>
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <Heading size="md" mb={4}>
-          Modify - Edit Asset
+          Modificar - Editar Asset
         </Heading>
 
         <Stack spacing={6} maxW="820px">
-          {/* Seleccionar Asset */}
+          {/* Seleccionar Asset (por nombre-categoría, SIN IDs) */}
           <Box>
             <Text fontWeight="semibold" mb={2}>
-              Select the asset to modify:
+              Selecciona el asset a modificar:
             </Text>
             <Select
-              placeholder="-- Select an asset --"
-              value={selectedAssetId}
-              onChange={(e) => setSelectedAssetId(e.target.value)}
-              isDisabled={loadingAssets}
+              placeholder="-- Seleccionar asset --"
+              value={selectedAssetKey}
+              onChange={(e) => {
+                setSelectedAssetKey(e.target.value);
+                resetProgress();
+              }}
+              isDisabled={loadingAssets || modifying}
             >
-              {groupedAssets.map((asset) =>
-                asset.ids.map((id) => (
-                  <option key={id} value={id.toString()}>
-                    #{id} - {asset.name} ({asset.category})
+              {groupedAssets.map((asset) => {
+                const key = `${asset.name}-${asset.category}`;
+                return (
+                  <option key={key} value={key}>
+                    {asset.name} ({asset.category}) - {asset.copyCount} unidad{asset.copyCount !== 1 ? 'es' : ''}
                   </option>
-                ))
-              )}
+                );
+              })}
             </Select>
             {loadingAssets && (
               <Text fontSize="xs" color="gray.500" mt={1}>
@@ -207,11 +225,11 @@ const ModifyPage: React.FC = () => {
             )}
           </Box>
 
-          {/* Preview del Asset Seleccionado */}
+          {/* Preview del Asset Seleccionado (sin ID) */}
           {selectedAsset && (
             <Box borderWidth="1px" borderColor={border} rounded="md" p={4}>
               <Text fontWeight="bold" mb={3}>
-                Asset Selected:
+                Asset Seleccionado:
               </Text>
               <HStack spacing={4} align="start">
                 <Image
@@ -228,23 +246,45 @@ const ModifyPage: React.FC = () => {
                   </Text>
                   <HStack>
                     <Badge colorScheme="blue">{selectedAsset.category}</Badge>
-                    <Badge colorScheme="teal">ID: {assetIdNum}</Badge>
+                    <Badge colorScheme="purple">
+                      {selectedAsset.copyCount} unidad{selectedAsset.copyCount !== 1 ? 'es' : ''}
+                    </Badge>
                   </HStack>
                   <Text fontSize="xs" color="gray.500">
                     Author: {selectedAsset.author}
                   </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    {selectedAsset.copyCount} {selectedAsset.copyCount === 1 ? 'unit' : 'units'}
-                  </Text>
                 </VStack>
               </HStack>
+
+              {/* Info de transacciones necesarias */}
+              {transactionInfo && (
+                <Alert status="info" mt={4} rounded="md" fontSize="sm">
+                  <AlertIcon />
+                  <AlertDescription>
+                    <Text>
+                      <strong>Total de unidades:</strong> {transactionInfo.totalIds}
+                    </Text>
+                    <Text>
+                      <strong>Transacciones necesarias:</strong> {transactionInfo.totalBatches}
+                      {transactionInfo.totalBatches > 1 && ` (máx. ${BATCH_SIZE} acciones por transacción)`}
+                    </Text>
+                    {transactionInfo.totalBatches > 1 && (
+                      <Text color="orange.600" fontWeight="medium" mt={1}>
+                        ⚠️ Cada transacción requiere una firma. Se procesarán en cola.
+                      </Text>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              )}
 
               {/* Mostrar mdata actual */}
               <Box mt={4} p={3} bg={mdataBg} rounded="md" fontSize="xs">
                 <Text fontWeight="bold" mb={1}>
-                  mdata:
+                  mdata actual:
                 </Text>
-                <Text fontFamily="mono">{JSON.stringify(selectedAsset.mdata, null, 2)}</Text>
+                <Text fontFamily="mono" whiteSpace="pre-wrap">
+                  {JSON.stringify(selectedAsset.mdata, null, 2)}
+                </Text>
               </Box>
             </Box>
           )}
@@ -255,9 +295,11 @@ const ModifyPage: React.FC = () => {
               <Text fontWeight="semibold" mb={2}>
                 Campos mutables (mdata):
               </Text>
-              <Alert status="info" mb={3} fontSize="sm">
+              <Alert status="warning" mb={3} fontSize="sm">
                 <AlertIcon />
-                You can only modify the <strong>mutable fields (mdata)</strong>. The immutable fields (idata) cannot be changed.
+                Solo puedes modificar los <strong>campos mutables (mdata)</strong>. 
+                Los campos inmutables (idata) no se pueden cambiar.
+                La imagen (img) se mantiene automáticamente.
               </Alert>
 
               <Stack spacing={3}>
@@ -265,28 +307,63 @@ const ModifyPage: React.FC = () => {
                   <HStack key={field.id} align="stretch">
                     <Input
                       value={field.key}
-                      placeholder="Field (ej. color)"
+                      placeholder="Campo (ej. level)"
                       onChange={(e) => editField(field.id, { key: e.target.value })}
+                      isDisabled={modifying}
                     />
                     <Input
                       value={field.value}
-                      placeholder="Valor (ej. rojo)"
+                      placeholder="Valor (ej. 5)"
                       onChange={(e) => editField(field.id, { value: e.target.value })}
+                      isDisabled={modifying}
                     />
                     <IconButton
-                      aria-label="Delete"
+                      aria-label="Eliminar"
                       icon={<CloseIcon boxSize="2" />}
                       variant="ghost"
                       borderWidth="1px"
                       borderColor={border}
                       onClick={() => removeField(field.id)}
+                      isDisabled={modifying}
                     />
                   </HStack>
                 ))}
-                <Button size="sm" onClick={addField} alignSelf="flex-start">
-                  + Add filed
+                <Button size="sm" onClick={addField} alignSelf="flex-start" isDisabled={modifying}>
+                  + Añadir campo
                 </Button>
               </Stack>
+            </Box>
+          )}
+
+          {/* Barra de progreso durante modificación */}
+          {modifying && progress.status !== 'idle' && (
+            <Box>
+              <Text fontSize="sm" mb={2}>
+                {progress.status === 'awaiting_signature' && (
+                  <>🔐 Esperando firma para lote {progress.currentBatch}/{progress.totalBatches}...</>
+                )}
+                {progress.status === 'processing' && (
+                  <>⏳ Procesando lote {progress.currentBatch}/{progress.totalBatches}...</>
+                )}
+                {progress.status === 'completed' && <>✅ ¡Completado!</>}
+                {progress.status === 'error' && <>❌ Error: {progress.error}</>}
+              </Text>
+              <Progress
+                value={progressPercent}
+                size="sm"
+                colorScheme={
+                  progress.status === 'error'
+                    ? 'red'
+                    : progress.status === 'completed'
+                    ? 'green'
+                    : 'teal'
+                }
+                hasStripe
+                isAnimated={modifying}
+              />
+              <Text fontSize="xs" color="gray.500" mt={1}>
+                {progress.completedActions} / {progress.totalActions} acciones completadas
+              </Text>
             </Box>
           )}
 
@@ -296,26 +373,32 @@ const ModifyPage: React.FC = () => {
               colorScheme="teal"
               onClick={handleModify}
               isLoading={modifying}
-              loadingText="Modifying..."
+              loadingText={
+                progress.status === 'awaiting_signature'
+                  ? `Firma lote ${progress.currentBatch}...`
+                  : 'Modificando...'
+              }
               isDisabled={!selectedAsset}
             >
-              Modify Asset
+              Modificar Asset
+              {transactionInfo && transactionInfo.totalBatches > 1 && (
+                <Badge ml={2} colorScheme="orange">
+                  {transactionInfo.totalBatches} firmas
+                </Badge>
+              )}
             </Button>
             <Button
               variant="outline"
-              onClick={() => {
-                setSelectedAssetId('');
-                setMdataFields([]);
-              }}
+              onClick={handleCancel}
               isDisabled={modifying}
             >
-              Clean
+              Limpiar
             </Button>
           </HStack>
 
           {!selectedAsset && (
             <Text fontSize="sm" color="gray.500" fontStyle="italic">
-              Select an asset to begin editing its mutable fields.
+              Selecciona un asset para comenzar a editar sus campos mutables.
             </Text>
           )}
         </Stack>
