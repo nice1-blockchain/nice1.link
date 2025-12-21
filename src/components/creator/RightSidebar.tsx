@@ -3,37 +3,41 @@ import React, { useState } from "react";
 import {
   Box,
   Stack,
-  Heading,
   Text,
   Divider,
   Spinner,
   Center,
-  useColorModeValue,
   Badge,
-  Tooltip,
+  useColorModeValue,
   useDisclosure,
+  Tooltip,
 } from "@chakra-ui/react";
-import { useStock, GroupedAsset } from "../../hooks/useStock";
+import { useStockContext, GroupedAsset } from "../../contexts/StockContext";
 import DuplicateModal from "./DuplicateModal";
 
-const PanelTitle: React.FC<React.PropsWithChildren<{ count?: number }>> = ({
+/* ---------- Título de sección ---------- */
+const PanelTitle: React.FC<{ children: React.ReactNode; count?: number }> = ({
   children,
   count,
-}) => (
-  <Heading as="h3" size="sm" mb={2}>
-    {children}
-    {count !== undefined && count > 0 && (
-      <Badge ml={2} colorScheme="teal" fontSize="xs">
-        {count}
-      </Badge>
-    )}
-  </Heading>
-);
+}) => {
+  const titleColor = useColorModeValue("gray.700", "whiteAlpha.900");
+  return (
+    <Text fontWeight="bold" fontSize="sm" color={titleColor} mb={2}>
+      {children}
+      {typeof count === "number" && count > 0 && (
+        <Badge ml={2} colorScheme="teal" fontSize="xs">
+          {count}
+        </Badge>
+      )}
+    </Text>
+  );
+};
 
+/* ---------- Tarjeta de item ---------- */
 interface CardItemProps {
   title: string;
   subtitle?: string;
-  copyCount?: number;
+  copyCount: number;
   onClick?: () => void;
 }
 
@@ -43,33 +47,30 @@ const CardItem: React.FC<CardItemProps> = ({
   copyCount,
   onClick,
 }) => {
-  const border = useColorModeValue("gray.200", "whiteAlpha.200");
-  const hover = useColorModeValue("gray.50", "whiteAlpha.100");
+  const bg = useColorModeValue("gray.50", "whiteAlpha.100");
+  const hoverBg = useColorModeValue("gray.100", "whiteAlpha.200");
 
   return (
-    <Tooltip
-      label={copyCount && copyCount > 1 ? `${copyCount} units` : title}
-      placement="left"
-    >
+    <Tooltip label="Click para duplicar" placement="left" hasArrow>
       <Box
-        p={3}
-        borderWidth="1px"
-        borderColor={border}
+        p={2}
+        bg={bg}
         rounded="md"
-        _hover={{ bg: hover }}
         cursor="pointer"
+        transition="background 0.15s"
+        _hover={{ bg: hoverBg }}
         onClick={onClick}
       >
-        <Text fontWeight="semibold" noOfLines={1}>
+        <Text fontWeight="medium" fontSize="sm" noOfLines={1}>
           {title}
         </Text>
         {subtitle && (
-          <Text fontSize="xs" opacity={0.7} noOfLines={1}>
+          <Text fontSize="xs" color="gray.500" noOfLines={1}>
             {subtitle}
           </Text>
         )}
-        {copyCount && copyCount > 1 && (
-          <Badge colorScheme="teal" fontSize="xs" mt={1}>
+        {copyCount > 1 && (
+          <Badge colorScheme="purple" fontSize="xs" mt={1}>
             {copyCount} {copyCount === 1 ? "unit" : "units"}
           </Badge>
         )}
@@ -80,8 +81,10 @@ const CardItem: React.FC<CardItemProps> = ({
 
 const RightSidebar: React.FC = () => {
   const border = useColorModeValue("gray.200", "whiteAlpha.200");
-  const { groupedAssets, loading, filterByCategory, reload } = useStock();
   
+  // Usar el contexto compartido en lugar de un hook local
+  const { groupedAssets, loading, filterByCategory, reload } = useStockContext();
+
   // Estado para el modal de duplicar
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
@@ -99,8 +102,8 @@ const RightSidebar: React.FC = () => {
   };
 
   // Callback cuando se duplica exitosamente
-  const handleDuplicateSuccess = () => {
-    reload();
+  const handleDuplicateSuccess = async () => {
+    await reload(); // Recargar el stock compartido
     onClose();
     setSelectedAsset(null);
   };
@@ -236,7 +239,7 @@ const RightSidebar: React.FC = () => {
 
           <Divider />
 
-          {/* Others (Custom) */}
+          {/* Others / Custom */}
           <Box>
             <PanelTitle count={others.length}>Others</PanelTitle>
             {others.length === 0 ? (
@@ -271,7 +274,7 @@ const RightSidebar: React.FC = () => {
         </Stack>
       </Box>
 
-      {/* Modal de Duplicación */}
+      {/* Modal de duplicar */}
       {selectedAsset && (
         <DuplicateModal
           isOpen={isOpen}

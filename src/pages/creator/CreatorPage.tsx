@@ -24,6 +24,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useAnchor } from "@nice1/react-tools";
 import { asString } from "../../utils/asstring";
 import { useCreatorContract } from "../../hooks/useCreatorContract";
+import { useStockContext } from "../../contexts/StockContext";
 
 /* ----------------------------- Helpers de formato ---------------------------- */
 /**
@@ -135,6 +136,9 @@ const CreatorPage: React.FC = () => {
   
   // Hook del contrato
   const { createAsset, loading, error, clearError } = useCreatorContract();
+  
+  // Contexto compartido para recargar el sidebar después de crear
+  const { reload: reloadStock } = useStockContext();
 
   const [assetType, setAssetType] = useState<AssetType>("license");
 
@@ -208,7 +212,11 @@ const CreatorPage: React.FC = () => {
 
       // Limpiar formulario después de éxito
       limpiarFormulario();
-      setTimeout(() => window.location.reload(), 1500);
+      
+      // Recargar el stock compartido (actualiza el sidebar automáticamente)
+      setTimeout(async () => {
+        await reloadStock();
+      }, 1500);
     } else {
       toast({
         title: "Error al crear activo",
@@ -269,10 +277,10 @@ const CreatorPage: React.FC = () => {
               onChange={(v) => setAssetType(v as AssetType)}
             >
               <HStack spacing={6}>
-                <Radio value="License">License</Radio>
-                <Radio value="Skin">Skin</Radio>
-                <Radio value="Asset">Asset</Radio>
-                <Radio value="Custom">custom</Radio>
+                <Radio value="license">License</Radio>
+                <Radio value="skin">Skin</Radio>
+                <Radio value="asset">Asset</Radio>
+                <Radio value="custom">Custom</Radio>
               </HStack>
             </RadioGroup>
 

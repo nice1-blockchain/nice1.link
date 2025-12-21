@@ -20,10 +20,9 @@ import {
   VStack,
   useToast,
 } from '@chakra-ui/react';
-import { useStock } from '../../hooks/useStock';
+import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
-import { GroupedAsset } from '../../hooks/useStock';
 import { useNavigate } from 'react-router-dom';
 import { useBurn } from '../../hooks/useBurn';
 
@@ -31,7 +30,8 @@ const StockPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
   const bg = useColorModeValue('white', 'gray.800');
 
-  const { groupedAssets, loading, error, reload, filterByCategory } = useStock();
+  // Usar contexto compartido en lugar de useStock local
+  const { groupedAssets, loading, error, reload, filterByCategory } = useStockContext();
   
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
@@ -49,11 +49,11 @@ const StockPage: React.FC = () => {
     setIsDuplicateModalOpen(true);
   };
 
-  const handleDuplicateSuccess = () => {
+  const handleDuplicateSuccess = async () => {
     setIsDuplicateModalOpen(false);
     setSelectedAsset(null);
-    // Recargar assets después de duplicar
-    setTimeout(() => reload(), 1000);
+    // Recargar assets después de duplicar (actualiza sidebar también)
+    setTimeout(async () => await reload(), 1000);
   };
 
   const getCategoryStats = (category: string | null) => {
@@ -81,7 +81,7 @@ const StockPage: React.FC = () => {
       const result = await burnAsset([asset.ids[0]]);
       if (result.success) {
         toast({ title: 'Asset quemado', status: 'success', duration: 3000 });
-        setTimeout(() => reload(), 1000);
+        setTimeout(async () => await reload(), 1000);
       } else {
         toast({ title: 'Error', description: result.error, status: 'error', duration: 5000 });
       }
@@ -95,7 +95,7 @@ const StockPage: React.FC = () => {
           <Center minH="400px">
             <VStack spacing={4}>
               <Spinner size="xl" color="teal.500" thickness="4px" />
-              <Text>Loadging your assets...</Text>
+              <Text>Loading your assets...</Text>
             </VStack>
           </Center>
         </Box>
