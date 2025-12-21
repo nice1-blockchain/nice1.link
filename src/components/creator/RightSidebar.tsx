@@ -280,22 +280,23 @@ const RightSidebar: React.FC = () => {
   const handleBurn = async () => {
     if (!selectedAsset) return;
 
-    if (window.confirm(`¿Seguro que quieres QUEMAR "${selectedAsset.name}"?`)) {
+    if (window.confirm(`You definitely want to BURN "${selectedAsset.name}"?`)) {
       const result = await burnAsset([selectedAsset.ids[0]]);
       if (result.success) {
         toast({
-          title: "Asset quemado",
-          description: `"${selectedAsset.name}" ha sido eliminado.`,
+          title: "Asset burned",
+          description: `"${selectedAsset.name}" has been removed.`,
           status: "success",
           duration: 5000,
           isClosable: true,
         });
         await reload();
         setSelectedAsset(null);
+        navigate('/creator/stock');
       } else {
         toast({
-          title: "Error al quemar",
-          description: result.error || "Error desconocido",
+          title: "Error burning",
+          description: result.error || "Unknown error",
           status: "error",
           duration: 7000,
           isClosable: true,

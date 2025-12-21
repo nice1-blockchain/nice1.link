@@ -19,7 +19,7 @@ import {
   AlertIcon,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useStock } from '../../hooks/useStock';
 import { useModify } from '../../hooks/useModify';
 
@@ -28,6 +28,8 @@ interface KV {
   key: string;
   value: string;
 }
+
+const navigate = useNavigate();
 
 // Hook para generar IDs únicos
 const useIdGen = () => {
@@ -138,16 +140,15 @@ const ModifyPage: React.FC = () => {
 
     if (result.success) {
       toast({
-        title: '¡Asset modificado exitosamente!',
-        description: `Se actualizó el asset #${assetIdNum}`,
+        title: 'Asset successfully modified!',
+        description: `The asset was updated #${assetIdNum}`,
         status: 'success',
         duration: 5000,
         isClosable: true,
         position: 'top-right',
       });
 
-      // Recargar página después de 1.5 segundos
-      setTimeout(() => window.location.reload(), 1500);
+      setTimeout(() => navigate('/creator/stock'), 1500);
     } else {
       toast({
         title: 'Error al modificar asset',

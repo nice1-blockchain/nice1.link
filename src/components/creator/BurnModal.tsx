@@ -77,8 +77,8 @@ const BurnModal: React.FC<BurnModalProps> = ({ isOpen, onClose, asset, onSuccess
 
     if (result.success) {
       toast({
-        title: '🔥 Assets quemados',
-        description: `Se han eliminado ${idsToBurn.length} unidad${idsToBurn.length !== 1 ? 'es' : ''} de "${asset.name}"`,
+        title: '🔥 Assets burned',
+        description: `They have been removed ${idsToBurn.length} units${idsToBurn.length !== 1 ? 'es' : ''} de "${asset.name}"`,
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -87,8 +87,8 @@ const BurnModal: React.FC<BurnModalProps> = ({ isOpen, onClose, asset, onSuccess
       onSuccess();
     } else {
       toast({
-        title: 'Error al quemar',
-        description: result.error || 'Error desconocido',
+        title: 'Burning error',
+        description: result.error || 'Unknown error',
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -282,7 +282,7 @@ const BurnModal: React.FC<BurnModalProps> = ({ isOpen, onClose, asset, onSuccess
                   <Alert status="warning" rounded="md" fontSize="sm">
                     <AlertIcon />
                     <Text>
-                      This will remove <strong>TODAS</strong> the copies of this asset.
+                      This will remove <strong>ALL</strong> the copies of this asset.
                     </Text>
                   </Alert>
                 )}
