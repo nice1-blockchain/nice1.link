@@ -48,7 +48,7 @@ const CardItem: React.FC<CardItemProps> = ({
 
   return (
     <Tooltip
-      label={copyCount && copyCount > 1 ? `${copyCount} copias` : title}
+      label={copyCount && copyCount > 1 ? `${copyCount} units` : title}
       placement="left"
     >
       <Box
@@ -70,7 +70,7 @@ const CardItem: React.FC<CardItemProps> = ({
         )}
         {copyCount && copyCount > 1 && (
           <Badge colorScheme="teal" fontSize="xs" mt={1}>
-            {copyCount} {copyCount === 1 ? "copia" : "copias"}
+            {copyCount} {copyCount === 1 ? "unit" : "units"}
           </Badge>
         )}
       </Box>

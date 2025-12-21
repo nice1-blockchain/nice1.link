@@ -153,7 +153,7 @@ const StockPage: React.FC = () => {
                   <TabPanel key={cat.value || 'all'} px={0}>
                     <Text fontSize="sm" mb={4} color="gray.500">
                       {stats.uniqueAssets} asset{stats.uniqueAssets !== 1 ? 's' : ''} único
-                      {stats.uniqueAssets !== 1 ? 's' : ''} • {stats.totalAssets} copia
+                      {stats.uniqueAssets !== 1 ? 's' : ''} • {stats.totalAssets} unit
                       {stats.totalAssets !== 1 ? 's' : ''} en total
                     </Text>
 

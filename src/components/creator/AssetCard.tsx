@@ -98,9 +98,9 @@ const AssetCard: React.FC<AssetCardProps> = ({
 
         {/* Badge copias */}
         {asset.copyCount > 1 && (
-          <Tooltip label={`${asset.copyCount} copias en total`}>
+          <Tooltip label={`${asset.copyCount} units`}>
             <Badge position="absolute" bottom={2} right={2} colorScheme="teal" px={2} py={1}>
-              {asset.copyCount} copias
+              {asset.copyCount} units
             </Badge>
           </Tooltip>
         )}
@@ -140,7 +140,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
         </HStack>
 
         <HStack justify="space-between" fontSize="xs" color="gray.500">
-          <Text>IDs: {asset.ids.length}</Text>
+          <Text>Units: {asset.ids.length}</Text>
           <Text noOfLines={1}>by {asset.author}</Text>
         </HStack>
       </VStack>

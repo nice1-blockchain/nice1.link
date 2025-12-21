@@ -23,13 +23,13 @@ export const useDuplicate = () => {
   const duplicateAsset = useCallback(
     async (asset: GroupedAsset, copies: number): Promise<DuplicateResult> => {
       if (!session) {
-        const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
+        const errMsg = 'There is no active session. Please connect your wallet.';
         setError(errMsg);
         return { success: false, error: errMsg };
       }
 
       if (copies < 1 || copies > 100) {
-        const errMsg = 'El número de copias debe estar entre 1 y 100';
+        const errMsg = 'The number of units must be between 1 and 100.';
         setError(errMsg);
         return { success: false, error: errMsg };
       }

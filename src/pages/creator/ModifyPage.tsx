@@ -233,7 +233,7 @@ const ModifyPage: React.FC = () => {
                     Author: {selectedAsset.author}
                   </Text>
                   <Text fontSize="xs" color="gray.500">
-                    {selectedAsset.copyCount} {selectedAsset.copyCount === 1 ? 'copia' : 'copias'}
+                    {selectedAsset.copyCount} {selectedAsset.copyCount === 1 ? 'unit' : 'units'}
                   </Text>
                 </VStack>
               </HStack>

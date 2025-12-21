@@ -78,8 +78,8 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
 
     if (result.success) {
       toast({
-        title: '¡Assets duplicados exitosamente!',
-        description: `Se han creado ${copies} copia${copies !== 1 ? 's' : ''} de "${asset.name}"`,
+        title: 'Assets successfully duplicated!',
+        description: `They have been created ${copies} unit${copies !== 1 ? 's' : ''} of "${asset.name}"`,
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -88,8 +88,8 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
       onSuccess();
     } else {
       toast({
-        title: 'Error al duplicar',
-        description: result.error || 'Ha ocurrido un error desconocido',
+        title: 'Error duplicating asset',
+        description: result.error || 'An unknown error occurred',
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -127,7 +127,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
       <Modal isOpen={isOpen} onClose={handleClose} size="lg" isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Duplicar Asset</ModalHeader>
+          <ModalHeader>Duplicate Asset</ModalHeader>
           <ModalCloseButton isDisabled={loading} />
 
           <ModalBody>
@@ -165,7 +165,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
                     <HStack>
                       <Badge colorScheme="purple">{asset.category}</Badge>
                       <Badge colorScheme="teal">
-                        {asset.copyCount} {asset.copyCount === 1 ? 'copia' : 'copias'} existentes
+                        {asset.copyCount} {asset.copyCount === 1 ? 'unit' : 'units'} existentes
                       </Badge>
                     </HStack>
                     <Text fontSize="xs" color="gray.500">
@@ -179,7 +179,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
 
               {/* Input de número de copias */}
               <FormControl>
-                <FormLabel>¿Cuántas copias quieres crear?</FormLabel>
+                <FormLabel>How many units do you want to create?</FormLabel>
                 <NumberInput
                   value={copies}
                   onChange={(_, valueAsNumber) => setCopies(valueAsNumber)}
@@ -194,7 +194,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
                   </NumberInputStepper>
                 </NumberInput>
                 <FormHelperText>
-                  Mínimo: 1 • Máximo: 100 copias por transacción
+                  Minimum: 1 • Maximum: 100 units per transaction
                 </FormHelperText>
               </FormControl>
 
@@ -203,11 +203,11 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
                 <AlertIcon />
                 <Box flex="1">
                   <AlertDescription>
-                    Se crearán <strong>{copies}</strong> {copies === 1 ? 'copia' : 'copias'} idéntica
-                    {copies !== 1 ? 's' : ''} con todos los datos del asset original.
+                    They will be created <strong>{copies}</strong> {copies === 1 ? 'unit' : 'units'} identical
+                    {copies !== 1 ? 's' : ''} with all the data of the original asset.
                     {copies > 50 && (
                       <Text mt={2} color="orange.600">
-                        ⚠️ Crear más de 50 copias puede tardar más tiempo.
+                        ⚠️ Creating more than 50 units may take longer.
                       </Text>
                     )}
                   </AlertDescription>
@@ -225,7 +225,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
               {/* Datos que se duplicarán */}
               <Box fontSize="xs" color="gray.500" p={3} bg="gray.50" rounded="md">
                 <Text fontWeight="bold" mb={2}>
-                  Datos a duplicar:
+                  Data to be duplicated:
                 </Text>
                 <Text>
                   <strong>idata:</strong> {JSON.stringify(asset.idata)}
@@ -243,7 +243,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
               mr={3}
               onClick={handleDuplicateClick}
               isLoading={loading}
-              loadingText={`Creando ${copies} ${copies === 1 ? 'copia' : 'copias'}...`}
+              loadingText={`Creando ${copies} ${copies === 1 ? 'unit' : 'units'}...`}
               isDisabled={copies < 1 || copies > 100}
             >
               Duplicar ({copies})
@@ -265,29 +265,29 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Confirmar duplicación
+              Confirm duplication
             </AlertDialogHeader>
 
             <AlertDialogBody>
               <VStack spacing={3} align="stretch">
                 <Text>
-                  Vas a consumir recursos de blockchain para crear{' '}
-                  <strong>{copies}</strong> {copies === 1 ? 'copia' : 'copias'} de{' '}
+                  You are about to consume blockchain resources to create{' '}
+                  <strong>{copies}</strong> {copies === 1 ? 'unit' : 'units'} de{' '}
                   <strong>"{asset.name}"</strong>.
                 </Text>
                 <Alert status="warning" rounded="md" fontSize="sm">
                   <AlertIcon />
-                  <Text>¿Es esta la licencia final?</Text>
+                  <Text>Is this the final license?</Text>
                 </Alert>
               </VStack>
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onAlertClose}>
-                Cancelar
+                Cancel
               </Button>
               <Button colorScheme="teal" onClick={handleConfirmDuplicate} ml={3}>
-                Aceptar
+                Accept
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
