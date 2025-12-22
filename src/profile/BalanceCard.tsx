@@ -50,7 +50,7 @@ const BalanceCard = () => {
           </SVGIcon>
           <Box>
             <Text fontSize='sm' color='gray.400'>
-              EOS
+              WAX
             </Text>
             <Text fontWeight='bold' fontSize='md'>
               <NumberFormat
