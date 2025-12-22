@@ -83,7 +83,7 @@ const NftDelegateConfModal = ({ delegTo, delegAssetId, delegEpochLimit, delegRed
 
       session?.transact({
         action: {
-          account: 'simpleassets',
+          account: 'nice2simplea',
           name: 'delegate',
           authorization: [session.auth],
           data: {

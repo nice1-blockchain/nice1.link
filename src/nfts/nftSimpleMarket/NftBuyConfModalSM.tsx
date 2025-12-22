@@ -64,7 +64,7 @@ export const NftBuyConfModalSM = ({ asset }: any ) => {
             }
           },
           {
-            account: "simpleassets",
+            account: "nice2simplea",
             name: "claim",
             authorization: [session.auth],
             data: {

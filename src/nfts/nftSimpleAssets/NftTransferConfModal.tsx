@@ -71,7 +71,7 @@ const NftTransferConfModal = ({ transfTo, transfAssetId, transfMemo, transMesErr
       const valueInputMemoTransfer = transfMemo.current.value;
       session?.transact({
         action: {
-          account: 'simpleassets',
+          account: 'nice2simplea',
           name: 'transfer',
           authorization: [session.auth],
           data: {

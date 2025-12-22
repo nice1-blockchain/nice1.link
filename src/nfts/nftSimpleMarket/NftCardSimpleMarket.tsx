@@ -54,7 +54,7 @@ const NftCardSimpleMarket = () => {
 
       const { rows } = await session.client.v1.chain.get_table_rows({
         json: true,
-        code: 'simpleassets',
+        code: 'nice2simplea',
         table: 'sassets',
         scope: 'simplemarket',
         limit: 1000,
