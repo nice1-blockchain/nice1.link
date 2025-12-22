@@ -2,7 +2,7 @@
 import { useCallback, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
-const CONTRACT_NAME = 'simpleassets';
+const CONTRACT_NAME = 'nice2simplea';
 const BATCH_SIZE = 50; // Máximo 50 acciones por transacción
 
 export interface ModifyBatchProgress {
