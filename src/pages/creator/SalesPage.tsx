@@ -172,7 +172,7 @@ const SalesPage: React.FC = () => {
                             <Text>Receptor 2: {product.receiver2} ({product.percentr2}%)</Text>
                           )}
                           <Text fontSize="xs" color="gray.400">
-                            int_ref: {product.int_ref}
+                            int_ref: {product.int_ref.toString()}
                           </Text>
                         </VStack>
 
