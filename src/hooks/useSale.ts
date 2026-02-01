@@ -27,10 +27,10 @@ export interface SaleResult {
   transactionId?: string;
   int_ref?: number;
   error?: string;
-  step?: 'setproduct' | 'addproductdata' | 'transfer';
+  step?: 'setproduct' | 'transfer';
 }
 
-type SaleStep = 'idle' | 'setproduct' | 'addproductdata' | 'transfer' | 'completed' | 'error';
+type SaleStep = 'idle' | 'setproduct' | 'transfer' | 'completed' | 'error';
 
 /**
  * Genera un número aleatorio de 8 dígitos
@@ -53,28 +53,36 @@ export const useSale = () => {
   const [currentStep, setCurrentStep] = useState<SaleStep>('idle');
 
   /**
-   * Paso 1: setproduct - Registra el producto en el contrato de venta
+   * Paso 1: setproduct + addproductdata (combinados en una sola transacción)
+   * Registra el producto y vincula el NFT de referencia con una sola firma
    */
-  const setProduct = useCallback(
-    async (params: SetProductParams, int_ref: number, ext_inf: number): Promise<SaleResult> => {
+  const setProductAndAddData = useCallback(
+    async (
+      params: SetProductParams,
+      int_ref: number,
+      ext_inf: number,
+      referenceNftId: number
+    ): Promise<SaleResult> => {
       if (!session) {
         return { success: false, error: 'No hay sesión activa', step: 'setproduct' };
       }
 
       try {
-        const productOwner = session.auth.actor.toString();
+        const owner = session.auth.actor.toString();
+        const authorization = [
+          {
+            actor: owner,
+            permission: session.auth.permission.toString(),
+          },
+        ];
 
-        const action = {
+        // Acción 1: setproduct
+        const setProductAction = {
           account: SALE_CONTRACT,
           name: 'setproduct',
-          authorization: [
-            {
-              actor: productOwner,
-              permission: session.auth.permission.toString(),
-            },
-          ],
+          authorization,
           data: {
-            productowner: productOwner,
+            productowner: owner,
             product: params.product,
             price: formatPrice(params.price),
             tokencontract: TOKEN_CONTRACT,
@@ -88,54 +96,11 @@ export const useSale = () => {
           },
         };
 
-        console.log('📤 [setproduct] Enviando:', action);
-
-        const result = await session.transact(
-          { actions: [action] },
-          { broadcast: true }
-        );
-
-        console.log('✅ [setproduct] Éxito:', result);
-
-        const txId =
-          result.transaction?.id?.toString() ||
-          result.processed?.id?.toString() ||
-          'unknown';
-
-        return { success: true, transactionId: txId, int_ref, step: 'setproduct' };
-      } catch (err: any) {
-        console.error('❌ [setproduct] Error:', err);
-        const errorMessage =
-          err?.message ||
-          err?.error?.details?.[0]?.message ||
-          'Error al registrar producto';
-        return { success: false, error: errorMessage, step: 'setproduct' };
-      }
-    },
-    [session]
-  );
-
-  /**
-   * Paso 2: addproductdata - Vincula el NFT de referencia al producto
-   */
-  const addProductData = useCallback(
-    async (int_ref: number, referenceNftId: number): Promise<SaleResult> => {
-      if (!session) {
-        return { success: false, error: 'No hay sesión activa', step: 'addproductdata' };
-      }
-
-      try {
-        const owner = session.auth.actor.toString();
-
-        const action = {
+        // Acción 2: addproductdata
+        const addProductDataAction = {
           account: SALE_CONTRACT,
           name: 'addproductdata',
-          authorization: [
-            {
-              actor: owner,
-              permission: session.auth.permission.toString(),
-            },
-          ],
+          authorization,
           data: {
             owner: owner,
             int_ref: int_ref,
@@ -144,28 +109,32 @@ export const useSale = () => {
           },
         };
 
-        console.log('📤 [addproductdata] Enviando:', action);
+        console.log('📤 [setproduct + addproductdata] Enviando:', {
+          setProductAction,
+          addProductDataAction,
+        });
 
+        // Enviar ambas acciones en una sola transacción
         const result = await session.transact(
-          { actions: [action] },
+          { actions: [setProductAction, addProductDataAction] },
           { broadcast: true }
         );
 
-        console.log('✅ [addproductdata] Éxito:', result);
+        console.log('✅ [setproduct + addproductdata] Éxito:', result);
 
         const txId =
           result.transaction?.id?.toString() ||
           result.processed?.id?.toString() ||
           'unknown';
 
-        return { success: true, transactionId: txId, int_ref, step: 'addproductdata' };
+        return { success: true, transactionId: txId, int_ref, step: 'setproduct' };
       } catch (err: any) {
-        console.error('❌ [addproductdata] Error:', err);
+        console.error('❌ [setproduct + addproductdata] Error:', err);
         const errorMessage =
           err?.message ||
           err?.error?.details?.[0]?.message ||
-          'Error al vincular NFT de referencia';
-        return { success: false, error: errorMessage, step: 'addproductdata' };
+          'Error al registrar producto';
+        return { success: false, error: errorMessage, step: 'setproduct' };
       }
     },
     [session]
@@ -228,8 +197,9 @@ export const useSale = () => {
   );
 
   /**
-   * Flujo completo de venta: setproduct → addproductdata → transfer
-   * Cada paso requiere firma individual del usuario
+   * Flujo completo de venta: (setproduct + addproductdata) → transfer
+   * Paso 1: Una firma para registrar producto y vincular NFT referencia
+   * Paso 2: Una firma para enviar stock inicial
    */
   const executeSaleFlow = useCallback(
     async (params: SaleFlowParams): Promise<SaleResult> => {
@@ -247,49 +217,37 @@ export const useSale = () => {
       const ext_inf = generateRef();
 
       try {
-        // PASO 1: setproduct
+        // PASO 1: setproduct + addproductdata (combinados - 1 firma)
         setCurrentStep('setproduct');
-        console.log('🚀 Iniciando paso 1: setproduct');
+        console.log('🚀 Iniciando paso 1/2: setproduct + addproductdata');
         
-        const step1 = await setProduct(params, int_ref, ext_inf);
+        const step1 = await setProductAndAddData(params, int_ref, ext_inf, params.referenceNftId);
         if (!step1.success) {
-          setError(step1.error || 'Error en setproduct');
+          setError(step1.error || 'Error en setproduct + addproductdata');
           setCurrentStep('error');
           setLoading(false);
           return step1;
         }
 
-        // PASO 2: addproductdata
-        setCurrentStep('addproductdata');
-        console.log('🚀 Iniciando paso 2: addproductdata');
+        // PASO 2: transfer (stock inicial - 1 firma)
+        setCurrentStep('transfer');
+        console.log('🚀 Iniciando paso 2/2: transfer');
         
-        const step2 = await addProductData(int_ref, params.referenceNftId);
+        const step2 = await transferToSale(params.assetIdsToSend, int_ref);
         if (!step2.success) {
-          setError(step2.error || 'Error en addproductdata');
+          setError(step2.error || 'Error en transfer');
           setCurrentStep('error');
           setLoading(false);
           return step2;
         }
 
-        // PASO 3: transfer (stock inicial)
-        setCurrentStep('transfer');
-        console.log('🚀 Iniciando paso 3: transfer');
-        
-        const step3 = await transferToSale(params.assetIdsToSend, int_ref);
-        if (!step3.success) {
-          setError(step3.error || 'Error en transfer');
-          setCurrentStep('error');
-          setLoading(false);
-          return step3;
-        }
-
-        // TODO: Completado
+        // Completado
         setCurrentStep('completed');
         setLoading(false);
 
         return {
           success: true,
-          transactionId: step3.transactionId,
+          transactionId: step2.transactionId,
           int_ref,
         };
       } catch (err: any) {
@@ -301,7 +259,7 @@ export const useSale = () => {
         return { success: false, error: errorMessage };
       }
     },
-    [session, setProduct, addProductData, transferToSale]
+    [session, setProductAndAddData, transferToSale]
   );
 
   /**

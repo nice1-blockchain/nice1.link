@@ -5,10 +5,10 @@ import { useAnchor } from '@nice1/react-tools';
 const SALE_CONTRACT = 'n1licensepos';
 
 // ⚠️ PLACEHOLDER: Reemplazar con el nombre real de la tabla
-const TABLE_PRODUCTOS_VENTA = 'TABLE_PRODUCTOS_VENTA';
+const TABLE_PRODUCTOS_VENTA = 'products';
 
 // ⚠️ PLACEHOLDER: Tabla para obtener int_ref de productos existentes
-const TABLE_INT_REF = 'TABLE_INT_REF';
+const TABLE_INT_REF = 'productdata';
 
 export interface SaleProduct {
   int_ref: number;
@@ -79,8 +79,8 @@ export const useSalesProducts = () => {
    * Obtener int_ref de un producto por su NFT de referencia
    * Útil para reponer stock
    */
-  const getIntRefByNftId = useCallback(
-    async (nftId: number): Promise<number | null> => {
+  const getIntRefByNftProduct = useCallback(
+    async (product: string): Promise<number | null> => {
       if (!session) return null;
 
       try {
@@ -98,7 +98,7 @@ export const useSalesProducts = () => {
         });
 
         // Buscar el producto que tiene este NFT como referencia
-        const product = rows.find((p: any) => p.id === nftId || p.referenceNftId === nftId);
+        const product = rows.find((p: any) => p.product === product);
         
         return product?.int_ref || null;
       } catch (err: any) {
@@ -139,7 +139,7 @@ export const useSalesProducts = () => {
     loading,
     error,
     reload: loadProducts,
-    getIntRefByNftId,
+    getIntRefByNftProduct,
     isProductOnSale,
     getProductByIntRef,
   };

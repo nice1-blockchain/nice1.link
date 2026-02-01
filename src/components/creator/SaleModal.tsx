@@ -72,12 +72,11 @@ const SaleModal: React.FC<SaleModalProps> = ({
     return availableIds.slice(0, stockToSend);
   }, [availableIds, stockToSend]);
 
-  // Progreso del flujo
+  // Progreso del flujo (2 pasos)
   const getStepProgress = (): number => {
     switch (currentStep) {
       case 'idle': return 0;
-      case 'setproduct': return 33;
-      case 'addproductdata': return 66;
+      case 'setproduct': return 50;
       case 'transfer': return 90;
       case 'completed': return 100;
       case 'error': return 0;
@@ -87,9 +86,8 @@ const SaleModal: React.FC<SaleModalProps> = ({
 
   const getStepLabel = (): string => {
     switch (currentStep) {
-      case 'setproduct': return 'Paso 1/3: Registrando producto...';
-      case 'addproductdata': return 'Paso 2/3: Vinculando NFT referencia...';
-      case 'transfer': return 'Paso 3/3: Enviando stock inicial...';
+      case 'setproduct': return 'Paso 1/2: Registrando producto...';
+      case 'transfer': return 'Paso 2/2: Enviando stock inicial...';
       case 'completed': return '¡Completado!';
       default: return '';
     }
