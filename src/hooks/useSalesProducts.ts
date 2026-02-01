@@ -12,7 +12,7 @@ const TABLE_INT_REF = 'productdata';
 
 export interface SaleProduct {
   int_ref: bigint;
-  ext_inf: bigint;
+  ext_ref: bigint;
   product: string;
   price: string;
   tokencontract: string;

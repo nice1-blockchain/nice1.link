@@ -25,7 +25,7 @@ export interface SaleFlowParams extends SetProductParams {
 export interface SaleResult {
   success: boolean;
   transactionId?: string;
-  int_ref?: bigint;
+  int_ref?: number;
   error?: string;
   step?: 'setproduct' | 'transfer';
 }
@@ -35,8 +35,8 @@ type SaleStep = 'idle' | 'setproduct' | 'transfer' | 'completed' | 'error';
 /**
  * Genera un número aleatorio de 8 dígitos
  */
-const generateRef = (): bigint => {
-  return BigInt(Math.floor(10000000 + Math.random() * 90000000));
+const generateRef = (): number => {
+  return Math.floor(10000000 + Math.random() * 90000000);
 };
 
 /**
@@ -59,8 +59,8 @@ export const useSale = () => {
   const setProductAndAddData = useCallback(
     async (
       params: SetProductParams,
-      int_ref: bigint,
-      ext_inf: bigint,
+      int_ref: number,
+      ext_ref: number,
       referenceNftId: number
     ): Promise<SaleResult> => {
       if (!session) {
@@ -88,7 +88,7 @@ export const useSale = () => {
             tokencontract: TOKEN_CONTRACT,
             nftcontract: NFT_CONTRACT,
             int_ref: int_ref,
-            ext_inf: ext_inf,
+            ext_ref: ext_ref,
             receiver1: params.receiver1,
             percentr1: params.percentr1,
             receiver2: params.receiver2 || '',
@@ -144,7 +144,7 @@ export const useSale = () => {
    * Paso 3: transfer - Envía NFTs al contrato de venta como stock inicial
    */
   const transferToSale = useCallback(
-    async (assetIds: number[], int_ref: bigint): Promise<SaleResult> => {
+    async (assetIds: number[], int_ref: number): Promise<SaleResult> => {
       if (!session) {
         return { success: false, error: 'No hay sesión activa', step: 'transfer' };
       }
@@ -214,14 +214,14 @@ export const useSale = () => {
 
       // Generar referencias únicas
       const int_ref = generateRef();
-      const ext_inf = generateRef();
+      const ext_ref = generateRef();
 
       try {
         // PASO 1: setproduct + addproductdata (combinados - 1 firma)
         setCurrentStep('setproduct');
         console.log('🚀 Iniciando paso 1/2: setproduct + addproductdata');
         
-        const step1 = await setProductAndAddData(params, int_ref, ext_inf, params.referenceNftId);
+        const step1 = await setProductAndAddData(params, int_ref, ext_ref, params.referenceNftId);
         if (!step1.success) {
           setError(step1.error || 'Error en setproduct + addproductdata');
           setCurrentStep('error');
@@ -266,7 +266,7 @@ export const useSale = () => {
    * Reponer stock: transfer con memo = int_ref
    */
   const restockProduct = useCallback(
-    async (assetIds: number[], int_ref: bigint): Promise<SaleResult> => {
+    async (assetIds: number[], int_ref: number): Promise<SaleResult> => {
       if (!session) {
         const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
         setError(errMsg);
