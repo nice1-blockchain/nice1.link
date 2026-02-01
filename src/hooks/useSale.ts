@@ -53,7 +53,7 @@ export const useSale = () => {
   const [currentStep, setCurrentStep] = useState<SaleStep>('idle');
 
   /**
-   * Paso 1: setproduct + addproductdata (combinados en una sola transacción)
+   * Paso 1: setproduct + addproddata (combinados en una sola transacción)
    * Registra el producto y vincula el NFT de referencia con una sola firma
    */
   const setProductAndAddData = useCallback(
@@ -96,10 +96,10 @@ export const useSale = () => {
           },
         };
 
-        // Acción 2: addproductdata
-        const addProductDataAction = {
+        // Acción 2: addproddata
+        const addproddataAction = {
           account: SALE_CONTRACT,
-          name: 'addproductdata',
+          name: 'addproddata',
           authorization,
           data: {
             owner: owner,
@@ -109,18 +109,18 @@ export const useSale = () => {
           },
         };
 
-        console.log('📤 [setproduct + addproductdata] Enviando:', {
+        console.log('📤 [setproduct + addproddata] Enviando:', {
           setProductAction,
-          addProductDataAction,
+          addproddataAction,
         });
 
         // Enviar ambas acciones en una sola transacción
         const result = await session.transact(
-          { actions: [setProductAction, addProductDataAction] },
+          { actions: [setProductAction, addproddataAction] },
           { broadcast: true }
         );
 
-        console.log('✅ [setproduct + addproductdata] Éxito:', result);
+        console.log('✅ [setproduct + addproddata] Éxito:', result);
 
         const txId =
           result.transaction?.id?.toString() ||
@@ -129,7 +129,7 @@ export const useSale = () => {
 
         return { success: true, transactionId: txId, int_ref, step: 'setproduct' };
       } catch (err: any) {
-        console.error('❌ [setproduct + addproductdata] Error:', err);
+        console.error('❌ [setproduct + addproddata] Error:', err);
         const errorMessage =
           err?.message ||
           err?.error?.details?.[0]?.message ||
@@ -197,7 +197,7 @@ export const useSale = () => {
   );
 
   /**
-   * Flujo completo de venta: (setproduct + addproductdata) → transfer
+   * Flujo completo de venta: (setproduct + addproddata) → transfer
    * Paso 1: Una firma para registrar producto y vincular NFT referencia
    * Paso 2: Una firma para enviar stock inicial
    */
@@ -217,13 +217,13 @@ export const useSale = () => {
       const ext_ref = generateRef();
 
       try {
-        // PASO 1: setproduct + addproductdata (combinados - 1 firma)
+        // PASO 1: setproduct + addproddata (combinados - 1 firma)
         setCurrentStep('setproduct');
-        console.log('🚀 Iniciando paso 1/2: setproduct + addproductdata');
+        console.log('🚀 Iniciando paso 1/2: setproduct + addproddata');
         
         const step1 = await setProductAndAddData(params, int_ref, ext_ref, params.referenceNftId);
         if (!step1.success) {
-          setError(step1.error || 'Error en setproduct + addproductdata');
+          setError(step1.error || 'Error en setproduct + addproddata');
           setCurrentStep('error');
           setLoading(false);
           return step1;
