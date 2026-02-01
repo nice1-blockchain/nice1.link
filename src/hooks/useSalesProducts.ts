@@ -123,7 +123,7 @@ export const useSalesProducts = () => {
    * Obtener producto por int_ref
    */
   const getProductByIntRef = useCallback(
-    (int_ref: number): SaleProduct | null => {
+    (int_ref: bigint): SaleProduct | null => {
       return products.find((p) => p.int_ref === int_ref) || null;
     },
     [products]

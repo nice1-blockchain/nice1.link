@@ -25,7 +25,7 @@ export interface SaleFlowParams extends SetProductParams {
 export interface SaleResult {
   success: boolean;
   transactionId?: string;
-  int_ref?: number;
+  int_ref?: bigint;
   error?: string;
   step?: 'setproduct' | 'transfer';
 }
@@ -59,8 +59,8 @@ export const useSale = () => {
   const setProductAndAddData = useCallback(
     async (
       params: SetProductParams,
-      int_ref: number,
-      ext_inf: number,
+      int_ref: bigint,
+      ext_inf: bigint,
       referenceNftId: number
     ): Promise<SaleResult> => {
       if (!session) {
@@ -144,7 +144,7 @@ export const useSale = () => {
    * Paso 3: transfer - Envía NFTs al contrato de venta como stock inicial
    */
   const transferToSale = useCallback(
-    async (assetIds: number[], int_ref: number): Promise<SaleResult> => {
+    async (assetIds: number[], int_ref: bigint): Promise<SaleResult> => {
       if (!session) {
         return { success: false, error: 'No hay sesión activa', step: 'transfer' };
       }
@@ -266,7 +266,7 @@ export const useSale = () => {
    * Reponer stock: transfer con memo = int_ref
    */
   const restockProduct = useCallback(
-    async (assetIds: number[], int_ref: number): Promise<SaleResult> => {
+    async (assetIds: number[], int_ref: bigint): Promise<SaleResult> => {
       if (!session) {
         const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
         setError(errMsg);

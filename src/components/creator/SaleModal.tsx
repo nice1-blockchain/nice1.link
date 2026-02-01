@@ -65,7 +65,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
 
   // Estado post-venta para reposición
   const [saleCompleted, setSaleCompleted] = useState(false);
-  const [savedIntRef, setSavedIntRef] = useState<number | null>(null);
+  const [savedIntRef, setSavedIntRef] = useState<bigint | null>(null);
   const [restockMode, setRestockMode] = useState(false);
   const [restockAmount, setRestockAmount] = useState<number>(1);
   const [restockLoading, setRestockLoading] = useState(false);
@@ -285,7 +285,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
                 <VStack align="start" spacing={0} flex={1}>
                   <Text fontWeight="bold">{product}</Text>
                   <Text fontSize="sm" color="gray.500">Precio: {price.toFixed(4)} NICEOFI</Text>
-                  <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef}</Text>
+                  <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef?.toString()}</Text>
                 </VStack>
               </HStack>
 
@@ -324,7 +324,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
                 <VStack align="start" spacing={0} flex={1}>
                   <Text fontWeight="bold">{product}</Text>
                   <Badge colorScheme="green">En Venta</Badge>
-                  <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef}</Text>
+                  <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef?.toString()}</Text>
                 </VStack>
               </HStack>
 
