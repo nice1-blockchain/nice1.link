@@ -133,7 +133,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
           <ModalBody>
             <VStack spacing={4} align="stretch">
               {/* Info del asset */}
-              <Box p={4} bg="gray.50" rounded="md">
+              <Box p={4} bg="gray.50" _dark={{ bg: 'gray.700' }} rounded="md">
                 <HStack spacing={4}>
                   {imageUrl && (
                     <Image
@@ -223,7 +223,7 @@ const DuplicateModal: React.FC<DuplicateModalProps> = ({
               )}
 
               {/* Datos que se duplicarán */}
-              <Box fontSize="xs" color="gray.500" p={3} bg="gray.50" rounded="md">
+              <Box fontSize="xs" color="gray.500" p={3} bg="gray.50" _dark={{ bg: 'gray.700' }} rounded="md">
                 <Text fontWeight="bold" mb={2}>
                   Data to be duplicated:
                 </Text>
