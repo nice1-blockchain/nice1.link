@@ -74,7 +74,7 @@ const NftTransferModal = ({ asset }: any) => {
                     <FormLabel>To:</FormLabel>
                     <Input type="text" ref={inputToTransferRef} placeholder='Account name... (required)' />
                   </FormControl>
-                  <FormControl>
+                  <FormControl display={inputMensajeErrorTransferRef.current?.value ? 'block' : 'none'}>
                     <Input
                       type='text'
                       border={'0px'}

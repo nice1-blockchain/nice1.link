@@ -86,8 +86,12 @@ const StockPage: React.FC = () => {
     nav(`/creator/modify?id=${asset.ids[0]}`);
   };
 
-  const handleDuplicate = (asset: GroupedAsset) => {
-    setSelectedAsset(asset);
+  const handleDuplicate = async (asset: GroupedAsset) => {
+    await reload();
+    const freshAsset = groupedAssets.find(a => 
+      a.ids.some(id => asset.ids.includes(id))
+    ) || asset;
+    setSelectedAsset(freshAsset);
     setIsDuplicateModalOpen(true);
   };
 
