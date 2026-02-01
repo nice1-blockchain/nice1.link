@@ -199,7 +199,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
     }
 
     setRestockLoading(true);
-    const result = await restockProduct(idsToRestock, savedIntRef);
+    const result = await restockProduct(idsToRestock, Number(savedIntRef));
     setRestockLoading(false);
 
     if (result.success) {

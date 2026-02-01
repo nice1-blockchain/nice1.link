@@ -11,8 +11,8 @@ const TABLE_PRODUCTOS_VENTA = 'products';
 const TABLE_INT_REF = 'productdata';
 
 export interface SaleProduct {
-  int_ref: bigint;
-  ext_ref: bigint;
+  int_ref: number;
+  ext_ref: number;
   product: string;
   price: string;
   tokencontract: string;
@@ -123,7 +123,7 @@ export const useSalesProducts = () => {
    * Obtener producto por int_ref
    */
   const getProductByIntRef = useCallback(
-    (int_ref: bigint): SaleProduct | null => {
+    (int_ref: number): SaleProduct | null => {
       return products.find((p) => p.int_ref === int_ref) || null;
     },
     [products]
