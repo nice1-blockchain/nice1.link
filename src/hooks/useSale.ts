@@ -35,8 +35,8 @@ type SaleStep = 'idle' | 'setproduct' | 'transfer' | 'completed' | 'error';
 /**
  * Genera un número aleatorio de 8 dígitos
  */
-const generateRef = (): number => {
-  return Math.floor(10000000 + Math.random() * 90000000);
+const generateRef = (): bigint => {
+  return BigInt(Math.floor(10000000 + Math.random() * 90000000));
 };
 
 /**

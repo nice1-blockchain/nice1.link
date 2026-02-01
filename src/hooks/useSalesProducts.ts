@@ -11,8 +11,8 @@ const TABLE_PRODUCTOS_VENTA = 'products';
 const TABLE_INT_REF = 'productdata';
 
 export interface SaleProduct {
-  int_ref: number;
-  ext_inf: number;
+  int_ref: bigint;
+  ext_inf: bigint;
   product: string;
   price: string;
   tokencontract: string;
