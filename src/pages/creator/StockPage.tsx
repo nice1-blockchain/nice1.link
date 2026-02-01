@@ -24,6 +24,7 @@ import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
 import BurnModal from '../../components/creator/BurnModal';
+import SaleModal from '../../components/creator/SaleModal';
 import { useNavigate } from 'react-router-dom';
 
 const StockPage: React.FC = () => {
@@ -36,6 +37,7 @@ const StockPage: React.FC = () => {
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   const [isBurnModalOpen, setIsBurnModalOpen] = useState(false);
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
 
   const categories = [
     { name: 'Todas', value: null },
@@ -64,6 +66,12 @@ const StockPage: React.FC = () => {
     setTimeout(async () => await reload(), 1000);
   };
 
+   const handleSaleSuccess = async () => {
+    setIsSaleModalOpen(false);
+    setSelectedAsset(null);
+    setTimeout(async () => await reload(), 1000);
+  };
+
   const getCategoryStats = (category: string | null) => {
     const filtered = filterByCategory(category);
     const totalAssets = filtered.reduce((sum, asset) => sum + asset.copyCount, 0);
@@ -86,6 +94,21 @@ const StockPage: React.FC = () => {
   const handleBurn = (asset: GroupedAsset) => {
     setSelectedAsset(asset);
     setIsBurnModalOpen(true);
+  };
+
+   const handleSale = (asset: GroupedAsset) => {
+    if (asset.copyCount <= 1) {
+      toast({
+        title: 'No puedes vender este asset',
+        description: 'Necesitas al menos 2 copias (1 referencia + 1 para vender)',
+        status: 'warning',
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+    setSelectedAsset(asset);
+    setIsSaleModalOpen(true);
   };
 
   if (loading) {
@@ -173,6 +196,7 @@ const StockPage: React.FC = () => {
                             onModify={handleModify}
                             onDuplicate={handleDuplicate}
                             onBurn={handleBurn}
+                            onSale={handleSale}
                           />
                         ))}
                       </SimpleGrid>
@@ -208,6 +232,18 @@ const StockPage: React.FC = () => {
           }}
           asset={selectedAsset}
           onSuccess={handleBurnSuccess}
+        />
+      )}
+
+      {selectedAsset && (
+        <SaleModal
+          isOpen={isSaleModalOpen}
+          onClose={() => {
+            setIsSaleModalOpen(false);
+            setSelectedAsset(null);
+          }}
+          asset={selectedAsset}
+          onSuccess={handleSaleSuccess}
         />
       )}
     </Box>

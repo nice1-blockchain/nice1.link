@@ -25,6 +25,12 @@ const CreatorHome: React.FC = () => {
             <Button colorScheme="blue" onClick={() => nav("stock")}>Go to Stock</Button>
           </Box>
 
+          <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
+            <Heading size="sm" mb={2}>En Venta</Heading>
+            <Text fontSize="sm" mb={3}>Gestiona tus productos en venta y repone stock.</Text>
+            <Button colorScheme="green" onClick={() => nav("sales")}>Ir a Ventas</Button>
+          </Box>
+
           {/* <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" opacity={0.8}>
             <Heading size="sm" mb={2}>Modify</Heading>
             <Text fontSize="sm" mb={3}>Edit an existing asset (coming soon).</Text>
