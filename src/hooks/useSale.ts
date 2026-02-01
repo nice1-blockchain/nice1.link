@@ -83,7 +83,7 @@ export const useSale = () => {
           authorization,
           data: {
             productowner: owner,
-            product: params.product,
+            product: params.product.toLowerCase(),
             price: formatPrice(params.price),
             tokencontract: TOKEN_CONTRACT,
             nftcontract: NFT_CONTRACT,
