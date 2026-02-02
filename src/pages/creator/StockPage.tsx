@@ -249,6 +249,7 @@ const StockPage: React.FC = () => {
                             onSale={handleSale}
                             onManage={handleManage}
                             isOnSale={checkIsOnSale(asset)}
+                            onRental={handleRental} 
                           />
                         ))}
                       </SimpleGrid>
