@@ -288,9 +288,217 @@ export const useSale = () => {
     [session, transferToSale]
   );
 
+/**
+   * Desactivar/Activar venta: toggleproduct
+   */
+  const toggleProduct = useCallback(
+    async (product: string, int_ref: string, active: boolean): Promise<SaleResult> => {
+      if (!session) {
+        const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
+        setError(errMsg);
+        return { success: false, error: errMsg };
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const owner = session.auth.actor.toString();
+
+        const action = {
+          account: SALE_CONTRACT,
+          name: 'toggleproduct',
+          authorization: [
+            {
+              actor: owner,
+              permission: session.auth.permission.toString(),
+            },
+          ],
+          data: {
+            product: product.toLowerCase(),
+            int_ref: int_ref,
+            productowner: owner,
+            active: active,
+            memo: 'confirm',
+          },
+        };
+
+        console.log('📤 [toggleproduct] Enviando:', action);
+
+        const result = await session.transact(
+          { actions: [action] },
+          { broadcast: true }
+        );
+
+        console.log('✅ [toggleproduct] Éxito:', result);
+
+        setLoading(false);
+        const txId =
+          result.transaction?.id?.toString() ||
+          result.processed?.id?.toString() ||
+          'unknown';
+
+        return { success: true, transactionId: txId, int_ref: parseInt(int_ref, 10) };
+      } catch (err: any) {
+        console.error('❌ [toggleproduct] Error:', err);
+        const errorMessage =
+          err?.message ||
+          err?.error?.details?.[0]?.message ||
+          'Error al cambiar estado del producto';
+        setError(errorMessage);
+        setLoading(false);
+        return { success: false, error: errorMessage };
+      }
+    },
+    [session]
+  );
+
+  /**
+   * Actualizar porcentajes: updateperc
+   */
+  const updatePercentages = useCallback(
+    async (
+      product: string,
+      int_ref: string,
+      receiver1: string,
+      percentr1: number,
+      receiver2: string,
+      percentr2: number
+    ): Promise<SaleResult> => {
+      if (!session) {
+        const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
+        setError(errMsg);
+        return { success: false, error: errMsg };
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const owner = session.auth.actor.toString();
+
+        const action = {
+          account: SALE_CONTRACT,
+          name: 'updateperc',
+          authorization: [
+            {
+              actor: owner,
+              permission: session.auth.permission.toString(),
+            },
+          ],
+          data: {
+            product: product.toLowerCase(),
+            int_ref: int_ref,
+            productowner: owner,
+            receiver1: receiver1,
+            percentr1: percentr1,
+            receiver2: receiver2 || '',
+            percentr2: percentr2 || 0,
+            memo: '',
+          },
+        };
+
+        console.log('📤 [updateperc] Enviando:', action);
+
+        const result = await session.transact(
+          { actions: [action] },
+          { broadcast: true }
+        );
+
+        console.log('✅ [updateperc] Éxito:', result);
+
+        setLoading(false);
+        const txId =
+          result.transaction?.id?.toString() ||
+          result.processed?.id?.toString() ||
+          'unknown';
+
+        return { success: true, transactionId: txId, int_ref: parseInt(int_ref, 10) };
+      } catch (err: any) {
+        console.error('❌ [updateperc] Error:', err);
+        const errorMessage =
+          err?.message ||
+          err?.error?.details?.[0]?.message ||
+          'Error al actualizar porcentajes';
+        setError(errorMessage);
+        setLoading(false);
+        return { success: false, error: errorMessage };
+      }
+    },
+    [session]
+  );
+
+  /**
+   * Actualizar precio: updateprice
+   */
+  const updatePrice = useCallback(
+    async (product: string, int_ref: string, newPrice: number): Promise<SaleResult> => {
+      if (!session) {
+        const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
+        setError(errMsg);
+        return { success: false, error: errMsg };
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const owner = session.auth.actor.toString();
+
+        const action = {
+          account: SALE_CONTRACT,
+          name: 'updateprice',
+          authorization: [
+            {
+              actor: owner,
+              permission: session.auth.permission.toString(),
+            },
+          ],
+          data: {
+            product: product.toLowerCase(),
+            int_ref: int_ref,
+            new_price: formatPrice(newPrice),
+            productowner: owner,
+            memo: '',
+          },
+        };
+
+        console.log('📤 [updateprice] Enviando:', action);
+
+        const result = await session.transact(
+          { actions: [action] },
+          { broadcast: true }
+        );
+
+        console.log('✅ [updateprice] Éxito:', result);
+
+        setLoading(false);
+        const txId =
+          result.transaction?.id?.toString() ||
+          result.processed?.id?.toString() ||
+          'unknown';
+
+        return { success: true, transactionId: txId, int_ref: parseInt(int_ref, 10) };
+      } catch (err: any) {
+        console.error('❌ [updateprice] Error:', err);
+        const errorMessage =
+          err?.message ||
+          err?.error?.details?.[0]?.message ||
+          'Error al actualizar precio';
+        setError(errorMessage);
+        setLoading(false);
+        return { success: false, error: errorMessage };
+      }
+    },
+    [session]
+  );
+
   return {
     executeSaleFlow,
     restockProduct,
+    toggleProduct,
+    updatePercentages,
+    updatePrice,
     loading,
     error,
     currentStep,

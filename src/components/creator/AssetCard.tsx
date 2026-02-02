@@ -12,7 +12,7 @@ import {
   Button,
   Collapse,
 } from '@chakra-ui/react';
-import { EditIcon, CopyIcon, DeleteIcon, CloseIcon } from '@chakra-ui/icons';
+import { EditIcon, CopyIcon, DeleteIcon, CloseIcon, SettingsIcon } from '@chakra-ui/icons';
 import { FaShoppingCart } from 'react-icons/fa';
 import { GroupedAsset } from '../../hooks/useStock';
 
@@ -23,6 +23,8 @@ interface AssetCardProps {
   onDuplicate?: (asset: GroupedAsset) => void;
   onBurn?: (asset: GroupedAsset) => void;
   onSale?: (asset: GroupedAsset) => void;
+  onManage?: (asset: GroupedAsset) => void;
+  isOnSale?: boolean;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({ 
@@ -30,7 +32,9 @@ const AssetCard: React.FC<AssetCardProps> = ({
   onModify, 
   onDuplicate, 
   onBurn,
-  onSale 
+  onSale,
+  onManage,
+  isOnSale = false, 
 }) => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.300');
   const bg = useColorModeValue('white', 'gray.700');
@@ -40,7 +44,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
   // Estado para mostrar/ocultar el menú de acciones
   const [showActions, setShowActions] = useState(false);
 
-  const canSell = asset.copyCount > 1;
+  const canSell = asset.copyCount > 1 && !isOnSale;
 
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
@@ -105,6 +109,19 @@ const AssetCard: React.FC<AssetCardProps> = ({
           {asset.category}
         </Badge>
 
+        {/* Badge "En Venta" si ya está en venta */}
+        {isOnSale && (
+          <Badge
+            position="absolute"
+            top={2}
+            left={2}
+            colorScheme="green"
+            fontSize="xs"
+          >
+            En Venta
+          </Badge>
+        )}
+
         {/* Badge copias */}
         {asset.copyCount > 1 && (
           <Tooltip label={`${asset.copyCount} units`}>
@@ -159,23 +176,39 @@ const AssetCard: React.FC<AssetCardProps> = ({
             >
               Modify
             </Button>
-            <Tooltip
-              label={canSell ? 'Poner en venta' : 'Necesitas más de 1 copia para vender'}
-              hasArrow
-            >
+            {/* Botón de Venta o Gestionar según estado */}
+            {isOnSale ? (
+              // Ya está en venta: mostrar botón "Gestionar"
               <Button
                 size="sm"
                 width="100%"
-                leftIcon={<FaShoppingCart />}
-                colorScheme="green"
-                variant={canSell ? 'solid' : 'outline'}
-                onClick={(e) => handleAction(e, () => onSale?.(asset))}
-                isDisabled={!canSell}
-                opacity={canSell ? 1 : 0.5}
+                leftIcon={<SettingsIcon />}
+                colorScheme="orange"
+                variant="solid"
+                onClick={(e) => handleAction(e, () => onManage?.(asset))}
               >
-                Venta {!canSell && '(1+ copias)'}
+                Gestionar Venta
               </Button>
-            </Tooltip>
+            ) : (
+              // No está en venta: mostrar botón "Venta"
+              <Tooltip
+                label={canSell ? 'Poner en venta' : 'Necesitas más de 1 copia para vender'}
+                hasArrow
+              >
+                <Button
+                  size="sm"
+                  width="100%"
+                  leftIcon={<FaShoppingCart />}
+                  colorScheme="green"
+                  variant={canSell ? 'solid' : 'outline'}
+                  onClick={(e) => handleAction(e, () => onSale?.(asset))}
+                  isDisabled={!canSell}
+                  opacity={canSell ? 1 : 0.5}
+                >
+                  Venta {!canSell && '(1+ copias)'}
+                </Button>
+              </Tooltip>
+            )}
             <Button
               size="sm"
               width="100%"

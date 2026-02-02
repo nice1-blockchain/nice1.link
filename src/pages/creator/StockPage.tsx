@@ -1,5 +1,6 @@
 // src/pages/creator/StockPage.tsx
-import React, { useState } from 'react';
+// MODIFICADO: Integración con productos en venta
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -21,23 +22,27 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
+import { useSalesProducts, SaleProduct } from '../../hooks/useSalesProducts';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
 import BurnModal from '../../components/creator/BurnModal';
 import SaleModal from '../../components/creator/SaleModal';
+import ManageProductModal from '../../components/creator/ManageProductModal';
 import { useNavigate } from 'react-router-dom';
 
 const StockPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
   const bg = useColorModeValue('white', 'gray.800');
 
-  // Usar contexto compartido en lugar de useStock local
   const { groupedAssets, loading, error, reload, filterByCategory } = useStockContext();
+  const { products: saleProducts, reload: reloadSales, getProductByName } = useSalesProducts();
   
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
+  const [selectedSaleProduct, setSelectedSaleProduct] = useState<SaleProduct | null>(null);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   const [isBurnModalOpen, setIsBurnModalOpen] = useState(false);
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
 
   const categories = [
     { name: 'Todas', value: null },
@@ -47,29 +52,36 @@ const StockPage: React.FC = () => {
     { name: 'Custom', value: 'custom' },
   ];
 
-  const handleAssetClick = (asset: GroupedAsset) => {
-    setSelectedAsset(asset);
-    setIsDuplicateModalOpen(true);
-  };
-
   const handleDuplicateSuccess = async () => {
     setIsDuplicateModalOpen(false);
     setSelectedAsset(null);
-    // Recargar assets después de duplicar (actualiza sidebar también)
     setTimeout(async () => await reload(), 1000);
   };
 
   const handleBurnSuccess = async () => {
     setIsBurnModalOpen(false);
     setSelectedAsset(null);
-    // Recargar assets después de quemar
     setTimeout(async () => await reload(), 1000);
   };
 
-   const handleSaleSuccess = async () => {
+  const handleSaleSuccess = async () => {
     setIsSaleModalOpen(false);
     setSelectedAsset(null);
-    setTimeout(async () => await reload(), 1000);
+    // Recargar ambos: stock y productos en venta
+    setTimeout(async () => {
+      await reload();
+      await reloadSales();
+    }, 1000);
+  };
+
+  const handleManageSuccess = async () => {
+    setIsManageModalOpen(false);
+    setSelectedAsset(null);
+    setSelectedSaleProduct(null);
+    setTimeout(async () => {
+      await reload();
+      await reloadSales();
+    }, 1000);
   };
 
   const getCategoryStats = (category: string | null) => {
@@ -86,12 +98,8 @@ const StockPage: React.FC = () => {
     nav(`/creator/modify?id=${asset.ids[0]}`);
   };
 
-  const handleDuplicate = async (asset: GroupedAsset) => {
-    await reload();
-    const freshAsset = groupedAssets.find(a => 
-      a.ids.some(id => asset.ids.includes(id))
-    ) || asset;
-    setSelectedAsset(freshAsset);
+  const handleDuplicate = (asset: GroupedAsset) => {
+    setSelectedAsset(asset);
     setIsDuplicateModalOpen(true);
   };
 
@@ -100,7 +108,8 @@ const StockPage: React.FC = () => {
     setIsBurnModalOpen(true);
   };
 
-   const handleSale = (asset: GroupedAsset) => {
+  // Handler para abrir modal de venta (nuevo producto)
+  const handleSale = (asset: GroupedAsset) => {
     if (asset.copyCount <= 1) {
       toast({
         title: 'No puedes vender este asset',
@@ -113,6 +122,21 @@ const StockPage: React.FC = () => {
     }
     setSelectedAsset(asset);
     setIsSaleModalOpen(true);
+  };
+
+  // Handler para gestionar producto ya en venta
+  const handleManage = (asset: GroupedAsset) => {
+    const saleProduct = getProductByName(asset.name);
+    if (saleProduct) {
+      setSelectedAsset(asset);
+      setSelectedSaleProduct(saleProduct);
+      setIsManageModalOpen(true);
+    }
+  };
+
+  // Verificar si un asset está en venta
+  const checkIsOnSale = (asset: GroupedAsset): boolean => {
+    return !!getProductByName(asset.name);
   };
 
   if (loading) {
@@ -196,11 +220,12 @@ const StockPage: React.FC = () => {
                           <AssetCard
                             key={`${asset.name}-${asset.category}-${index}`}
                             asset={asset}
-                            onClick={() => handleDuplicate(asset)}
                             onModify={handleModify}
                             onDuplicate={handleDuplicate}
                             onBurn={handleBurn}
                             onSale={handleSale}
+                            onManage={handleManage}
+                            isOnSale={checkIsOnSale(asset)}
                           />
                         ))}
                       </SimpleGrid>
@@ -239,6 +264,7 @@ const StockPage: React.FC = () => {
         />
       )}
 
+      {/* Modal de Venta (nuevo producto) */}
       {selectedAsset && (
         <SaleModal
           isOpen={isSaleModalOpen}
@@ -248,6 +274,21 @@ const StockPage: React.FC = () => {
           }}
           asset={selectedAsset}
           onSuccess={handleSaleSuccess}
+        />
+      )}
+
+      {/* Modal de Gestión (producto ya en venta) */}
+      {selectedAsset && selectedSaleProduct && (
+        <ManageProductModal
+          isOpen={isManageModalOpen}
+          onClose={() => {
+            setIsManageModalOpen(false);
+            setSelectedAsset(null);
+            setSelectedSaleProduct(null);
+          }}
+          asset={selectedAsset}
+          saleProduct={selectedSaleProduct}
+          onSuccess={handleManageSuccess}
         />
       )}
     </Box>

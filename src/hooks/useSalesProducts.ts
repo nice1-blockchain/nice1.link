@@ -22,6 +22,7 @@ export interface SaleProduct {
   receiver2: string;
   percentr2: number;
   productowner: string;
+  active?: boolean;
   referenceNftId?: number;
   stockCount?: number; // Cantidad de NFTs en venta
 }
@@ -75,6 +76,8 @@ export const useSalesProducts = () => {
     }
   }, [session]);
 
+  
+
   /**
    * Obtener int_ref de un producto por su NFT de referencia
    * Útil para reponer stock
@@ -110,6 +113,17 @@ export const useSalesProducts = () => {
   );
 
   /**
+   * Verificar si un producto ya está en venta por su nombre
+   * Retorna el producto si existe, null si no
+   */
+  const getProductByName = useCallback(
+    (productName: string): SaleProduct | null => {
+      return products.find((p) => p.product.toLowerCase() === productName.toLowerCase()) || null;
+    },
+    [products]
+  );
+
+  /**
    * Verificar si un asset ya está en venta
    */
   const isProductOnSale = useCallback(
@@ -140,6 +154,7 @@ export const useSalesProducts = () => {
     error,
     reload: loadProducts,
     getIntRefByNftProduct,
+    getProductByName,
     isProductOnSale,
     getProductByIntRef,
   };
