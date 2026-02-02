@@ -24,6 +24,7 @@ import { RepeatIcon, TimeIcon } from '@chakra-ui/icons';
 import { useRentalProducts, RentalProduct } from '../../hooks/useRentalProducts';
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import RestockRentalModal from '../../components/creator/RestockRentalModal';
+import ActionsHeader from './ActionsHeader';
 
 const RentalsPage: React.FC = () => {
   const cardBg = useColorModeValue('white', 'gray.700');
@@ -96,6 +97,7 @@ const RentalsPage: React.FC = () => {
 
   return (
     <Box>
+        <ActionsHeader />
       <HStack justify="space-between" mb={6}>
         <Heading size="md">Productos en Alquiler</Heading>
         <Button

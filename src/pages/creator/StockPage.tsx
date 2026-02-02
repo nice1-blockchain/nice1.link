@@ -30,6 +30,7 @@ import SaleModal from '../../components/creator/SaleModal';
 import ManageProductModal from '../../components/creator/ManageProductModal';
 import RentalModal from '../../components/creator/RentalModal';
 import { useNavigate } from 'react-router-dom';
+import ActionsHeader from './ActionsHeader';
 
 const StockPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
@@ -165,6 +166,7 @@ const StockPage: React.FC = () => {
   if (loading) {
     return (
       <Box flex="1" p={{ base: 0, md: 2 }}>
+        <ActionsHeader />
         <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
           <Center minH="400px">
             <VStack spacing={4}>
