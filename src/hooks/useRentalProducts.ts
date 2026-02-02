@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
-const RENTAL_CONTRACT = 'n1liceseren';
+const RENTAL_CONTRACT = 'n1licenseren';
 const TABLE_PRODUCTOS_ALQUILER = 'products';
 const TABLE_INT_REF = 'productdata';
 

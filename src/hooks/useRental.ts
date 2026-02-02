@@ -2,7 +2,7 @@
 import { useCallback, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
-const RENTAL_CONTRACT = 'n1liceseren';
+const RENTAL_CONTRACT = 'n1licenseren';
 const NFT_CONTRACT = 'nice2simplea';
 const TOKEN_CONTRACT = 'niceoneoffic';
 const TOKEN_SYMBOL = 'NICEOFI';

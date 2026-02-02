@@ -186,7 +186,7 @@ const RestockRentalModal: React.FC<RestockRentalModalProps> = ({
             <Alert status="warning" rounded="md" fontSize="sm">
               <AlertIcon />
               <Text>
-                Los NFTs se enviarán al contrato <strong>n1liceseren</strong> con memo: {rentalProduct.int_ref}
+                Los NFTs se enviarán al contrato <strong>n1licenseren</strong> con memo: {rentalProduct.int_ref}
               </Text>
             </Alert>
           </VStack>
