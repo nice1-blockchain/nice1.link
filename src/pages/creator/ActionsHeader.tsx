@@ -37,6 +37,23 @@ const ActionsHeader: React.FC = () => {
       >
         Stock
       </Button>
+      <Button
+        size="sm"
+        colorScheme={isActive("/sales") ? "green" : "gray"}
+        variant={isActive("/sales") ? "solid" : "outline"}
+        onClick={() => nav("/creator/sales")}
+      >
+        Sales
+      </Button>
+      {/* Nueva pestaña En Alquiler */}
+      <Button
+        size="sm"
+        colorScheme={isActive("/rentals") ? "purple" : "gray"}
+        variant={isActive("/rentals") ? "solid" : "outline"}
+        onClick={() => nav("/creator/rentals")}
+      >
+        Rent
+      </Button>
     </HStack>
   );
 };

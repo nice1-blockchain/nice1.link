@@ -12,7 +12,7 @@ import {
   Button,
   Collapse,
 } from '@chakra-ui/react';
-import { EditIcon, CopyIcon, DeleteIcon, CloseIcon, SettingsIcon } from '@chakra-ui/icons';
+import { EditIcon, CopyIcon, DeleteIcon, CloseIcon, SettingsIcon, TimeIcon } from '@chakra-ui/icons';
 import { FaShoppingCart } from 'react-icons/fa';
 import { GroupedAsset } from '../../hooks/useStock';
 
@@ -25,6 +25,7 @@ interface AssetCardProps {
   onSale?: (asset: GroupedAsset) => void;
   onManage?: (asset: GroupedAsset) => void;
   isOnSale?: boolean;
+  onRental?: (asset: GroupedAsset) => void;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({ 
@@ -35,6 +36,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
   onSale,
   onManage,
   isOnSale = false, 
+  onRental
 }) => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.300');
   const bg = useColorModeValue('white', 'gray.700');
@@ -45,6 +47,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
   const [showActions, setShowActions] = useState(false);
 
   const canSell = asset.copyCount > 1 && !isOnSale;
+  const canSellOrRent = asset.copyCount > 1;
 
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
@@ -209,6 +212,23 @@ const AssetCard: React.FC<AssetCardProps> = ({
                 </Button>
               </Tooltip>
             )}
+            <Tooltip
+              label={canSellOrRent ? 'Poner en alquiler' : 'Necesitas más de 1 copia para alquilar'}
+              hasArrow
+            >
+              <Button
+                size="sm"
+                width="100%"
+                leftIcon={<TimeIcon />}
+                colorScheme="purple"
+                variant={canSellOrRent ? 'solid' : 'outline'}
+                onClick={(e) => handleAction(e, () => onRental?.(asset))}
+                isDisabled={!canSellOrRent}
+                opacity={canSellOrRent ? 1 : 0.5}
+              >
+                Alquiler {!canSellOrRent && '(1+ copias)'}
+              </Button>
+            </Tooltip>
             <Button
               size="sm"
               width="100%"

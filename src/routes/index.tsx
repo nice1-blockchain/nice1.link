@@ -14,6 +14,7 @@ import CreatorPage  from "../pages/creator/CreatorPage";
 import StockPage    from "../pages/creator/StockPage";
 import ModifyPage   from "../pages/creator/ModifyPage";
 import SalesPage    from "../pages/creator/SalesPage";
+import RentalsPage  from "../pages/creator/RentalsPage";
 //import NftCardAtomicAssets from '../nfts/nftAtomicAssets/NftCardAtomicAssets'
 //import NftCardAtomicMarket from '../nfts/nftAtomicMarket/NftCardAtomicMarket'
 
@@ -39,6 +40,7 @@ const AppRoutes = () => {
           <Route path="stock" element={<StockPage />} />
           <Route path="modify" element={<ModifyPage />} />
           <Route path="sales" element={<SalesPage />} />
+          <Route path="rentals" element={<RentalsPage />} />
         </Route>
       </Routes>
     </>

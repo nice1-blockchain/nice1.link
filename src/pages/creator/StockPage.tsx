@@ -28,6 +28,7 @@ import DuplicateModal from '../../components/creator/DuplicateModal';
 import BurnModal from '../../components/creator/BurnModal';
 import SaleModal from '../../components/creator/SaleModal';
 import ManageProductModal from '../../components/creator/ManageProductModal';
+import RentalModal from '../../components/creator/RentalModal';
 import { useNavigate } from 'react-router-dom';
 
 const StockPage: React.FC = () => {
@@ -43,6 +44,7 @@ const StockPage: React.FC = () => {
   const [isBurnModalOpen, setIsBurnModalOpen] = useState(false);
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+  const [isRentalModalOpen, setIsRentalModalOpen] = useState(false);
 
   const categories = [
     { name: 'Todas', value: null },
@@ -84,6 +86,12 @@ const StockPage: React.FC = () => {
     }, 1000);
   };
 
+   const handleRentalSuccess = async () => {
+    setIsRentalModalOpen(false);
+    setSelectedAsset(null);
+    setTimeout(async () => await reload(), 1000);
+  };
+
   const getCategoryStats = (category: string | null) => {
     const filtered = filterByCategory(category);
     const totalAssets = filtered.reduce((sum, asset) => sum + asset.copyCount, 0);
@@ -122,6 +130,21 @@ const StockPage: React.FC = () => {
     }
     setSelectedAsset(asset);
     setIsSaleModalOpen(true);
+  };
+
+  // NUEVO: Handler para alquiler
+  const handleRental = (asset: GroupedAsset) => {
+    if (asset.copyCount <= 1) {
+      toast({
+        title: 'No disponible',
+        description: 'Necesitas más de 1 copia para poner en alquiler',
+        status: 'warning',
+        duration: 3000,
+      });
+      return;
+    }
+    setSelectedAsset(asset);
+    setIsRentalModalOpen(true);
   };
 
   // Handler para gestionar producto ya en venta
@@ -289,6 +312,19 @@ const StockPage: React.FC = () => {
           asset={selectedAsset}
           saleProduct={selectedSaleProduct}
           onSuccess={handleManageSuccess}
+        />
+      )}
+
+      {/* Modal Alquiler - NUEVO */}
+      {selectedAsset && (
+        <RentalModal
+          isOpen={isRentalModalOpen}
+          onClose={() => {
+            setIsRentalModalOpen(false);
+            setSelectedAsset(null);
+          }}
+          asset={selectedAsset}
+          onSuccess={handleRentalSuccess}
         />
       )}
     </Box>
