@@ -323,7 +323,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
                 />
                 <VStack align="start" spacing={0} flex={1}>
                   <Text fontWeight="bold">{product}</Text>
-                  <Badge colorScheme="green">En Venta</Badge>
+                  <Badge colorScheme="green">On Sale</Badge>
                   <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef}</Text>
                 </VStack>
               </HStack>

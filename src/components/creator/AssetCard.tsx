@@ -112,7 +112,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
           {asset.category}
         </Badge>
 
-        {/* Badge "En Venta" si ya está en venta */}
+        {/* Badge "On Sale" si ya está en venta */}
         {isOnSale && (
           <Badge
             position="absolute"
@@ -121,7 +121,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             colorScheme="green"
             fontSize="xs"
           >
-            En Venta
+            On Sale
           </Badge>
         )}
 

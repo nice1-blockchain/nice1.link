@@ -96,7 +96,7 @@ const SalesPage: React.FC = () => {
     <Box flex="1" p={{ base: 0, md: 2 }}>
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <HStack justify="space-between" mb={4}>
-          <Heading size="md">En Venta</Heading>
+          <Heading size="md">On Sale</Heading>
           <Button
             size="sm"
             leftIcon={<RepeatIcon />}
@@ -161,7 +161,7 @@ const SalesPage: React.FC = () => {
                           <Text fontWeight="bold" noOfLines={1}>
                             {product.product}
                           </Text>
-                          <Badge colorScheme="green">En Venta</Badge>
+                          <Badge colorScheme="green">On Sale</Badge>
                         </VStack>
 
                         {/* Detalles */}

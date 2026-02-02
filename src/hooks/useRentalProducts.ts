@@ -31,7 +31,7 @@ export const useRentalProducts = () => {
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Cargar productos en alquiler del usuario
+   * Load user's rental products
    */
   const loadProducts = useCallback(async () => {
     if (!session) {
@@ -55,16 +55,26 @@ export const useRentalProducts = () => {
         show_payer: false,
       });
 
-      console.log('📦 Productos en alquiler cargados:', rows);
+      console.log('📦 Rental products loaded:', rows);
 
       setProducts(rows as RentalProduct[]);
     } catch (err: any) {
-      console.error('❌ Error cargando productos en alquiler:', err);
-      if (err?.message?.includes('table not found') || err?.message?.includes('Table not found')) {
-        console.log('ℹ️ Tabla de productos de alquiler no encontrada');
+      console.error('❌ Error loading rental products:', err);
+      const errorMsg = err?.message || err?.toString() || '';
+      
+      // Handle common "no data" scenarios gracefully
+      if (
+        errorMsg.includes('table not found') ||
+        errorMsg.includes('Table not found') ||
+        errorMsg.includes('Account Query Exception') ||
+        errorMsg.includes('does not exist') ||
+        errorMsg.includes('scope not found')
+      ) {
+        console.log('ℹ️ No rental products found (table or scope empty)');
         setProducts([]);
+        // Don't set error - this is a normal state
       } else {
-        setError(err?.message || 'Error al cargar productos en alquiler');
+        setError(err?.message || 'Error loading rental products');
       }
     } finally {
       setLoading(false);
@@ -72,7 +82,7 @@ export const useRentalProducts = () => {
   }, [session]);
 
   /**
-   * Obtener int_ref de un producto por nombre
+   * Get int_ref of a product by name
    */
   const getIntRefByProduct = useCallback(
     async (product: string): Promise<number | null> => {
@@ -94,7 +104,7 @@ export const useRentalProducts = () => {
         const found = rows.find((r: any) => r.product === product.toLowerCase());
         return found?.int_ref || null;
       } catch (err) {
-        console.error('Error obteniendo int_ref:', err);
+        console.error('Error getting int_ref:', err);
         return null;
       }
     },

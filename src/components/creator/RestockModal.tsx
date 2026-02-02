@@ -128,7 +128,7 @@ const RestockModal: React.FC<RestockModalProps> = ({
               />
               <VStack align="start" spacing={1} flex={1}>
                 <Text fontWeight="bold">{saleProduct.product}</Text>
-                <Badge colorScheme="green">En Venta</Badge>
+                <Badge colorScheme="green">On Sale</Badge>
                 <Text fontSize="sm" color="gray.500">
                   Precio: {saleProduct.price}
                 </Text>

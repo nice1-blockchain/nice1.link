@@ -53,7 +53,7 @@ const RentalsPage: React.FC = () => {
   const formatPeriod = (seconds: number): string => {
     if (seconds < 3600) return `${Math.floor(seconds / 60)} min`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)} h`;
-    return `${Math.floor(seconds / 86400)} días`;
+    return `${Math.floor(seconds / 86400)} days`;
   };
 
   const findAssetForProduct = (product: RentalProduct): GroupedAsset | undefined => {
@@ -80,33 +80,39 @@ const RentalsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Center py={10}>
-        <Spinner size="xl" color="purple.500" />
-      </Center>
+      <Box>
+        <ActionsHeader />
+        <Center py={10}>
+          <Spinner size="xl" color="purple.500" />
+        </Center>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Alert status="error" rounded="md">
-        <AlertIcon />
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
+      <Box>
+        <ActionsHeader />
+        <Alert status="error" rounded="md">
+          <AlertIcon />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </Box>
     );
   }
 
   return (
     <Box>
-        <ActionsHeader />
+      <ActionsHeader />
       <HStack justify="space-between" mb={6}>
-        <Heading size="md">Productos en Alquiler</Heading>
+        <Heading size="md">Rental Products</Heading>
         <Button
           size="sm"
           leftIcon={<RepeatIcon />}
           onClick={reload}
           isLoading={loading}
         >
-          Actualizar
+          Refresh
         </Button>
       </HStack>
 
@@ -114,8 +120,8 @@ const RentalsPage: React.FC = () => {
         <Alert status="info" rounded="md">
           <AlertIcon />
           <AlertDescription>
-            No tienes productos en alquiler.{' '}
-            Ve a Stock y selecciona "Alquiler" en un asset con más de una copia.
+            You don't have any rental products.{' '}
+            Go to Stock and select "Rent" on an asset with more than one copy.
           </AlertDescription>
         </Alert>
       )}
@@ -123,7 +129,7 @@ const RentalsPage: React.FC = () => {
       {products.length > 0 && (
         <>
           <Text fontSize="sm" mb={4} color="gray.500">
-            {products.length} producto{products.length !== 1 ? 's' : ''} en alquiler
+            {products.length} product{products.length !== 1 ? 's' : ''} for rent
           </Text>
 
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
@@ -157,7 +163,7 @@ const RentalsPage: React.FC = () => {
                           {product.product}
                         </Text>
                         <HStack>
-                          <Badge colorScheme="purple">En Alquiler</Badge>
+                          <Badge colorScheme="purple">For Rent</Badge>
                           <Badge colorScheme="blue" variant="outline">
                             <HStack spacing={1}>
                               <TimeIcon boxSize={3} />
@@ -168,12 +174,12 @@ const RentalsPage: React.FC = () => {
                       </VStack>
 
                       <VStack align="start" spacing={0} fontSize="sm" color="gray.500">
-                        <Text>Precio: <strong>{product.price}</strong></Text>
-                        <Text>Receptor 1: {product.receiver1} ({product.percentr1}%)</Text>
+                        <Text>Price: <strong>{product.price}</strong></Text>
+                        <Text>Receiver 1: {product.receiver1} ({product.percentr1}%)</Text>
                         {product.receiver2 && (
-                          <Text>Receptor 2: {product.receiver2} ({product.percentr2}%)</Text>
+                          <Text>Receiver 2: {product.receiver2} ({product.percentr2}%)</Text>
                         )}
-                        <Text>Redelegate: {product.redelegate ? 'Sí' : 'No'}</Text>
+                        <Text>Redelegate: {product.redelegate ? 'Yes' : 'No'}</Text>
                         <Text fontSize="xs" color="gray.400">
                           int_ref: {product.int_ref.toString()}
                         </Text>
@@ -189,8 +195,8 @@ const RentalsPage: React.FC = () => {
                           <AlertIcon boxSize={4} />
                           <Text>
                             {availableStock > 0
-                              ? `${availableStock} unidad(es) disponibles para reponer`
-                              : 'Sin stock disponible en wallet'}
+                              ? `${availableStock} unit(s) available to restock`
+                              : 'No stock available in wallet'}
                           </Text>
                         </Alert>
                       )}
@@ -202,7 +208,7 @@ const RentalsPage: React.FC = () => {
                         onClick={() => handleRestock(product)}
                         isDisabled={!asset || availableStock === 0}
                       >
-                        Reponer Stock
+                        Restock
                       </Button>
                     </VStack>
                   </CardBody>
