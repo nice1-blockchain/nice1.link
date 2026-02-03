@@ -1,4 +1,4 @@
-import { IconButton, VStack } from '@chakra-ui/react'
+import { IconButton, VStack, Spinner } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -10,6 +10,7 @@ import {
   Shutdown,
   User,
 } from '../icons'
+import { useWhitelist } from '../hooks/useWhitelist'
 
 const SVGIconButton : typeof IconButton = styled(IconButton)`
   svg {
@@ -27,7 +28,7 @@ const SVGLogoButton : typeof SVGIconButton = styled(SVGIconButton)`
 
 const Menu = () => {
   const { logout } = useAnchor()
-
+  const { isWhitelisted, loading: whitelistLoading } = useWhitelist()
   return (
     <VStack>
       <Link to='/'>
@@ -46,14 +47,19 @@ const Menu = () => {
           title="User profile"
         />
       </Link>
-      <Link to='/creator'>
-        <SVGIconButton
-          variant='link'
-          aria-label='Creator'
-          icon={<AddIcon />}
-          title="Creator"
-        />
-      </Link>
+      {/* Creator menu - only visible for whitelisted users */}
+      {whitelistLoading ? (
+        <Spinner size="sm" color="gray.500" />
+      ) : isWhitelisted ? (
+        <Link to='/creator'>
+          <SVGIconButton
+            variant='link'
+            aria-label='Creator'
+            icon={<AddIcon />}
+            title="Creator"
+          />
+        </Link>
+      ) : null}
       <Link to='/simple-asset'>
         <SVGIconButton
           variant='link'
