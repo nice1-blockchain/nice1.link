@@ -2,7 +2,8 @@ import { IconButton, VStack, Spinner } from '@chakra-ui/react'
 import { useAnchor } from '@nice1/react-tools'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, Icon } from '@chakra-ui/icons'
+import { MdStorefront } from 'react-icons/md';
 
 import {
   N1Link,
@@ -92,6 +93,14 @@ const Menu = () => {
           title="Atomic Market"
         />
       </Link> */}
+      <Link to='/store'>
+        <SVGIconButton
+          variant='link'
+          aria-label='Store'
+          icon={<Icon as={MdStorefront} />}
+          title="Game Store"
+        />
+      </Link>
       <SVGIconButton
         variant='link'
         aria-label='Logout'

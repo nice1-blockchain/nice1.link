@@ -25,6 +25,11 @@ import { useSalesProducts, SaleProduct } from '../../hooks/useSalesProducts';
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import RestockModal from '../../components/creator/RestockModal';
 
+// --- NUEVAS IMPORTACIONES PARA EL STORE ---
+import { useStore } from '../../hooks/useStore';
+import { EditStoreInfoModal } from '../../components/creator/EditStoreInfoModal';
+import ActionsHeader from './ActionsHeader';
+
 const SalesPage: React.FC = () => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.200');
   const bg = useColorModeValue('white', 'gray.800');
@@ -32,6 +37,14 @@ const SalesPage: React.FC = () => {
 
   const { products, loading, error, reload } = useSalesProducts();
   const { groupedAssets, reload: reloadStock } = useStockContext();
+
+  // --- HOOKS PARA GESTIÓN DE TIENDA ---
+  const { updateGameMetadata, storeItems } = useStore();
+  const {
+    isOpen: isEditStoreOpen,
+    onOpen: onEditStoreOpen,
+    onClose: onEditStoreClose,
+  } = useDisclosure();
 
   const [selectedProduct, setSelectedProduct] = useState<SaleProduct | null>(null);
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
@@ -42,10 +55,6 @@ const SalesPage: React.FC = () => {
     onClose: onRestockClose,
   } = useDisclosure();
 
-  /**
-   * Buscar el asset agrupado que corresponde a un producto en venta
-   * (por nombre del producto)
-   */
   const findAssetForProduct = (product: SaleProduct): GroupedAsset | null => {
     return groupedAssets.find((a) => a.name === product.product) || null;
   };
@@ -63,7 +72,6 @@ const SalesPage: React.FC = () => {
     onRestockClose();
     setSelectedProduct(null);
     setSelectedAsset(null);
-    // Recargar datos
     await reload();
     await reloadStock();
   };
@@ -80,6 +88,7 @@ const SalesPage: React.FC = () => {
   if (loading) {
     return (
       <Box flex="1" p={{ base: 0, md: 2 }}>
+        <ActionsHeader />
         <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
           <Center minH="300px">
             <VStack spacing={4}>
@@ -94,6 +103,7 @@ const SalesPage: React.FC = () => {
 
   return (
     <Box flex="1" p={{ base: 0, md: 2 }}>
+      <ActionsHeader />
       <Box bg={bg} borderWidth="1px" borderColor={border} rounded="lg" p={6}>
         <HStack justify="space-between" mb={4}>
           <Heading size="md">On Sale</Heading>
@@ -132,18 +142,20 @@ const SalesPage: React.FC = () => {
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
               {products.map((product) => {
                 const asset = findAssetForProduct(product);
-                const availableStock = asset ? asset.copyCount - 1 : 0; // -1 por el NFT referencia
+                const availableStock = asset ? asset.copyCount - 1 : 0;
+                
+                // Obtenemos metadatos actuales para este producto específico
+                const currentStoreItem = storeItems.find(si => si.product === product.product);
 
                 return (
                   <Card
-                    key={product.int_ref}
+                    key={product.int_ref.toString()}
                     bg={cardBg}
                     borderWidth="1px"
                     borderColor={border}
                   >
                     <CardBody>
                       <VStack align="stretch" spacing={3}>
-                        {/* Imagen */}
                         {asset && (
                           <Image
                             src={getImageUrl(asset.image)}
@@ -156,7 +168,6 @@ const SalesPage: React.FC = () => {
                           />
                         )}
 
-                        {/* Info */}
                         <VStack align="start" spacing={1}>
                           <Text fontWeight="bold" noOfLines={1}>
                             {product.product}
@@ -164,45 +175,39 @@ const SalesPage: React.FC = () => {
                           <Badge colorScheme="green">On Sale</Badge>
                         </VStack>
 
-                        {/* Detalles */}
                         <VStack align="start" spacing={0} fontSize="sm" color="gray.500">
                           <Text>Precio: <strong>{product.price}</strong></Text>
-                          <Text>Receptor 1: {product.receiver1} ({product.percentr1}%)</Text>
-                          {product.receiver2 && (
-                            <Text>Receptor 2: {product.receiver2} ({product.percentr2}%)</Text>
-                          )}
                           <Text fontSize="xs" color="gray.400">
                             int_ref: {product.int_ref.toString()}
                           </Text>
                         </VStack>
 
-                        {/* Stock disponible en wallet */}
-                        {asset && (
-                          <Alert
-                            status={availableStock > 0 ? 'info' : 'warning'}
-                            rounded="md"
-                            fontSize="xs"
-                            py={2}
+                        <VStack spacing={2} mt={2}>
+                          {/* BOTÓN PARA EDITAR INFORMACIÓN DE LA TIENDA */}
+                          <Button 
+                            size="sm" 
+                            w="100%"
+                            variant="outline" 
+                            colorScheme="blue"
+                            onClick={() => {
+                              setSelectedProduct(product);
+                              onEditStoreOpen();
+                            }}
                           >
-                            <AlertIcon boxSize={4} />
-                            <Text>
-                              {availableStock > 0
-                                ? `${availableStock} unidad(es) disponibles para reponer`
-                                : 'Sin stock disponible en wallet'}
-                            </Text>
-                          </Alert>
-                        )}
+                            Editar Info Store
+                          </Button>
 
-                        {/* Botón reponer */}
-                        <Button
-                          size="sm"
-                          colorScheme="teal"
-                          leftIcon={<RepeatIcon />}
-                          onClick={() => handleRestock(product)}
-                          isDisabled={!asset || availableStock === 0}
-                        >
-                          Reponer Stock
-                        </Button>
+                          <Button
+                            size="sm"
+                            w="100%"
+                            colorScheme="teal"
+                            leftIcon={<RepeatIcon />}
+                            onClick={() => handleRestock(product)}
+                            isDisabled={!asset || availableStock === 0}
+                          >
+                            Reponer Stock
+                          </Button>
+                        </VStack>
                       </VStack>
                     </CardBody>
                   </Card>
@@ -225,6 +230,24 @@ const SalesPage: React.FC = () => {
           asset={selectedAsset}
           saleProduct={selectedProduct}
           onSuccess={handleRestockSuccess}
+        />
+      )}
+
+      {/* MODAL DE EDICIÓN DE METADATOS EXTENDIDOS */}
+      {selectedProduct && (
+        <EditStoreInfoModal
+          isOpen={isEditStoreOpen}
+          onClose={onEditStoreClose}
+          productName={selectedProduct.product}
+          currentMetadata={
+            storeItems.find(si => si.product === selectedProduct.product)?.metadata || {
+              shortDescription: "",
+              longDescription: "",
+              previews: [],
+              videoUrl: ""
+            }
+          }
+          onSave={updateGameMetadata}
         />
       )}
     </Box>

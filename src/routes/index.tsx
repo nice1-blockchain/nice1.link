@@ -15,6 +15,8 @@ import StockPage    from "../pages/creator/StockPage";
 import ModifyPage   from "../pages/creator/ModifyPage";
 import SalesPage    from "../pages/creator/SalesPage";
 import RentalsPage  from "../pages/creator/RentalsPage";
+import GameDetail from '../pages/store/GameDetail'
+import StorePage from '../pages/store/StorePage'
 //import NftCardAtomicAssets from '../nfts/nftAtomicAssets/NftCardAtomicAssets'
 //import NftCardAtomicMarket from '../nfts/nftAtomicMarket/NftCardAtomicMarket'
 
@@ -34,6 +36,12 @@ const AppRoutes = () => {
         {/* <Route path='/atomic-asset' element={<DashboardLayout><NftCardAtomicAssets /></DashboardLayout>} />
         <Route path='/atomic-market' element={<DashboardLayout><NftCardAtomicMarket /></DashboardLayout>} /> */}
         <Route path='/blog/:slug' element={<BlogLayout><Post /></BlogLayout>} />
+        {/* 2. Grupo de la Tienda (Store) */}
+      {/* Definimos /store como un prefijo */}
+      <Route path="store">
+        <Route index element={<StorePage />} /> {/* Esto es /store */}
+        <Route path=":productName" element={<GameDetail />} /> {/* Esto es /store/:productName */}
+      </Route>
         <Route path="/creator" element={<CreatorShell />}>
           <Route index element={<CreatorHome />} />
           <Route path="create" element={<CreatorPage />} />

@@ -48,7 +48,7 @@ export const useSalesProducts = () => {
         json: true,
         code: SALE_CONTRACT,
         table: TABLE_PRODUCTOS_VENTA,
-        scope: owner,
+        scope: SALE_CONTRACT,
         limit: 100,
         reverse: false,
         show_payer: false,
