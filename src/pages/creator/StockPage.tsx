@@ -29,6 +29,7 @@ import BurnModal from '../../components/creator/BurnModal';
 import SaleModal from '../../components/creator/SaleModal';
 import ManageProductModal from '../../components/creator/ManageProductModal';
 import RentalModal from '../../components/creator/RentalModal';
+import DemoModal from '../../components/creator/DemoModal';
 import { useNavigate } from 'react-router-dom';
 import ActionsHeader from './ActionsHeader';
 
@@ -46,6 +47,7 @@ const StockPage: React.FC = () => {
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
   const [isRentalModalOpen, setIsRentalModalOpen] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
   const categories = [
     { name: 'Todas', value: null },
@@ -75,6 +77,20 @@ const StockPage: React.FC = () => {
       await reload();
       await reloadSales();
     }, 1000);
+  };
+
+   const handleDemo = (asset: GroupedAsset) => {
+    if (asset.copyCount <= 1) {
+      toast({
+        title: 'No disponible',
+        description: 'Necesitas más de 1 copia para configurar demo',
+        status: 'warning',
+        duration: 3000,
+      });
+      return;
+    }
+    setSelectedAsset(asset);
+    setIsDemoModalOpen(true);
   };
 
   const handleManageSuccess = async () => {
@@ -161,6 +177,12 @@ const StockPage: React.FC = () => {
   // Verificar si un asset está en venta
   const checkIsOnSale = (asset: GroupedAsset): boolean => {
     return !!getProductByName(asset.name);
+  };
+
+  const handleDemoSuccess = () => {
+    setIsDemoModalOpen(false);
+    setSelectedAsset(null);
+    reload();
   };
 
   if (loading) {
@@ -251,7 +273,8 @@ const StockPage: React.FC = () => {
                             onSale={handleSale}
                             onManage={handleManage}
                             isOnSale={checkIsOnSale(asset)}
-                            onRental={handleRental} 
+                            onRental={handleRental}
+                            onDemo={handleDemo} 
                           />
                         ))}
                       </SimpleGrid>
@@ -318,7 +341,7 @@ const StockPage: React.FC = () => {
         />
       )}
 
-      {/* Modal Alquiler - NUEVO */}
+      {/* Modal Alquiler */}
       {selectedAsset && (
         <RentalModal
           isOpen={isRentalModalOpen}
@@ -328,6 +351,18 @@ const StockPage: React.FC = () => {
           }}
           asset={selectedAsset}
           onSuccess={handleRentalSuccess}
+        />
+      )}
+      {/* Modal Demo */}
+      {selectedAsset && (
+        <DemoModal
+          isOpen={isDemoModalOpen}
+          onClose={() => {
+            setIsDemoModalOpen(false);
+            setSelectedAsset(null);
+          }}
+          asset={selectedAsset}
+          onSuccess={handleDemoSuccess}
         />
       )}
     </Box>

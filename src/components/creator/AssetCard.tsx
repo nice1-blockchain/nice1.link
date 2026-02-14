@@ -14,11 +14,12 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon, CopyIcon, DeleteIcon, CloseIcon, SettingsIcon, TimeIcon } from '@chakra-ui/icons';
 import { FaShoppingCart } from 'react-icons/fa';
+import { MdPlayCircleOutline } from 'react-icons/md';
 import { GroupedAsset } from '../../hooks/useStock';
 
 interface AssetCardProps {
   asset: GroupedAsset;
-  onClick?: () => void; // Ya no se usa directamente
+  onClick?: () => void; 
   onModify?: (asset: GroupedAsset) => void;
   onDuplicate?: (asset: GroupedAsset) => void;
   onBurn?: (asset: GroupedAsset) => void;
@@ -26,6 +27,7 @@ interface AssetCardProps {
   onManage?: (asset: GroupedAsset) => void;
   isOnSale?: boolean;
   onRental?: (asset: GroupedAsset) => void;
+  onDemo?: (asset: GroupedAsset) => void;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({ 
@@ -36,7 +38,8 @@ const AssetCard: React.FC<AssetCardProps> = ({
   onSale,
   onManage,
   isOnSale = false, 
-  onRental
+  onRental,
+  onDemo,
 }) => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.300');
   const bg = useColorModeValue('white', 'gray.700');
@@ -227,6 +230,23 @@ const AssetCard: React.FC<AssetCardProps> = ({
                 opacity={canSellOrRent ? 1 : 0.5}
               >
                 Alquiler {!canSellOrRent && '(1+ copias)'}
+              </Button>
+            </Tooltip>
+            <Tooltip
+              label={canSellOrRent ? 'Configurar demo' : 'Necesitas más de 1 copia para demo'}
+              hasArrow
+            >
+              <Button
+                size="sm"
+                width="100%"
+                leftIcon={<MdPlayCircleOutline />}
+                colorScheme="cyan"
+                variant={canSellOrRent ? 'solid' : 'outline'}
+                onClick={(e) => handleAction(e, () => onDemo?.(asset))}
+                isDisabled={!canSellOrRent}
+                opacity={canSellOrRent ? 1 : 0.5}
+              >
+                Demo {!canSellOrRent && '(1+ copias)'}
               </Button>
             </Tooltip>
             <Button
