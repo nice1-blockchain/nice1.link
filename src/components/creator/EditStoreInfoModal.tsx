@@ -15,13 +15,16 @@ import {
   VStack,
   SimpleGrid,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
+import { useAnchor } from '@nice1/react-tools';
 import { GameMetadata } from '../../hooks/useStore';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   productName: string;
+  productOwner: string;
   currentMetadata: GameMetadata;
   onSave: (name: string, data: GameMetadata) => void;
 }
@@ -31,10 +34,14 @@ export const EditStoreInfoModal: React.FC<Props> = ({
   isOpen,
   onClose,
   productName,
+  productOwner,
   currentMetadata,
   onSave,
 }) => {
+  const { session } = useAnchor();
+  const toast = useToast();
   const [formData, setFormData] = useState<GameMetadata>(currentMetadata);
+  const [saving, setSaving] = useState(false);
   const bg = useColorModeValue('white', 'gray.800');
 
   // Sincronizar el estado interno cuando cambia el producto seleccionado
@@ -44,9 +51,83 @@ export const EditStoreInfoModal: React.FC<Props> = ({
     }
   }, [isOpen, currentMetadata]);
 
-  const handleSave = () => {
-    onSave(productName, formData);
-    onClose();
+  const handleSave = async () => {
+    if (!session) {
+      toast({
+        title: 'Wallet no conectada',
+        description: 'Conecta tu wallet para guardar cambios.',
+        status: 'warning',
+      });
+      return;
+    }
+
+    const currentUser = session.auth.actor.toString();
+
+    // 1. Verificar que el usuario logueado es el productowner
+    if (currentUser !== productOwner) {
+      toast({
+        title: 'Sin permisos',
+        description: `Solo el owner (${productOwner}) puede editar este producto.`,
+        status: 'error',
+      });
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      // 2. Pedir firma de wallet para autenticar la acción
+      //    Usamos una transferencia de 0 tokens a sí mismo como "proof of ownership"
+      //    Alternativa: si tienes un contrato con acción de metadata, úsalo aquí
+      const action = {
+        account: 'eosio.token',
+        name: 'transfer',
+        authorization: [
+          {
+            actor: currentUser,
+            permission: session.auth.permission.toString(),
+          },
+        ],
+        data: {
+          from: currentUser,
+          to: currentUser,
+          quantity: '0.00000000 WAX',
+          memo: `n1store:update:${productName}`,
+        },
+      };
+
+      const result = await session.transact(
+        { actions: [action] },
+        { broadcast: true }
+      );
+
+      console.log('✅ Autenticación de ownership exitosa:', result);
+
+      // 3. Solo si la firma fue exitosa, guardar los metadatos
+      onSave(productName, formData);
+
+      toast({
+        title: 'Cambios guardados',
+        description: 'La información de la tienda se ha actualizado correctamente.',
+        status: 'success',
+      });
+
+      onClose();
+    } catch (err: any) {
+      console.error('❌ Error al autenticar:', err);
+
+      // Si el usuario cancela la firma, no guardar nada
+      toast({
+        title: 'No se guardaron los cambios',
+        description:
+          err?.message?.includes('cancel') || err?.message?.includes('rejected')
+            ? 'Firma cancelada por el usuario.'
+            : `Error: ${err?.message || 'desconocido'}`,
+        status: 'error',
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -122,11 +203,16 @@ export const EditStoreInfoModal: React.FC<Props> = ({
           </VStack>
         </ModalBody>
 
-        <ModalFooter borderTopWidth="1px" mt={4}>
-          <Button variant="ghost" mr={3} onClick={onClose}>
+        <ModalFooter>
+          <Button variant="ghost" mr={3} onClick={onClose} isDisabled={saving}>
             Cancelar
           </Button>
-          <Button colorScheme="blue" onClick={handleSave}>
+          <Button
+            colorScheme="blue"
+            onClick={handleSave}
+            isLoading={saving}
+            loadingText="Firmando..."
+          >
             Guardar Cambios
           </Button>
         </ModalFooter>

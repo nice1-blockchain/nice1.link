@@ -239,6 +239,7 @@ const SalesPage: React.FC = () => {
           isOpen={isEditStoreOpen}
           onClose={onEditStoreClose}
           productName={selectedProduct.product}
+          productOwner={selectedProduct.productowner}
           currentMetadata={
             storeItems.find(si => si.product === selectedProduct.product)?.metadata || {
               shortDescription: "",
