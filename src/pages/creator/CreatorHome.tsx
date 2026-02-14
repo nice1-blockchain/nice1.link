@@ -36,6 +36,12 @@ const CreatorHome: React.FC = () => {
             <Text fontSize="sm" mb={3}>Manage your rental products and restock.</Text>
             <Button colorScheme="purple" onClick={() => nav("rentals")}>Go to Rentals</Button>
           </Box>
+
+          <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
+            <Heading size="sm" mb={2}>Demo</Heading>
+            <Text fontSize="sm" mb={3}>Manage your demo products and restock.</Text>
+            <Button colorScheme="cyan" onClick={() => nav("demos")}>Go to Demos</Button>
+          </Box>
         </Stack>
       </Box>
     </Box>

@@ -54,6 +54,14 @@ const ActionsHeader: React.FC = () => {
       >
         Rent
       </Button>
+      <Button
+        size="sm"
+        colorScheme={isActive("/demos") ? "cyan" : "gray"}
+        variant={isActive("/demos") ? "solid" : "outline"}
+        onClick={() => nav("/creator/demos")}
+      >
+        Demo
+      </Button>
     </HStack>
   );
 };
