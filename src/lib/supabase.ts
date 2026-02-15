@@ -6,6 +6,9 @@ const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY! as string;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('⚠️ Falta configurar SUPABASE_URL y SUPABASE_ANON_KEY en .env');
+} else
+{
+    console.log(SUPABASE_URL);
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
