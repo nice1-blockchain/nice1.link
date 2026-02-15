@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAnchor } from '@nice1/react-tools';
 
 const SALE_CONTRACT = 'n1licensepos';
+
+// ⚠️ PLACEHOLDER: Reemplazar con el nombre real de la tabla si es diferente
 const TABLE_PRODUCTOS_VENTA = 'products';
-const TABLE_INT_REF = 'productdata';
 
 export interface SaleProduct {
   int_ref: number;
@@ -30,7 +31,7 @@ export const useSalesProducts = () => {
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Load user's sale products
+   * Cargar productos en venta del usuario
    */
   const loadProducts = useCallback(async () => {
     if (!session) {
@@ -44,36 +45,27 @@ export const useSalesProducts = () => {
     try {
       const owner = session.auth.actor.toString();
 
+      // Consultar tabla de productos (scope = productowner)
       const { rows } = await session.client.v1.chain.get_table_rows({
         json: true,
         code: SALE_CONTRACT,
         table: TABLE_PRODUCTOS_VENTA,
-        scope: SALE_CONTRACT,
+        scope: owner,
         limit: 100,
         reverse: false,
         show_payer: false,
       });
 
-      console.log('📦 Sale products loaded:', rows);
+      console.log('📦 Productos en venta cargados:', rows);
 
       setProducts(rows as SaleProduct[]);
     } catch (err: any) {
-      console.error('❌ Error loading sale products:', err);
-      const errorMsg = err?.message || err?.toString() || '';
-      
-      // Handle common "no data" scenarios gracefully
-      if (
-        errorMsg.includes('table not found') ||
-        errorMsg.includes('Table not found') ||
-        errorMsg.includes('Account Query Exception') ||
-        errorMsg.includes('does not exist') ||
-        errorMsg.includes('scope not found')
-      ) {
-        console.log('ℹ️ No sale products found (table or scope empty)');
+      console.error('❌ Error cargando productos en venta:', err);
+      if (err?.message?.includes('table not found') || err?.message?.includes('Table not found')) {
+        console.log('ℹ️ Tabla de productos no encontrada (puede que no exista aún)');
         setProducts([]);
-        // Don't set error - this is a normal state
       } else {
-        setError(err?.message || 'Error loading sale products');
+        setError(err?.message || 'Error al cargar productos en venta');
       }
     } finally {
       setLoading(false);
@@ -81,37 +73,8 @@ export const useSalesProducts = () => {
   }, [session]);
 
   /**
-   * Get int_ref of a product by name
-   */
-  const getIntRefByNftProduct = useCallback(
-    async (productName: string): Promise<number | null> => {
-      if (!session) return null;
-
-      try {
-        const owner = session.auth.actor.toString();
-
-        const { rows } = await session.client.v1.chain.get_table_rows({
-          json: true,
-          code: SALE_CONTRACT,
-          table: TABLE_INT_REF,
-          scope: owner,
-          limit: 100,
-          reverse: false,
-          show_payer: false,
-        });
-
-        const found = rows.find((p: any) => p.product === productName);
-        return found?.int_ref || null;
-      } catch (err: any) {
-        console.error('❌ Error getting int_ref:', err);
-        return null;
-      }
-    },
-    [session]
-  );
-
-  /**
-   * Get product by name
+   * Verificar si un producto ya está en venta por su nombre
+   * Retorna el producto si existe, null si no
    */
   const getProductByName = useCallback(
     (productName: string): SaleProduct | null => {
@@ -121,17 +84,17 @@ export const useSalesProducts = () => {
   );
 
   /**
-   * Check if asset is on sale
+   * Verificar si un asset (por nombre) ya está en venta
    */
   const isProductOnSale = useCallback(
-    (assetName: string): SaleProduct | null => {
-      return products.find((p) => p.product === assetName) || null;
+    (assetName: string): boolean => {
+      return products.some((p) => p.product.toLowerCase() === assetName.toLowerCase());
     },
     [products]
   );
 
   /**
-   * Get product by int_ref
+   * Obtener producto por int_ref
    */
   const getProductByIntRef = useCallback(
     (int_ref: number): SaleProduct | null => {
@@ -140,6 +103,7 @@ export const useSalesProducts = () => {
     [products]
   );
 
+  // Cargar al montar y cuando cambia la sesión
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
@@ -149,7 +113,6 @@ export const useSalesProducts = () => {
     loading,
     error,
     reload: loadProducts,
-    getIntRefByNftProduct,
     getProductByName,
     isProductOnSale,
     getProductByIntRef,

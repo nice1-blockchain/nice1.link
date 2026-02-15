@@ -144,7 +144,7 @@ const ManageProductModal: React.FC<ManageProductModalProps> = ({
       return;
     }
 
-    const result = await toggleProduct(saleProduct.product, saleProduct.int_ref.toString(), !isActive);
+    const result = await toggleProduct(saleProduct.product, saleProduct.int_ref, !isActive);
 
     if (result.success) {
       toast({
@@ -174,7 +174,7 @@ const ManageProductModal: React.FC<ManageProductModalProps> = ({
       return;
     }
 
-    const result = await updatePrice(saleProduct.product, saleProduct.int_ref.toString(), newPrice);
+    const result = await updatePrice(saleProduct.product, saleProduct.int_ref, newPrice);
 
     if (result.success) {
       toast({
@@ -213,7 +213,7 @@ const ManageProductModal: React.FC<ManageProductModalProps> = ({
 
     const result = await updatePercentages(
       saleProduct.product,
-      saleProduct.int_ref.toString(),
+      saleProduct.int_ref,
       newReceiver1.trim(),
       newPercentr1,
       newReceiver2.trim(),

@@ -133,7 +133,7 @@ const RestockModal: React.FC<RestockModalProps> = ({
                   Precio: {saleProduct.price}
                 </Text>
                 <Text fontSize="xs" color="gray.400">
-                  int_ref: {saleProduct.int_ref.toString()}
+                  int_ref: {saleProduct.int_ref}
                 </Text>
               </VStack>
             </HStack>

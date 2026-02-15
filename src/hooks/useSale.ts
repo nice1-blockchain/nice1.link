@@ -33,7 +33,7 @@ export interface SaleResult {
 type SaleStep = 'idle' | 'setproduct' | 'transfer' | 'completed' | 'error';
 
 /**
- * Genera un número aleatorio de 8 dígitos
+ * Genera un uint64 aleatorio de 8 dígitos (10000000 - 99999999)
  */
 const generateRef = (): number => {
   return Math.floor(10000000 + Math.random() * 90000000);
@@ -141,7 +141,7 @@ export const useSale = () => {
   );
 
   /**
-   * Paso 3: transfer - Envía NFTs al contrato de venta como stock inicial
+   * Paso 2: transfer - Envía NFTs al contrato de venta como stock inicial
    */
   const transferToSale = useCallback(
     async (assetIds: number[], int_ref: number): Promise<SaleResult> => {
@@ -288,11 +288,11 @@ export const useSale = () => {
     [session, transferToSale]
   );
 
-/**
-   * Desactivar/Activar venta: toggleproduct
+  /**
+   * Desactivar/Activar venta: toggleprod
    */
   const toggleProduct = useCallback(
-    async (product: string, int_ref: string, active: boolean): Promise<SaleResult> => {
+    async (product: string, int_ref: number, active: boolean): Promise<SaleResult> => {
       if (!session) {
         const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
         setError(errMsg);
@@ -307,7 +307,7 @@ export const useSale = () => {
 
         const action = {
           account: SALE_CONTRACT,
-          name: 'toggleproduct',
+          name: 'toggleprod',
           authorization: [
             {
               actor: owner,
@@ -319,18 +319,18 @@ export const useSale = () => {
             int_ref: int_ref,
             productowner: owner,
             active: active,
-            memo: 'confirm',
+            memo: '',
           },
         };
 
-        console.log('📤 [toggleproduct] Enviando:', action);
+        console.log('📤 [toggleprod] Enviando:', action);
 
         const result = await session.transact(
           { actions: [action] },
           { broadcast: true }
         );
 
-        console.log('✅ [toggleproduct] Éxito:', result);
+        console.log('✅ [toggleprod] Éxito:', result);
 
         setLoading(false);
         const txId =
@@ -338,9 +338,9 @@ export const useSale = () => {
           result.processed?.id?.toString() ||
           'unknown';
 
-        return { success: true, transactionId: txId, int_ref: parseInt(int_ref, 10) };
+        return { success: true, transactionId: txId, int_ref };
       } catch (err: any) {
-        console.error('❌ [toggleproduct] Error:', err);
+        console.error('❌ [toggleprod] Error:', err);
         const errorMessage =
           err?.message ||
           err?.error?.details?.[0]?.message ||
@@ -359,7 +359,7 @@ export const useSale = () => {
   const updatePercentages = useCallback(
     async (
       product: string,
-      int_ref: string,
+      int_ref: number,
       receiver1: string,
       percentr1: number,
       receiver2: string,
@@ -413,7 +413,7 @@ export const useSale = () => {
           result.processed?.id?.toString() ||
           'unknown';
 
-        return { success: true, transactionId: txId, int_ref: parseInt(int_ref, 10) };
+        return { success: true, transactionId: txId, int_ref };
       } catch (err: any) {
         console.error('❌ [updateperc] Error:', err);
         const errorMessage =
@@ -432,7 +432,7 @@ export const useSale = () => {
    * Actualizar precio: updateprice
    */
   const updatePrice = useCallback(
-    async (product: string, int_ref: string, newPrice: number): Promise<SaleResult> => {
+    async (product: string, int_ref: number, newPrice: number): Promise<SaleResult> => {
       if (!session) {
         const errMsg = 'No hay sesión activa. Por favor, conecta tu wallet.';
         setError(errMsg);
@@ -478,7 +478,7 @@ export const useSale = () => {
           result.processed?.id?.toString() ||
           'unknown';
 
-        return { success: true, transactionId: txId, int_ref: parseInt(int_ref, 10) };
+        return { success: true, transactionId: txId, int_ref };
       } catch (err: any) {
         console.error('❌ [updateprice] Error:', err);
         const errorMessage =

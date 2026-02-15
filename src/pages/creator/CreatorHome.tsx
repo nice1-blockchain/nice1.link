@@ -14,31 +14,27 @@ const CreatorHome: React.FC = () => {
 
         <Stack direction={{ base: "column", md: "row" }} spacing={4} flexWrap="wrap">
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
-            <Heading size="sm" mb={2}>Create</Heading>
             <Text fontSize="sm" mb={3}>Create a new License, Skin, Asset, or Custom.</Text>
             <Button colorScheme="teal" onClick={() => nav("create")}>Go to Create</Button>
           </Box>
 
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
-            <Heading size="sm" mb={2}>Stock</Heading>
             <Text fontSize="sm" mb={3}>View and duplicate your created assets.</Text>
             <Button colorScheme="blue" onClick={() => nav("stock")}>Go to Stock</Button>
           </Box>
-
-          <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
-            <Heading size="sm" mb={2}>Sales</Heading>
+        </Stack>
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} flexWrap="wrap">
+          <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">            
             <Text fontSize="sm" mb={3}>Manage your products for sale and restock.</Text>
             <Button colorScheme="green" onClick={() => nav("sales")}>Go to Sales</Button>
           </Box>
 
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
-            <Heading size="sm" mb={2}>Rent</Heading>
             <Text fontSize="sm" mb={3}>Manage your rental products and restock.</Text>
             <Button colorScheme="purple" onClick={() => nav("rentals")}>Go to Rentals</Button>
           </Box>
 
           <Box p={4} borderWidth="1px" borderColor={border} rounded="md" flex="1" minW="200px">
-            <Heading size="sm" mb={2}>Demo</Heading>
             <Text fontSize="sm" mb={3}>Manage your demo products and restock.</Text>
             <Button colorScheme="cyan" onClick={() => nav("demos")}>Go to Demos</Button>
           </Box>
