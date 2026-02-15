@@ -22,6 +22,7 @@ export interface RentalProduct {
   redelegate: boolean;
   referenceNftId?: number;
   stockCount?: number;
+  active: boolean;
 }
 
 export const useRentalProducts = () => {

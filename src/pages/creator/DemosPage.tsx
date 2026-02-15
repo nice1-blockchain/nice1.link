@@ -24,6 +24,7 @@ import ActionsHeader from './ActionsHeader';
 import { useDemoProducts, DemoProduct } from '../../hooks/useDemoProducts';
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import RestockDemoModal from '../../components/creator/RestockDemoModal';
+import SetDemoPeriodModal from '../../components/creator/SetDemoPeriodModal';
 
 /**
  * Formatea segundos en texto legible
@@ -49,6 +50,7 @@ const DemosPage: React.FC = () => {
   const { groupedAssets } = useStockContext();
 
   const { isOpen: isRestockOpen, onOpen: onRestockOpen, onClose: onRestockClose } = useDisclosure();
+  const { isOpen: isPeriodOpen, onOpen: onPeriodOpen, onClose: onPeriodClose } = useDisclosure();
   const [selectedProduct, setSelectedProduct] = useState<DemoProduct | null>(null);
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
 
@@ -69,6 +71,14 @@ const DemosPage: React.FC = () => {
 
   const handleRestockSuccess = () => {
     onRestockClose();
+    setSelectedProduct(null);
+    setSelectedAsset(null);
+    reload();
+  };
+
+  const handleSuccess = () => {
+    onRestockClose();
+    onPeriodClose();
     setSelectedProduct(null);
     setSelectedAsset(null);
     reload();
@@ -217,6 +227,15 @@ const DemosPage: React.FC = () => {
           asset={selectedAsset}
           demoProduct={selectedProduct}
           onSuccess={handleRestockSuccess}
+        />
+      )}
+
+      {selectedProduct && (
+        <SetDemoPeriodModal
+          isOpen={isPeriodOpen}
+          onClose={() => { onPeriodClose(); setSelectedProduct(null); }}
+          product={selectedProduct}
+          onSuccess={handleSuccess}
         />
       )}
     </Box>

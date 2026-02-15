@@ -74,11 +74,13 @@ const DemoModal: React.FC<DemoModalProps> = ({
   onSuccess,
 }) => {
   const toast = useToast();
-  const { executeDemoFlow, restockDemoProduct, loading, error, currentStep, clearError, resetStep } = useDemo();
+  const { executeDemoFlow, loading, error, currentStep, clearError, resetStep } = useDemo();
 
   // Formulario
   const [product, setProduct] = useState(asset.name);
-  const [stockToSend, setStockToSend] = useState<number>(1);
+
+  // Stock inicial fijo en 1 (oculto)
+  const stockToSend = 1;
 
   // Campos específicos de demo
   const [periodOption, setPeriodOption] = useState<number>(86400); // 1 día por defecto
@@ -96,6 +98,7 @@ const DemoModal: React.FC<DemoModalProps> = ({
   const availableIds = sortedIds.slice(1);
   const maxStock = availableIds.length;
 
+  // IDs que se enviarán (siempre 1)
   const idsToSend = useMemo(
     () => availableIds.slice(0, stockToSend),
     [availableIds, stockToSend]
@@ -105,8 +108,7 @@ const DemoModal: React.FC<DemoModalProps> = ({
 
   const canSubmit =
     product.trim() !== '' &&
-    stockToSend > 0 &&
-    stockToSend <= maxStock &&
+    maxStock > 0 &&
     effectivePeriod > 0;
 
   const getStepProgress = (): number => {
@@ -127,6 +129,18 @@ const DemoModal: React.FC<DemoModalProps> = ({
     }
   };
 
+  const getImageUrl = (img: string): string => {
+    if (!img) return '/placeholder-image.png';
+    if (img.startsWith('ipfs://')) {
+      const cid = img.replace('ipfs://', '');
+      return `https://ipfs.io/ipfs/${cid}`;
+    }
+    if (img.startsWith('Qm')) {
+      return `https://ipfs.io/ipfs/${img}`;
+    }
+    return img;
+  };
+
   const handleSubmit = async () => {
     if (!canSubmit) return;
 
@@ -145,7 +159,7 @@ const DemoModal: React.FC<DemoModalProps> = ({
       setCompletedIntRef(result.int_ref || null);
       toast({
         title: 'Demo configurado correctamente',
-        description: `Producto "${product}" registrado con ${idsToSend.length} NFT(s) de stock.`,
+        description: `Producto "${product}" registrado.`,
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -196,8 +210,6 @@ const DemoModal: React.FC<DemoModalProps> = ({
                 <br />
                 int_ref: {completedIntRef}
                 <br />
-                Stock enviado: {idsToSend.length} NFT(s)
-                <br />
                 Período: {formatPeriodDisplay(effectivePeriod)}
               </Text>
             </VStack>
@@ -207,16 +219,15 @@ const DemoModal: React.FC<DemoModalProps> = ({
           {currentStep !== 'completed' && !loading && (
             <VStack spacing={4} align="stretch">
               {/* Info del asset */}
-              <HStack spacing={3}>
-                {asset.image && (
-                  <Image
-                    src={asset.image.startsWith('Qm') ? `https://ipfs.io/ipfs/${asset.image}` : asset.image}
-                    alt={asset.name}
-                    boxSize="60px"
-                    objectFit="cover"
-                    rounded="md"
-                  />
-                )}
+              <HStack spacing={4} p={3} bg="gray.50" rounded="md" _dark={{ bg: 'gray.700' }}>
+                <Image
+                  src={getImageUrl(asset.image)}
+                  alt={asset.name}
+                  boxSize="60px"
+                  objectFit="cover"
+                  rounded="md"
+                  fallbackSrc="https://via.placeholder.com/60"
+                />
                 <Box>
                   <Text fontWeight="bold">{asset.name}</Text>
                   <Text fontSize="sm" color="gray.500">
@@ -228,7 +239,7 @@ const DemoModal: React.FC<DemoModalProps> = ({
               <Alert status="info" rounded="md" fontSize="sm">
                 <AlertIcon />
                 <AlertDescription>
-                  El demo requiere 2 firmas: 1) registrar producto y 2) transferir NFTs al contrato.
+                  El demo requiere 2 firmas: 1) registrar producto y 2) transferir NFT al contrato.
                   El ID más bajo ({referenceId}) se usa como referencia.
                 </AlertDescription>
               </Alert>
@@ -284,29 +295,6 @@ const DemoModal: React.FC<DemoModalProps> = ({
                   </FormHelperText>
                 </FormControl>
               )}
-
-              <Divider />
-
-              <FormControl isRequired>
-                <FormLabel>Stock inicial a enviar</FormLabel>
-                <NumberInput
-                  value={stockToSend}
-                  onChange={(_, val) => setStockToSend(val || 1)}
-                  min={1}
-                  max={maxStock}
-                  isDisabled={loading}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-                <FormHelperText>
-                  Disponibles: {maxStock} · IDs a enviar: {idsToSend.slice(0, 5).join(', ')}
-                  {idsToSend.length > 5 && ` ... (+${idsToSend.length - 5} más)`}
-                </FormHelperText>
-              </FormControl>
             </VStack>
           )}
 

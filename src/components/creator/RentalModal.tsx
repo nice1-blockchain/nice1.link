@@ -35,6 +35,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, RepeatIcon } from '@chakra-ui/icons';
+import { useAnchor } from '@nice1/react-tools';
 import { GroupedAsset } from '../../hooks/useStock';
 import { useRental, RentalFlowParams } from '../../hooks/useRental';
 
@@ -58,6 +59,16 @@ const PERIOD_OPTIONS = [
   { label: 'Personalizado', value: -1 },
 ];
 
+/**
+ * Formatea segundos en texto legible
+ */
+const formatPeriodDisplay = (seconds: number): string => {
+  if (seconds < 60) return `${seconds} segundos`;
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} minutos`;
+  if (seconds < 86400) return `${(seconds / 3600).toFixed(1)} horas`;
+  return `${(seconds / 86400).toFixed(1)} días`;
+};
+
 const RentalModal: React.FC<RentalModalProps> = ({
   isOpen,
   onClose,
@@ -65,40 +76,55 @@ const RentalModal: React.FC<RentalModalProps> = ({
   onSuccess,
 }) => {
   const toast = useToast();
+  const { session } = useAnchor();
   const { executeRentalFlow, restockRentalProduct, loading, error, currentStep, clearError, resetStep } = useRental();
+
+  // Cuenta logueada (será el receptor por defecto)
+  const loggedAccount = session?.auth?.actor?.toString() || '';
 
   // Formulario
   const [product, setProduct] = useState(asset.name);
   const [price, setPrice] = useState<number>(1);
+  
+  // Checkbox para cambiar cuenta de recepción
+  const [useCustomReceivers, setUseCustomReceivers] = useState(false);
+  
+  // Receptores (por defecto cuenta logueada con 100%)
   const [receiver1, setReceiver1] = useState('');
   const [percentr1, setPercentr1] = useState<number>(100);
   const [receiver2, setReceiver2] = useState('');
   const [percentr2, setPercentr2] = useState<number>(0);
   const [useSecondReceiver, setUseSecondReceiver] = useState(false);
-  const [stockToSend, setStockToSend] = useState<number>(1);
   
   // Campos específicos de alquiler
   const [periodOption, setPeriodOption] = useState<number>(86400); // 1 día por defecto
   const [customPeriod, setCustomPeriod] = useState<number>(86400);
-  const [redelegate, setRedelegate] = useState<boolean>(false);
+  
+  // Redelegate siempre false (oculto)
+  const redelegate = false;
+  
+  // Stock inicial fijo en 1 (oculto)
+  const stockToSend = 1;
 
-  // Estado post-alquiler
+  // Estado post-alquiler para reposición
   const [rentalCompleted, setRentalCompleted] = useState(false);
   const [savedIntRef, setSavedIntRef] = useState<string | null>(null);
   const [restockMode, setRestockMode] = useState(false);
   const [restockAmount, setRestockAmount] = useState<number>(1);
   const [restockLoading, setRestockLoading] = useState(false);
 
-  // IDs disponibles
+  // IDs disponibles (excluyendo el ID más bajo que es la referencia)
   const sortedIds = useMemo(() => [...asset.ids].sort((a, b) => a - b), [asset.ids]);
-  const referenceNftId = sortedIds[0];
-  const availableIds = sortedIds.slice(1);
+  const referenceNftId = sortedIds[0]; // ID más bajo = referencia
+  const availableIds = sortedIds.slice(1); // IDs disponibles para alquiler
   const maxStock = availableIds.length;
 
+  // IDs que se enviarán como stock inicial (siempre 1)
   const idsToSend = useMemo(() => {
     return availableIds.slice(0, stockToSend);
   }, [availableIds, stockToSend]);
 
+  // IDs disponibles para reposición (después de alquiler completado)
   const remainingIdsAfterRental = useMemo(() => {
     if (!rentalCompleted) return availableIds;
     return availableIds.slice(stockToSend);
@@ -106,6 +132,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
 
   const maxRestock = remainingIdsAfterRental.length;
 
+  // IDs que se enviarán en reposición
   const idsToRestock = useMemo(() => {
     return remainingIdsAfterRental.slice(0, restockAmount);
   }, [remainingIdsAfterRental, restockAmount]);
@@ -113,6 +140,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
   // Período efectivo
   const effectivePeriod = periodOption === -1 ? customPeriod : periodOption;
 
+  // Progreso del flujo
   const getStepProgress = (): number => {
     switch (currentStep) {
       case 'idle': return 0;
@@ -139,13 +167,10 @@ const RentalModal: React.FC<RentalModalProps> = ({
       const cid = img.replace('ipfs://', '');
       return `https://ipfs.io/ipfs/${cid}`;
     }
+    if (img.startsWith('Qm')) {
+      return `https://ipfs.io/ipfs/${img}`;
+    }
     return img;
-  };
-
-  const formatPeriodDisplay = (seconds: number): string => {
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutos`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} horas`;
-    return `${Math.floor(seconds / 86400)} días`;
   };
 
   const handleSubmit = async () => {
@@ -158,34 +183,39 @@ const RentalModal: React.FC<RentalModalProps> = ({
       toast({ title: 'El precio debe ser mayor a 0', status: 'warning', duration: 3000 });
       return;
     }
-    if (!receiver1.trim()) {
-      toast({ title: 'El receptor 1 es requerido', status: 'warning', duration: 3000 });
+    if (effectivePeriod <= 0) {
+      toast({ title: 'El período debe ser mayor a 0', status: 'warning', duration: 3000 });
       return;
     }
-    if (percentr1 < 1 || percentr1 > 100) {
-      toast({ title: 'El porcentaje 1 debe estar entre 1 y 100', status: 'warning', duration: 3000 });
-      return;
-    }
-    if (useSecondReceiver && receiver2.trim() && (percentr1 + percentr2 > 100)) {
-      toast({ title: 'La suma de porcentajes no puede superar 100', status: 'warning', duration: 3000 });
-      return;
-    }
-    if (stockToSend < 1) {
-      toast({ title: 'Debes enviar al menos 1 unidad de stock', status: 'warning', duration: 3000 });
-      return;
-    }
-    if (effectivePeriod < 60) {
-      toast({ title: 'El período debe ser al menos 60 segundos', status: 'warning', duration: 3000 });
-      return;
+
+    // Determinar receptores finales
+    const finalReceiver1 = useCustomReceivers ? receiver1.trim() : loggedAccount;
+    const finalPercentr1 = useCustomReceivers ? percentr1 : 100;
+    const finalReceiver2 = useCustomReceivers && useSecondReceiver ? receiver2.trim() : '';
+    const finalPercentr2 = useCustomReceivers && useSecondReceiver ? percentr2 : 0;
+
+    if (useCustomReceivers) {
+      if (!finalReceiver1) {
+        toast({ title: 'El receptor 1 es requerido', status: 'warning', duration: 3000 });
+        return;
+      }
+      if (finalPercentr1 < 1 || finalPercentr1 > 100) {
+        toast({ title: 'El porcentaje 1 debe estar entre 1 y 100', status: 'warning', duration: 3000 });
+        return;
+      }
+      if (useSecondReceiver && finalReceiver2 && (finalPercentr1 + finalPercentr2 > 100)) {
+        toast({ title: 'La suma de porcentajes no puede superar 100', status: 'warning', duration: 3000 });
+        return;
+      }
     }
 
     const params: RentalFlowParams = {
       product: product.trim(),
       price,
-      receiver1: receiver1.trim(),
-      percentr1,
-      receiver2: useSecondReceiver ? receiver2.trim() : '',
-      percentr2: useSecondReceiver ? percentr2 : 0,
+      receiver1: finalReceiver1,
+      percentr1: finalPercentr1,
+      receiver2: finalReceiver2,
+      percentr2: finalPercentr2,
       period: effectivePeriod,
       redelegate,
       referenceNftId,
@@ -258,6 +288,8 @@ const RentalModal: React.FC<RentalModalProps> = ({
       setSavedIntRef(null);
       setRestockMode(false);
       setRestockAmount(1);
+      setUseCustomReceivers(false);
+      setUseSecondReceiver(false);
       onClose();
     }
   };
@@ -325,26 +357,35 @@ const RentalModal: React.FC<RentalModalProps> = ({
                   </Box>
                 </Alert>
               ) : (
-                <Alert status="success" rounded="md">
+                <Alert status="warning" rounded="md">
                   <AlertIcon />
-                  <Text>Todo el stock ha sido enviado al contrato de alquiler.</Text>
+                  <Text>No tienes más unidades disponibles para enviar.</Text>
                 </Alert>
               )}
             </VStack>
           )}
 
-          {/* MODO REPOSICIÓN */}
+          {/* FORMULARIO DE REPOSICIÓN */}
           {rentalCompleted && restockMode && (
             <VStack spacing={4} align="stretch">
-              <Alert status="info" rounded="md">
-                <AlertIcon />
-                <Text>
-                  Stock disponible: <strong>{maxRestock}</strong> unidad(es)
-                </Text>
-              </Alert>
+              <HStack spacing={4} p={3} bg="gray.50" rounded="md" _dark={{ bg: 'gray.700' }}>
+                <Image
+                  src={getImageUrl(asset.image)}
+                  alt={asset.name}
+                  boxSize="60px"
+                  objectFit="cover"
+                  rounded="md"
+                  fallbackSrc="https://via.placeholder.com/60"
+                />
+                <VStack align="start" spacing={0} flex={1}>
+                  <Text fontWeight="bold">{product}</Text>
+                  <Badge colorScheme="purple">En Alquiler</Badge>
+                  <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef}</Text>
+                </VStack>
+              </HStack>
 
-              <FormControl>
-                <FormLabel>Cantidad a reponer</FormLabel>
+              <FormControl isRequired>
+                <FormLabel>Cantidad a enviar</FormLabel>
                 <NumberInput
                   value={restockAmount}
                   onChange={(_, val) => setRestockAmount(val || 1)}
@@ -359,16 +400,16 @@ const RentalModal: React.FC<RentalModalProps> = ({
                   </NumberInputStepper>
                 </NumberInput>
                 <FormHelperText>
-                  IDs a enviar: {idsToRestock.slice(0, 5).join(', ')}
-                  {idsToRestock.length > 5 && ` ... (+${idsToRestock.length - 5} más)`}
+                  Disponibles: {maxRestock} | IDs a enviar: {idsToRestock.join(', ')}
                 </FormHelperText>
               </FormControl>
             </VStack>
           )}
 
-          {/* FORMULARIO INICIAL */}
-          {!rentalCompleted && !loading && (
+          {/* FORMULARIO DE ALQUILER INICIAL */}
+          {!rentalCompleted && (
             <VStack spacing={4} align="stretch">
+              {/* Info del asset */}
               <HStack spacing={4} p={3} bg="gray.50" rounded="md" _dark={{ bg: 'gray.700' }}>
                 <Image
                   src={getImageUrl(asset.image)}
@@ -378,24 +419,28 @@ const RentalModal: React.FC<RentalModalProps> = ({
                   rounded="md"
                   fallbackSrc="https://via.placeholder.com/80"
                 />
-                <VStack align="start" spacing={1}>
+                <VStack align="start" spacing={1} flex={1}>
                   <Text fontWeight="bold">{asset.name}</Text>
-                  <Badge colorScheme="blue">{asset.category}</Badge>
-                  <Text fontSize="xs" color="gray.500">
+                  <Badge colorScheme="purple">{asset.category}</Badge>
+                  <Text fontSize="sm" color="gray.500">
+                    {asset.copyCount} copias totales
+                  </Text>
+                  <Text fontSize="xs" color="teal.500">
                     NFT Referencia: #{referenceNftId}
                   </Text>
                 </VStack>
               </HStack>
 
-              <Alert status="info" rounded="md">
+              <Alert status="info" rounded="md" fontSize="sm">
                 <AlertIcon />
-                <Text fontSize="sm">
-                  Tienes <strong>{maxStock}</strong> unidad(es) disponibles para alquiler.
+                <Text>
+                  El NFT #{referenceNftId} (ID más bajo) se usará como referencia y NO se alquilará.
                 </Text>
               </Alert>
 
               <Divider />
 
+              {/* Nombre del producto */}
               <FormControl isRequired>
                 <FormLabel>Nombre del producto</FormLabel>
                 <Input
@@ -406,8 +451,9 @@ const RentalModal: React.FC<RentalModalProps> = ({
                 />
               </FormControl>
 
+              {/* Precio */}
               <FormControl isRequired>
-                <FormLabel>Precio (NICEOFI)</FormLabel>
+                <FormLabel>Precio por período (NICEOFI)</FormLabel>
                 <NumberInput
                   value={price}
                   onChange={(_, val) => setPrice(val || 0)}
@@ -427,7 +473,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
 
               <Divider />
 
-              {/* PERÍODO DE ALQUILER */}
+              {/* PERÍODO */}
               <FormControl isRequired>
                 <FormLabel>Período de alquiler</FormLabel>
                 <Select
@@ -465,70 +511,54 @@ const RentalModal: React.FC<RentalModalProps> = ({
                 </FormControl>
               )}
 
-              <Checkbox
-                isChecked={redelegate}
-                onChange={(e) => setRedelegate(e.target.checked)}
-                isDisabled={loading}
-              >
-                Permitir redelegar (redelegate)
-              </Checkbox>
-
               <Divider />
 
-              <FormControl isRequired>
-                <FormLabel>Receptor 1 (cuenta WAX)</FormLabel>
-                <Input
-                  value={receiver1}
-                  onChange={(e) => setReceiver1(e.target.value)}
-                  placeholder="cuenta.wam"
-                  isDisabled={loading}
-                />
-              </FormControl>
+              {/* Info de receptor por defecto */}
+              <Alert status="success" rounded="md" fontSize="sm">
+                <AlertIcon />
+                <Text>
+                  Los pagos se recibirán en tu cuenta: <strong>{loggedAccount}</strong>
+                </Text>
+              </Alert>
 
-              <FormControl isRequired>
-                <FormLabel>Porcentaje receptor 1</FormLabel>
-                <NumberInput
-                  value={percentr1}
-                  onChange={(_, val) => setPercentr1(val || 0)}
-                  min={1}
-                  max={100}
-                  isDisabled={loading}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-
+              {/* Checkbox para cambiar receptores */}
               <Checkbox
-                isChecked={useSecondReceiver}
-                onChange={(e) => setUseSecondReceiver(e.target.checked)}
+                isChecked={useCustomReceivers}
+                onChange={(e) => {
+                  setUseCustomReceivers(e.target.checked);
+                  if (!e.target.checked) {
+                    setReceiver1('');
+                    setPercentr1(100);
+                    setReceiver2('');
+                    setPercentr2(0);
+                    setUseSecondReceiver(false);
+                  }
+                }}
                 isDisabled={loading}
               >
-                Añadir segundo receptor
+                Recibir en otra cuenta o en 2 cuentas
               </Checkbox>
 
-              {useSecondReceiver && (
-                <>
-                  <FormControl>
-                    <FormLabel>Receptor 2 (cuenta WAX)</FormLabel>
+              {/* Campos de receptores (solo si checkbox activo) */}
+              {useCustomReceivers && (
+                <VStack spacing={4} align="stretch" pl={6} borderLeftWidth="2px" borderColor="purple.200">
+                  <FormControl isRequired>
+                    <FormLabel>Receptor 1 (cuenta WAX)</FormLabel>
                     <Input
-                      value={receiver2}
-                      onChange={(e) => setReceiver2(e.target.value)}
-                      placeholder="cuenta.wam (opcional)"
+                      value={receiver1}
+                      onChange={(e) => setReceiver1(e.target.value)}
+                      placeholder="cuenta.wam"
                       isDisabled={loading}
                     />
                   </FormControl>
 
-                  <FormControl>
-                    <FormLabel>Porcentaje receptor 2</FormLabel>
+                  <FormControl isRequired>
+                    <FormLabel>Porcentaje receptor 1</FormLabel>
                     <NumberInput
-                      value={percentr2}
-                      onChange={(_, val) => setPercentr2(val || 0)}
-                      min={0}
-                      max={100 - percentr1}
+                      value={percentr1}
+                      onChange={(_, val) => setPercentr1(val || 0)}
+                      min={1}
+                      max={100}
                       isDisabled={loading}
                     >
                       <NumberInputField />
@@ -537,65 +567,79 @@ const RentalModal: React.FC<RentalModalProps> = ({
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
-                    <FormHelperText>
-                      Total: {percentr1 + percentr2}% (debe ser ≤ 100%)
-                    </FormHelperText>
+                    <FormHelperText>Solo números enteros</FormHelperText>
                   </FormControl>
-                </>
+
+                  <Checkbox
+                    isChecked={useSecondReceiver}
+                    onChange={(e) => {
+                      setUseSecondReceiver(e.target.checked);
+                      if (!e.target.checked) {
+                        setReceiver2('');
+                        setPercentr2(0);
+                      }
+                    }}
+                    isDisabled={loading}
+                  >
+                    Añadir segundo receptor
+                  </Checkbox>
+
+                  {useSecondReceiver && (
+                    <>
+                      <FormControl>
+                        <FormLabel>Receptor 2 (cuenta WAX)</FormLabel>
+                        <Input
+                          value={receiver2}
+                          onChange={(e) => setReceiver2(e.target.value)}
+                          placeholder="cuenta.wam"
+                          isDisabled={loading}
+                        />
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel>Porcentaje receptor 2</FormLabel>
+                        <NumberInput
+                          value={percentr2}
+                          onChange={(_, val) => setPercentr2(val || 0)}
+                          min={0}
+                          max={100 - percentr1}
+                          isDisabled={loading}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      </FormControl>
+                    </>
+                  )}
+                </VStack>
               )}
 
-              <Divider />
+              {/* Progreso */}
+              {loading && (
+                <Box>
+                  <Text fontSize="sm" mb={2} color="purple.500">
+                    {getStepLabel()}
+                  </Text>
+                  <Progress
+                    value={getStepProgress()}
+                    size="sm"
+                    colorScheme="purple"
+                    hasStripe
+                    isAnimated
+                  />
+                </Box>
+              )}
 
-              <FormControl isRequired>
-                <FormLabel>Stock inicial a enviar</FormLabel>
-                <NumberInput
-                  value={stockToSend}
-                  onChange={(_, val) => setStockToSend(val || 1)}
-                  min={1}
-                  max={maxStock}
-                  isDisabled={loading}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-                <FormHelperText>
-                  IDs a enviar: {idsToSend.slice(0, 5).join(', ')}
-                  {idsToSend.length > 5 && ` ... (+${idsToSend.length - 5} más)`}
-                </FormHelperText>
-              </FormControl>
+              {error && (
+                <Alert status="error" rounded="md">
+                  <AlertIcon />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
             </VStack>
-          )}
-
-          {/* PROGRESO */}
-          {loading && (
-            <VStack spacing={4} py={6}>
-              <Progress
-                value={getStepProgress()}
-                size="sm"
-                colorScheme="teal"
-                width="100%"
-                rounded="md"
-                hasStripe
-                isAnimated
-              />
-              <Text fontWeight="bold" color="teal.500">
-                {getStepLabel()}
-              </Text>
-              <Text fontSize="sm" color="gray.500">
-                Por favor, firma la transacción en tu wallet...
-              </Text>
-            </VStack>
-          )}
-
-          {/* ERROR */}
-          {error && !loading && (
-            <Alert status="error" rounded="md" mt={4}>
-              <AlertIcon />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
           )}
         </ModalBody>
 
@@ -606,7 +650,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
               {maxRestock > 0 && (
                 <Button
                   leftIcon={<RepeatIcon />}
-                  colorScheme="teal"
+                  colorScheme="purple"
                   variant="outline"
                   onClick={() => setRestockMode(true)}
                 >
@@ -625,7 +669,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
                 Volver
               </Button>
               <Button
-                colorScheme="teal"
+                colorScheme="purple"
                 onClick={handleRestock}
                 isLoading={restockLoading}
                 loadingText="Enviando..."
