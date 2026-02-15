@@ -34,6 +34,7 @@ import {
   Icon,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, RepeatIcon } from '@chakra-ui/icons';
+import { useAnchor } from '@nice1/react-tools';
 import { GroupedAsset } from '../../hooks/useStock';
 import { useSale, SaleFlowParams } from '../../hooks/useSale';
 
@@ -51,21 +52,32 @@ const SaleModal: React.FC<SaleModalProps> = ({
   onSuccess,
 }) => {
   const toast = useToast();
+  const { session } = useAnchor();
   const { executeSaleFlow, restockProduct, loading, error, currentStep, clearError, resetStep } = useSale();
+
+  // Cuenta logueada (será el receptor por defecto)
+  const loggedAccount = session?.auth?.actor?.toString() || '';
 
   // Formulario de venta
   const [product, setProduct] = useState(asset.name);
   const [price, setPrice] = useState<number>(1);
+  
+  // Checkbox para cambiar cuenta de recepción
+  const [useCustomReceivers, setUseCustomReceivers] = useState(false);
+  
+  // Receptores (por defecto cuenta logueada con 100%)
   const [receiver1, setReceiver1] = useState('');
   const [percentr1, setPercentr1] = useState<number>(100);
   const [receiver2, setReceiver2] = useState('');
   const [percentr2, setPercentr2] = useState<number>(0);
   const [useSecondReceiver, setUseSecondReceiver] = useState(false);
-  const [stockToSend, setStockToSend] = useState<number>(1);
+
+  // Stock inicial fijo en 1 (oculto)
+  const stockToSend = 1;
 
   // Estado post-venta para reposición
   const [saleCompleted, setSaleCompleted] = useState(false);
-  const [savedIntRef, setSavedIntRef] = useState<string | null>(null);
+  const [savedIntRef, setSavedIntRef] = useState<number | null>(null);
   const [restockMode, setRestockMode] = useState(false);
   const [restockAmount, setRestockAmount] = useState<number>(1);
   const [restockLoading, setRestockLoading] = useState(false);
@@ -76,7 +88,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
   const availableIds = sortedIds.slice(1); // IDs disponibles para venta
   const maxStock = availableIds.length;
 
-  // IDs que se enviarán como stock inicial
+  // IDs que se enviarán como stock inicial (siempre 1)
   const idsToSend = useMemo(() => {
     return availableIds.slice(0, stockToSend);
   }, [availableIds, stockToSend]);
@@ -84,7 +96,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
   // IDs disponibles para reposición (después de venta completada)
   const remainingIdsAfterSale = useMemo(() => {
     if (!saleCompleted) return availableIds;
-    return availableIds.slice(stockToSend); // Los que quedan después del envío inicial
+    return availableIds.slice(stockToSend);
   }, [availableIds, stockToSend, saleCompleted]);
 
   const maxRestock = remainingIdsAfterSale.length;
@@ -134,30 +146,35 @@ const SaleModal: React.FC<SaleModalProps> = ({
       toast({ title: 'El precio debe ser mayor a 0', status: 'warning', duration: 3000 });
       return;
     }
-    if (!receiver1.trim()) {
-      toast({ title: 'El receptor 1 es requerido', status: 'warning', duration: 3000 });
-      return;
-    }
-    if (percentr1 < 1 || percentr1 > 100) {
-      toast({ title: 'El porcentaje 1 debe estar entre 1 y 100', status: 'warning', duration: 3000 });
-      return;
-    }
-    if (useSecondReceiver && receiver2.trim() && (percentr1 + percentr2 > 100)) {
-      toast({ title: 'La suma de porcentajes no puede superar 100', status: 'warning', duration: 3000 });
-      return;
-    }
-    if (stockToSend < 1) {
-      toast({ title: 'Debes enviar al menos 1 unidad de stock', status: 'warning', duration: 3000 });
-      return;
+
+    // Determinar receptores finales
+    const finalReceiver1 = useCustomReceivers ? receiver1.trim() : loggedAccount;
+    const finalPercentr1 = useCustomReceivers ? percentr1 : 100;
+    const finalReceiver2 = useCustomReceivers && useSecondReceiver ? receiver2.trim() : '';
+    const finalPercentr2 = useCustomReceivers && useSecondReceiver ? percentr2 : 0;
+
+    if (useCustomReceivers) {
+      if (!finalReceiver1) {
+        toast({ title: 'El receptor 1 es requerido', status: 'warning', duration: 3000 });
+        return;
+      }
+      if (finalPercentr1 < 1 || finalPercentr1 > 100) {
+        toast({ title: 'El porcentaje 1 debe estar entre 1 y 100', status: 'warning', duration: 3000 });
+        return;
+      }
+      if (useSecondReceiver && finalReceiver2 && (finalPercentr1 + finalPercentr2 > 100)) {
+        toast({ title: 'La suma de porcentajes no puede superar 100', status: 'warning', duration: 3000 });
+        return;
+      }
     }
 
     const params: SaleFlowParams = {
       product: product.trim(),
       price,
-      receiver1: receiver1.trim(),
-      percentr1,
-      receiver2: useSecondReceiver ? receiver2.trim() : '',
-      percentr2: useSecondReceiver ? percentr2 : 0,
+      receiver1: finalReceiver1,
+      percentr1: finalPercentr1,
+      receiver2: finalReceiver2,
+      percentr2: finalPercentr2,
       referenceNftId,
       assetIdsToSend: idsToSend,
     };
@@ -165,13 +182,12 @@ const SaleModal: React.FC<SaleModalProps> = ({
     const result = await executeSaleFlow(params);
 
     if (result.success) {
-      // Guardar int_ref para posibles reposiciones
-      setSavedIntRef(result.int_ref ? String(result.int_ref) : null);
+      setSavedIntRef(result.int_ref || null);
       setSaleCompleted(true);
       
       toast({
         title: '¡Producto en venta!',
-        description: `"${product}" está ahora en venta con ${stockToSend} unidad(es) de stock.`,
+        description: `"${product}" está ahora en venta.`,
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -199,7 +215,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
     }
 
     setRestockLoading(true);
-    const result = await restockProduct(idsToRestock, Number(savedIntRef));
+    const result = await restockProduct(idsToRestock, savedIntRef);
     setRestockLoading(false);
 
     if (result.success) {
@@ -210,8 +226,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
         duration: 5000,
         isClosable: true,
       });
-      // Actualizar estado para reflejar los NFTs enviados
-      onSuccess(); // Cerrar y recargar
+      onSuccess();
     } else {
       toast({
         title: 'Error al reponer stock',
@@ -227,16 +242,16 @@ const SaleModal: React.FC<SaleModalProps> = ({
     if (!loading && !restockLoading) {
       clearError();
       resetStep();
-      // Resetear estados de reposición
       setSaleCompleted(false);
       setSavedIntRef(null);
       setRestockMode(false);
       setRestockAmount(1);
+      setUseCustomReceivers(false);
+      setUseSecondReceiver(false);
       onClose();
     }
   };
 
-  // Cerrar y finalizar (después de venta exitosa)
   const handleFinish = () => {
     resetStep();
     setSaleCompleted(false);
@@ -266,7 +281,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
                   ¡Producto registrado correctamente!
                 </Text>
                 <Text color="gray.500" textAlign="center">
-                  "{product}" está ahora en venta con {stockToSend} unidad(es) de stock inicial.
+                  "{product}" está ahora en venta.
                 </Text>
               </VStack>
 
@@ -323,7 +338,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
                 />
                 <VStack align="start" spacing={0} flex={1}>
                   <Text fontWeight="bold">{product}</Text>
-                  <Badge colorScheme="green">On Sale</Badge>
+                  <Badge colorScheme="green">En Venta</Badge>
                   <Text fontSize="xs" color="gray.400">int_ref: {savedIntRef}</Text>
                 </VStack>
               </HStack>
@@ -379,13 +394,12 @@ const SaleModal: React.FC<SaleModalProps> = ({
                 <AlertIcon />
                 <Text>
                   El NFT #{referenceNftId} (ID más bajo) se usará como referencia y NO se venderá.
-                  Tienes <strong>{maxStock}</strong> unidad(es) disponibles para venta.
                 </Text>
               </Alert>
 
               <Divider />
 
-              {/* Formulario */}
+              {/* Nombre del producto */}
               <FormControl isRequired>
                 <FormLabel>Nombre del producto</FormLabel>
                 <Input
@@ -396,6 +410,7 @@ const SaleModal: React.FC<SaleModalProps> = ({
                 />
               </FormControl>
 
+              {/* Precio */}
               <FormControl isRequired>
                 <FormLabel>Precio (NICEOFI)</FormLabel>
                 <NumberInput
@@ -417,67 +432,52 @@ const SaleModal: React.FC<SaleModalProps> = ({
 
               <Divider />
 
-              <FormControl isRequired>
-                <FormLabel>Receptor 1 (cuenta WAX)</FormLabel>
-                <Input
-                  value={receiver1}
-                  onChange={(e) => setReceiver1(e.target.value)}
-                  placeholder="cuenta.wam"
-                  isDisabled={loading}
-                />
-              </FormControl>
+              {/* Info de receptor por defecto */}
+              <Alert status="success" rounded="md" fontSize="sm">
+                <AlertIcon />
+                <Text>
+                  Los pagos se recibirán en tu cuenta: <strong>{loggedAccount}</strong>
+                </Text>
+              </Alert>
 
-              <FormControl isRequired>
-                <FormLabel>Porcentaje receptor 1</FormLabel>
-                <NumberInput
-                  value={percentr1}
-                  onChange={(_, val) => setPercentr1(val || 0)}
-                  min={1}
-                  max={100}
-                  isDisabled={loading}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-                <FormHelperText>Solo números enteros</FormHelperText>
-              </FormControl>
-
+              {/* Checkbox para cambiar receptores */}
               <Checkbox
-                isChecked={useSecondReceiver}
+                isChecked={useCustomReceivers}
                 onChange={(e) => {
-                  setUseSecondReceiver(e.target.checked);
+                  setUseCustomReceivers(e.target.checked);
                   if (!e.target.checked) {
+                    setReceiver1('');
+                    setPercentr1(100);
                     setReceiver2('');
                     setPercentr2(0);
+                    setUseSecondReceiver(false);
                   }
                 }}
                 isDisabled={loading}
               >
-                Añadir segundo receptor
+                Recibir en otra cuenta o en 2 cuentas
               </Checkbox>
 
-              {useSecondReceiver && (
-                <>
-                  <FormControl>
-                    <FormLabel>Receptor 2 (cuenta WAX)</FormLabel>
+              {/* Campos de receptores (solo si checkbox activo) */}
+              {useCustomReceivers && (
+                <VStack spacing={4} align="stretch" pl={6} borderLeftWidth="2px" borderColor="teal.200">
+                  <FormControl isRequired>
+                    <FormLabel>Receptor 1 (cuenta WAX)</FormLabel>
                     <Input
-                      value={receiver2}
-                      onChange={(e) => setReceiver2(e.target.value)}
+                      value={receiver1}
+                      onChange={(e) => setReceiver1(e.target.value)}
                       placeholder="cuenta.wam"
                       isDisabled={loading}
                     />
                   </FormControl>
 
-                  <FormControl>
-                    <FormLabel>Porcentaje receptor 2</FormLabel>
+                  <FormControl isRequired>
+                    <FormLabel>Porcentaje receptor 1</FormLabel>
                     <NumberInput
-                      value={percentr2}
-                      onChange={(_, val) => setPercentr2(val || 0)}
-                      min={0}
-                      max={100 - percentr1}
+                      value={percentr1}
+                      onChange={(_, val) => setPercentr1(val || 0)}
+                      min={1}
+                      max={100}
                       isDisabled={loading}
                     >
                       <NumberInputField />
@@ -486,31 +486,55 @@ const SaleModal: React.FC<SaleModalProps> = ({
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
+                    <FormHelperText>Solo números enteros</FormHelperText>
                   </FormControl>
-                </>
+
+                  <Checkbox
+                    isChecked={useSecondReceiver}
+                    onChange={(e) => {
+                      setUseSecondReceiver(e.target.checked);
+                      if (!e.target.checked) {
+                        setReceiver2('');
+                        setPercentr2(0);
+                      }
+                    }}
+                    isDisabled={loading}
+                  >
+                    Añadir segundo receptor
+                  </Checkbox>
+
+                  {useSecondReceiver && (
+                    <>
+                      <FormControl>
+                        <FormLabel>Receptor 2 (cuenta WAX)</FormLabel>
+                        <Input
+                          value={receiver2}
+                          onChange={(e) => setReceiver2(e.target.value)}
+                          placeholder="cuenta.wam"
+                          isDisabled={loading}
+                        />
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel>Porcentaje receptor 2</FormLabel>
+                        <NumberInput
+                          value={percentr2}
+                          onChange={(_, val) => setPercentr2(val || 0)}
+                          min={0}
+                          max={100 - percentr1}
+                          isDisabled={loading}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      </FormControl>
+                    </>
+                  )}
+                </VStack>
               )}
-
-              <Divider />
-
-              <FormControl isRequired>
-                <FormLabel>Stock inicial a enviar</FormLabel>
-                <NumberInput
-                  value={stockToSend}
-                  onChange={(_, val) => setStockToSend(val || 1)}
-                  min={1}
-                  max={maxStock}
-                  isDisabled={loading}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-                <FormHelperText>
-                  Máximo disponible: {maxStock} | IDs a enviar: {idsToSend.join(', ')}
-                </FormHelperText>
-              </FormControl>
 
               {/* Progreso */}
               {loading && (
