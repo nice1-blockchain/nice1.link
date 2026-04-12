@@ -130,8 +130,10 @@ export const StockProvider: React.FC<StockProviderProps> = ({ children }) => {
         show_payer: false,
       });
 
-      setRawAssets(rows as RawAsset[]);
-      const grouped = groupAssets(rows as RawAsset[]);
+      const owner = session.auth.actor.toString();
+      const ownedRows = (rows as RawAsset[]).filter((a) => a.author === owner);
+      setRawAssets(ownedRows);
+      const grouped = groupAssets(ownedRows);
       setGroupedAssets(grouped);
     } catch (err: any) {
       console.error('Error cargando assets:', err);

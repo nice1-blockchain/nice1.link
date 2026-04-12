@@ -23,6 +23,8 @@ import {
 } from '@chakra-ui/react';
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import { useSalesProducts, SaleProduct } from '../../hooks/useSalesProducts';
+import { useRentalProducts } from '../../hooks/useRentalProducts';
+import { useDemoProducts } from '../../hooks/useDemoProducts';
 import AssetCard from '../../components/creator/AssetCard';
 import DuplicateModal from '../../components/creator/DuplicateModal';
 import BurnModal from '../../components/creator/BurnModal';
@@ -39,7 +41,15 @@ const StockPage: React.FC = () => {
 
   const { groupedAssets, loading, error, reload, filterByCategory } = useStockContext();
   const { products: saleProducts, reload: reloadSales, getProductByName } = useSalesProducts();
-  
+  const { products: rentalProducts } = useRentalProducts();
+  const { products: demoProducts } = useDemoProducts();
+
+  const checkIsOnRental = (asset: GroupedAsset): boolean =>
+    rentalProducts.some((p) => p.product.toLowerCase() === asset.name.toLowerCase());
+
+  const checkIsOnDemo = (asset: GroupedAsset): boolean =>
+    demoProducts.some((p) => p.product.toLowerCase() === asset.name.toLowerCase());
+
   const [selectedAsset, setSelectedAsset] = useState<GroupedAsset | null>(null);
   const [selectedSaleProduct, setSelectedSaleProduct] = useState<SaleProduct | null>(null);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
@@ -79,14 +89,13 @@ const StockPage: React.FC = () => {
     }, 1000);
   };
 
-   const handleDemo = (asset: GroupedAsset) => {
+  const handleDemo = (asset: GroupedAsset) => {
     if (asset.copyCount <= 1) {
-      toast({
-        title: 'No disponible',
-        description: 'Necesitas más de 1 copia para configurar demo',
-        status: 'warning',
-        duration: 3000,
-      });
+      toast({ title: 'No disponible', description: 'Necesitas más de 1 copia para configurar demo', status: 'warning', duration: 3000 });
+      return;
+    }
+    if (checkIsOnDemo(asset)) {
+      toast({ title: 'Ya tiene demo configurado', description: 'Este producto ya tiene demo activo. Gestiónalo desde la pestaña Demo.', status: 'warning', duration: 4000, isClosable: true });
       return;
     }
     setSelectedAsset(asset);
@@ -149,15 +158,13 @@ const StockPage: React.FC = () => {
     setIsSaleModalOpen(true);
   };
 
-  // NUEVO: Handler para alquiler
   const handleRental = (asset: GroupedAsset) => {
     if (asset.copyCount <= 1) {
-      toast({
-        title: 'No disponible',
-        description: 'Necesitas más de 1 copia para poner en alquiler',
-        status: 'warning',
-        duration: 3000,
-      });
+      toast({ title: 'No disponible', description: 'Necesitas más de 1 copia para poner en alquiler', status: 'warning', duration: 3000 });
+      return;
+    }
+    if (checkIsOnRental(asset)) {
+      toast({ title: 'Ya está en alquiler', description: 'Este producto ya tiene alquiler activo. Gestiónalo desde la pestaña Rent.', status: 'warning', duration: 4000, isClosable: true });
       return;
     }
     setSelectedAsset(asset);
@@ -274,7 +281,9 @@ const StockPage: React.FC = () => {
                             onManage={handleManage}
                             isOnSale={checkIsOnSale(asset)}
                             onRental={handleRental}
-                            onDemo={handleDemo} 
+                            onDemo={handleDemo}
+                            isOnRental={checkIsOnRental(asset)}
+                            isOnDemo={checkIsOnDemo(asset)}
                           />
                         ))}
                       </SimpleGrid>

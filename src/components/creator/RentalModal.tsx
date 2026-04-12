@@ -17,6 +17,7 @@ import {
   FormControl,
   FormLabel,
   FormHelperText,
+  FormErrorMessage,
   Input,
   NumberInput,
   NumberInputField,
@@ -35,6 +36,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, RepeatIcon } from '@chakra-ui/icons';
+import { validateEosioName } from '../../utils/eosioValidation';
 import { useAnchor } from '@nice1/react-tools';
 import { GroupedAsset } from '../../hooks/useStock';
 import { useRental, RentalFlowParams } from '../../hooks/useRental';
@@ -84,6 +86,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
 
   // Formulario
   const [product, setProduct] = useState(asset.name);
+  const [nameError, setNameError] = useState<string | null>(null);
   const [price, setPrice] = useState<number>(1);
   
   // Checkbox para cambiar cuenta de recepción
@@ -441,14 +444,21 @@ const RentalModal: React.FC<RentalModalProps> = ({
               <Divider />
 
               {/* Nombre del producto */}
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={!!nameError}>
                 <FormLabel>Nombre del producto</FormLabel>
                 <Input
                   value={product}
-                  onChange={(e) => setProduct(e.target.value)}
-                  placeholder="Nombre del producto"
+                  onChange={(e) => {
+                    const val = e.target.value.toLowerCase().replace(/[^a-z1-5.]/g, '').slice(0, 12);
+                    setProduct(val);
+                    setNameError(validateEosioName(val));
+                  }}
+                  placeholder="ej: mygame"
+                  maxLength={12}
                   isDisabled={loading}
                 />
+                <FormHelperText>Máx. 12 caracteres: letras minúsculas (a-z) y números 1-5</FormHelperText>
+                {nameError && <FormErrorMessage>{nameError}</FormErrorMessage>}
               </FormControl>
 
               {/* Precio */}
@@ -690,7 +700,7 @@ const RentalModal: React.FC<RentalModalProps> = ({
                 onClick={handleSubmit}
                 isLoading={loading}
                 loadingText="Procesando..."
-                isDisabled={maxStock === 0}
+                isDisabled={maxStock === 0 || !!nameError}
               >
                 Poner en Alquiler
               </Button>

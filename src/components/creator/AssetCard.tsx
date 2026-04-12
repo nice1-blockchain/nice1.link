@@ -28,6 +28,8 @@ interface AssetCardProps {
   isOnSale?: boolean;
   onRental?: (asset: GroupedAsset) => void;
   onDemo?: (asset: GroupedAsset) => void;
+  isOnRental?: boolean;
+  isOnDemo?: boolean;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({ 
@@ -37,9 +39,11 @@ const AssetCard: React.FC<AssetCardProps> = ({
   onBurn,
   onSale,
   onManage,
-  isOnSale = false, 
+  isOnSale = false,
   onRental,
   onDemo,
+  isOnRental = false,
+  isOnDemo = false,
 }) => {
   const border = useColorModeValue('gray.200', 'whiteAlpha.300');
   const bg = useColorModeValue('white', 'gray.700');
@@ -126,6 +130,12 @@ const AssetCard: React.FC<AssetCardProps> = ({
           >
             On Sale
           </Badge>
+        )}
+        {isOnRental && (
+          <Badge position="absolute" top={8} left={2} colorScheme="purple" fontSize="xs">On Rent</Badge>
+        )}
+        {isOnDemo && (
+          <Badge position="absolute" top={14} left={2} colorScheme="cyan" fontSize="xs">Demo</Badge>
         )}
 
         {/* Badge copias */}
@@ -215,40 +225,36 @@ const AssetCard: React.FC<AssetCardProps> = ({
                 </Button>
               </Tooltip>
             )}
-            <Tooltip
-              label={canSellOrRent ? 'Poner en alquiler' : 'Necesitas más de 1 copia para alquilar'}
-              hasArrow
-            >
-              <Button
-                size="sm"
-                width="100%"
-                leftIcon={<TimeIcon />}
-                colorScheme="purple"
-                variant={canSellOrRent ? 'solid' : 'outline'}
-                onClick={(e) => handleAction(e, () => onRental?.(asset))}
-                isDisabled={!canSellOrRent}
-                opacity={canSellOrRent ? 1 : 0.5}
-              >
-                Alquiler {!canSellOrRent && '(1+ copias)'}
+            {isOnRental ? (
+              <Button size="sm" width="100%" leftIcon={<TimeIcon />} colorScheme="purple" variant="solid"
+                onClick={(e) => handleAction(e, () => onRental?.(asset))}>
+                Gestionar Alquiler
               </Button>
-            </Tooltip>
-            <Tooltip
-              label={canSellOrRent ? 'Configurar demo' : 'Necesitas más de 1 copia para demo'}
-              hasArrow
-            >
-              <Button
-                size="sm"
-                width="100%"
-                leftIcon={<MdPlayCircleOutline />}
-                colorScheme="cyan"
-                variant={canSellOrRent ? 'solid' : 'outline'}
-                onClick={(e) => handleAction(e, () => onDemo?.(asset))}
-                isDisabled={!canSellOrRent}
-                opacity={canSellOrRent ? 1 : 0.5}
-              >
-                Demo {!canSellOrRent && '(1+ copias)'}
+            ) : (
+              <Tooltip label={canSellOrRent ? 'Poner en alquiler' : 'Necesitas más de 1 copia para alquilar'} hasArrow>
+                <Button size="sm" width="100%" leftIcon={<TimeIcon />} colorScheme="purple"
+                  variant={canSellOrRent ? 'solid' : 'outline'}
+                  onClick={(e) => handleAction(e, () => onRental?.(asset))}
+                  isDisabled={!canSellOrRent} opacity={canSellOrRent ? 1 : 0.5}>
+                  Alquiler {!canSellOrRent && '(1+ copias)'}
+                </Button>
+              </Tooltip>
+            )}
+            {isOnDemo ? (
+              <Button size="sm" width="100%" leftIcon={<MdPlayCircleOutline />} colorScheme="cyan" variant="solid"
+                onClick={(e) => handleAction(e, () => onDemo?.(asset))}>
+                Gestionar Demo
               </Button>
-            </Tooltip>
+            ) : (
+              <Tooltip label={canSellOrRent ? 'Configurar demo' : 'Necesitas más de 1 copia para demo'} hasArrow>
+                <Button size="sm" width="100%" leftIcon={<MdPlayCircleOutline />} colorScheme="cyan"
+                  variant={canSellOrRent ? 'solid' : 'outline'}
+                  onClick={(e) => handleAction(e, () => onDemo?.(asset))}
+                  isDisabled={!canSellOrRent} opacity={canSellOrRent ? 1 : 0.5}>
+                  Demo {!canSellOrRent && '(1+ copias)'}
+                </Button>
+              </Tooltip>
+            )}
             <Button
               size="sm"
               width="100%"

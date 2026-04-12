@@ -17,6 +17,7 @@ import {
   FormControl,
   FormLabel,
   FormHelperText,
+  FormErrorMessage,
   Input,
   NumberInput,
   NumberInputField,
@@ -34,6 +35,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, RepeatIcon } from '@chakra-ui/icons';
+import { validateEosioName } from '../../utils/eosioValidation';
 import { GroupedAsset } from '../../hooks/useStock';
 import { useDemo, DemoFlowParams } from '../../hooks/useDemo';
 
@@ -78,6 +80,7 @@ const DemoModal: React.FC<DemoModalProps> = ({
 
   // Formulario
   const [product, setProduct] = useState(asset.name);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   // Stock inicial fijo en 1 (oculto)
   const stockToSend = 1;
@@ -108,6 +111,7 @@ const DemoModal: React.FC<DemoModalProps> = ({
 
   const canSubmit =
     product.trim() !== '' &&
+    !nameError &&
     maxStock > 0 &&
     effectivePeriod > 0;
 
@@ -246,14 +250,21 @@ const DemoModal: React.FC<DemoModalProps> = ({
 
               <Divider />
 
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={!!nameError}>
                 <FormLabel>Nombre del producto</FormLabel>
                 <Input
                   value={product}
-                  onChange={(e) => setProduct(e.target.value)}
-                  placeholder="Nombre del producto"
+                  onChange={(e) => {
+                    const val = e.target.value.toLowerCase().replace(/[^a-z1-5.]/g, '').slice(0, 12);
+                    setProduct(val);
+                    setNameError(validateEosioName(val));
+                  }}
+                  placeholder="ej: mygame"
+                  maxLength={12}
                   isDisabled={loading}
                 />
+                <FormHelperText>Máx. 12 caracteres: letras minúsculas (a-z) y números 1-5</FormHelperText>
+                {nameError && <FormErrorMessage>{nameError}</FormErrorMessage>}
               </FormControl>
 
               <Divider />
