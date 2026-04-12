@@ -57,7 +57,8 @@ export const useStore = () => {
       if (data) {
         const db: Record<string, GameMetadata> = {};
         (data as GameMetadataRow[]).forEach((row) => {
-          db[row.product_name] = rowToMetadata(row);
+          const key = `${row.product_name}:${row.owner_account}`;
+          db[key] = rowToMetadata(row);
         });
         setMetadataDb(db);
       }
@@ -77,7 +78,8 @@ export const useStore = () => {
   useEffect(() => {
     if (products) {
       const merged = products.map((p) => {
-        const metadata = metadataDb[p.product] || DEFAULT_METADATA;
+        const key = `${p.product}:${p.productowner}`;
+        const metadata = metadataDb[key] || DEFAULT_METADATA;
         return {
           ...p,
           metadata,
@@ -113,10 +115,8 @@ export const useStore = () => {
         }
 
         // Actualizar estado local sin recargar todo
-        setMetadataDb((prev) => ({
-          ...prev,
-          [productName]: data,
-        }));
+        const key = `${productName}:${ownerAccount}`;
+        setMetadataDb((prev) => ({ ...prev, [key]: data }));
 
         console.log('✅ Metadatos guardados en Supabase:', productName);
         return true;

@@ -27,6 +27,8 @@ import {
 import { RepeatIcon, EditIcon } from '@chakra-ui/icons';
 import { FaPercentage } from 'react-icons/fa';
 import { useSalesProducts, SaleProduct } from '../../hooks/useSalesProducts';
+import { useStore, GameMetadata } from '../../hooks/useStore';
+import { EditStoreInfoModal } from '../../components/creator/EditStoreInfoModal';
 import { useStockContext, GroupedAsset } from '../../contexts/StockContext';
 import { useSale } from '../../hooks/useSale';
 import RestockModal from '../../components/creator/RestockModal';
@@ -39,7 +41,9 @@ const SalesPage: React.FC = () => {
   const cardBg = useColorModeValue('gray.50', 'gray.700');
 
   const toast = useToast();
-  const { products, loading, error, reload } = useSalesProducts();
+  const { storeItems, loading, error, updateGameMetadata, refresh } = useStore();
+  const products = storeItems;
+  const reload = refresh;
   const { groupedAssets, reload: reloadStock } = useStockContext();
   const { toggleProduct, loading: toggleLoading } = useSale();
 
@@ -65,6 +69,14 @@ const SalesPage: React.FC = () => {
     onOpen: onPercOpen,
     onClose: onPercClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isStoreEditOpen,
+    onOpen: onStoreEditOpen,
+    onClose: onStoreEditClose,
+  } = useDisclosure();
+
+  const [storeEditProduct, setStoreEditProduct] = useState<typeof storeItems[0] | null>(null);
 
   /**
    * Buscar el asset agrupado que corresponde a un producto en venta
@@ -149,6 +161,22 @@ const SalesPage: React.FC = () => {
     onPercClose();
     setSelectedProduct(null);
     await reload();
+  };
+
+  const handleEditStoreInfo = (product: typeof storeItems[0]) => {
+    setStoreEditProduct(product);
+    onStoreEditOpen();
+  };
+
+  const handleStoreSave = async (productName: string, data: GameMetadata) => {
+    if (!storeEditProduct) return;
+    const ok = await updateGameMetadata(productName, storeEditProduct.productowner, data);
+    if (ok) {
+      toast({ title: 'Metadatos guardados', status: 'success', duration: 3000 });
+      onStoreEditClose();
+    } else {
+      toast({ title: 'Error al guardar metadatos', status: 'error', duration: 4000 });
+    }
   };
 
   const getImageUrl = (img: string): string => {
@@ -334,6 +362,16 @@ const SalesPage: React.FC = () => {
                               Reparto
                             </Button>
                           </HStack>
+                          <Button
+                            size="sm"
+                            width="100%"
+                            colorScheme="teal"
+                            variant="outline"
+                            leftIcon={<EditIcon />}
+                            onClick={() => handleEditStoreInfo(product)}
+                          >
+                            Info Tienda
+                          </Button>
                         </VStack>
                       </VStack>
                     </CardBody>
@@ -383,6 +421,18 @@ const SalesPage: React.FC = () => {
           }}
           product={selectedProduct}
           onSuccess={handlePercSuccess}
+        />
+      )}
+
+      {/* Modal de Info Tienda */}
+      {storeEditProduct && (
+        <EditStoreInfoModal
+          isOpen={isStoreEditOpen}
+          onClose={onStoreEditClose}
+          productName={storeEditProduct.product}
+          productOwner={storeEditProduct.productowner}
+          currentMetadata={storeEditProduct.metadata}
+          onSave={handleStoreSave}
         />
       )}
     </Box>

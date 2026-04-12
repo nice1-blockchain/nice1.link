@@ -26,7 +26,7 @@ interface Props {
   productName: string;
   productOwner: string;
   currentMetadata: GameMetadata;
-  onSave: (name: string, data: GameMetadata) => void;
+  onSave: (name: string, data: GameMetadata) => Promise<void> | void;
 }
 
 // IMPORTANTE: Se añade 'export' al inicio del componente
@@ -104,14 +104,9 @@ export const EditStoreInfoModal: React.FC<Props> = ({
       console.log('✅ Autenticación de ownership exitosa:', result);
 
       // 3. Solo si la firma fue exitosa, guardar los metadatos
-      onSave(productName, formData);
+      await onSave(productName, formData);
 
-      toast({
-        title: 'Cambios guardados',
-        description: 'La información de la tienda se ha actualizado correctamente.',
-        status: 'success',
-      });
-
+      // Parent (SalesPage) handles the toast and close
       onClose();
     } catch (err: any) {
       console.error('❌ Error al autenticar:', err);
